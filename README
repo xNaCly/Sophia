@@ -1,0 +1,34 @@
+Tisp 
+====
+
+My take on a small lisp like programming language. 
+
+teo+lisp = tisp (τ)
+
+tisp supports arithmetics and the o in io :^)
+
+Run
+---
+
+    git clone https://github.com/xnacly/tisp
+
+with a file: 
+
+    go run . -f ./examples/helloworld.tisp
+
+as a repl:
+
+    go run .
+
+Reference
+---------
+
+keyword     args    description
+
+putv        x        prints x to stdout
+add         x,y      adds x and y
+sub         x,y      subtracts y from x
+mul         x,y      multiplies x and y
+div         x,y      divides x by y
+
+Tips supports strings and 64 bit floating point integers.
