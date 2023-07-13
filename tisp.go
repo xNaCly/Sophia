@@ -29,9 +29,12 @@ func run(input []byte) error {
 func main() {
 	log.SetFlags(log.Ltime)
 	file := flag.String("f", "", "specifiy source file, if not specifiy start repl")
+	execute := flag.String("e", "", "specifiy expression to execute")
 	flag.Parse()
 
-	if len(*file) != 0 {
+	if len(*execute) != 0 {
+		run([]byte(*execute))
+	} else if len(*file) != 0 {
 		f, err := os.ReadFile(*file)
 		if err != nil {
 			log.Fatalf("Failed to open file: %s\n", err)

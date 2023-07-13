@@ -13,13 +13,19 @@ git clone https://github.com/xnacly/tisp
 with a file:
 
 ```bash
-go run . -f ./examples/helloworld.tisp
+tisp -f ./examples/helloworld.tisp
+```
+
+with an expression:
+
+```bash
+tisp -e '[putv "Hello World"]'
 ```
 
 as a repl:
 
 ```bash
-go run .
+tisp
 ```
 
 ## Reference
