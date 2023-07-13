@@ -9,6 +9,7 @@ import (
 )
 
 func Repl() {
+	fmt.Println(`Welcome to the Tisp repl - press <CTRL-D> or <CTRL-C> to quit...`)
 	prompt := "τ :: "
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
