@@ -28,7 +28,7 @@ go run .
 
 tisp currently supports arithmetics and the o in io :^)
 
-```tisp
+```lisp
 [putv "Hello World!"]
 ```
 
@@ -46,7 +46,7 @@ tisp currently supports arithmetics and the o in io :^)
 
 All execution is done left to right, meaning:
 
-```tisp
+```lisp
 [add 2 3 4] ;; results in 2+3+4 -> 9
 [sub 2 3 4] ;; results in 2-3-4 -> -5
 [mul 2 3 4] ;; results in 2*3*4 -> 24
