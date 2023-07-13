@@ -6,6 +6,9 @@
 ;; putv for put value 
 [putv 25 12]
 
+;; adding floats
+[putv .1 .1 .1 .1]
+
 ;; print 23 
 [putv [sub 25 [add 1 [mul 5 [div 5 2]]]]]
 
