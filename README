@@ -23,12 +23,25 @@ as a repl:
 Reference
 ---------
 
-keyword     args    description
+Hello world:
 
-putv        x        prints x to stdout
-add         x,y      adds x and y
-sub         x,y      subtracts y from x
-mul         x,y      multiplies x and y
-div         x,y      divides x by y
+    [putv "Hello World!"]
+
+
+Keyword reference:
+
+keyword     description
+
+putv        prints x to stdout
+add         adds all arguments together
+sub         subtracts all arguments
+mul         multiplies x and y
+div         divides x by y
+
+All execution is done left to right, meaning
+    
+    [add 1 2 3] ;; results in 1+2+3 -> 6
+    [sub 1 2 3] ;; results in 1-2-3-> -4
+
 
 Tips supports strings and 64 bit floating point integers.
