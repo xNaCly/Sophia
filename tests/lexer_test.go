@@ -20,6 +20,7 @@ func TestLexerHelloWorld(t *testing.T) {
 		core.PUTV,
 		core.STRING,
 		core.RIGHT_BRACE,
+		core.EOF,
 	}
 
 	for i, tok := range token {
@@ -75,6 +76,7 @@ func TestLexerArithmetic(t *testing.T) {
 		core.RIGHT_BRACE,
 		core.RIGHT_BRACE,
 		core.RIGHT_BRACE,
+		core.EOF,
 	}
 
 	for i, tok := range token {
@@ -94,7 +96,7 @@ func TestLexerIgnoreCharsAndComments(t *testing.T) {
 	for _, v := range in {
 		l := core.NewLexer([]byte(v))
 		o := l.Lex()
-		if len(o) != 0 {
+		if len(o) != 1 {
 			t.Errorf("lexer output for '%s' should be empty due to a comment, but contains '%v' of size '%d'", v, o, len(o))
 		}
 	}
@@ -112,7 +114,7 @@ func TestLexerErrorsOnUnknownTokenAndIntegers(t *testing.T) {
 	for _, v := range in {
 		l := core.NewLexer([]byte(v))
 		o := l.Lex()
-		if len(o) != 0 {
+		if len(o) != 1 {
 			t.Errorf("lexer output for '%s' should be empty due to a syntax error, but contains '%v' of size '%d'", v, o, len(o))
 		}
 	}
