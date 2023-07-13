@@ -24,7 +24,31 @@ func TestLexerHelloWorld(t *testing.T) {
 
 	for i, tok := range token {
 		if tok.Type != expected[i] {
-			t.Errorf("given token '%+v' of type '%d' at pos '%d' does not match expected token '%d'", tok, tok.Type, i, expected[i])
+			t.Errorf("given token '%+v' of type '%d' at pos '%d' does not match expected token '%d'\n", tok, tok.Type, i, expected[i])
+		}
+	}
+}
+
+func TestLexerFloats(t *testing.T) {
+	null, _ := os.Open(os.DevNull)
+	os.Stdout = null
+	log.SetOutput(null)
+	in := map[string]float64{
+		"10.0":      10.0,
+		"1_000_000": 1_000_000.0,
+		".01":       0.01,
+		".1e-3":     0.0001,
+		"1.2e-2":    0.012,
+		"15e4":      150_000,
+	}
+	for k, v := range in {
+		l := core.NewLexer([]byte(k))
+		o := l.Lex()
+		if l.HasError {
+			t.Fatalf("failed to lex float for input '%s', expected '%f'\n", k, v)
+		}
+		if o[0].Float != v {
+			t.Fatalf("lexed float '%f' not equal to '%f' for input '%s'\n", o[0].Float, v, k)
 		}
 	}
 }
@@ -65,6 +89,7 @@ func TestLexerIgnoreCharsAndComments(t *testing.T) {
 		";;",
 		";;comment",
 		"\t\n ",
+		"      ",
 	}
 	for _, v := range in {
 		l := core.NewLexer([]byte(v))

@@ -15,17 +15,23 @@ type Lexer struct {
 	chr      byte
 	line     int
 	linepos  int
-	hasError bool
+	HasError bool
 }
 
 func NewLexer(input []byte) Lexer {
+	if len(input) == 0 || len(strings.TrimSpace(string(input))) == 0 {
+		log.Println("err: input is empty, stopping")
+		return Lexer{
+			HasError: true,
+		}
+	}
 	return Lexer{
 		input:    input,
 		pos:      0,
 		chr:      input[0],
 		line:     0,
 		linepos:  0,
-		hasError: false,
+		HasError: false,
 	}
 }
 
@@ -64,7 +70,7 @@ func (l *Lexer) Lex() []Token {
 					l.error(1, t.Raw)
 				}
 				continue
-			} else if unicode.IsDigit(rune(l.chr)) {
+			} else if unicode.IsDigit(rune(l.chr)) || l.chr == '-' || l.chr == '.' {
 				if t, err := l.float(); err == nil {
 					token = append(token, t)
 				} else {
@@ -85,7 +91,7 @@ func (l *Lexer) Lex() []Token {
 
 		l.advance()
 	}
-	if l.hasError {
+	if l.HasError {
 		return []Token{}
 	}
 	return token
@@ -98,34 +104,40 @@ func (l *Lexer) error(errType uint, ident string) {
 	switch errType {
 	case 3:
 		pos = pos - iLen
-		log.Printf("err: Invalid floating point integer '%s' at [l %d:%d->%d]", ident, l.line, pos, l.linepos)
+		log.Printf("err: Invalid floating point integer '%s' at [l %d:%d->%d]", ident, l.line+1, pos, l.linepos-1)
 	case 2:
 		pos = pos - iLen
-		log.Printf("err: Unterminated String at [l %d:%d->%d]", l.line, pos, l.linepos)
+		log.Printf("err: Unterminated String at [l %d:%d->%d]", l.line+1, pos, l.linepos-1)
 	case 1:
 		pos = pos - iLen
-		log.Printf("err: UNKNOWN identifier '%s' at [l %d:%d->%d]", ident, l.line, pos, l.linepos)
+		log.Printf("err: UNKNOWN identifier '%s' at [l %d:%d->%d]", ident, l.line+1, pos, l.linepos-1)
+		pos++
 	default:
-		log.Printf("err: UNKNOWN token '%c' at [l %d:%d]", l.chr, l.line, pos)
+		log.Printf("err: UNKNOWN token '%c' at [l %d:%d]", l.chr, l.line+1, pos)
 	}
 
 	lines := strings.Split(string(l.input), "\n")
 
 	spaces := pos
+
 	if iLen > 0 {
 		spaces = pos - iLen
 	}
+
 	if spaces < 0 {
 		spaces = 0
 	}
+
 	// if string error highlight string start " and predicted end " with ^
 	if errType == 2 {
 		iLen++
 	}
+
 	// if no identifier given, print one ^
 	if iLen == 0 {
 		iLen += 1
 	}
+
 	if l.line-1 > -1 {
 		spaces -= 1
 		if spaces < 0 {
@@ -133,9 +145,9 @@ func (l *Lexer) error(errType uint, ident string) {
 		}
 		fmt.Printf("\n%.3d |\t%s\n%.3d |\t%s\n\t%s%s\n\n", l.line, lines[l.line-1], l.line+1, lines[l.line], strings.Repeat(" ", spaces), strings.Repeat("^", iLen))
 	} else {
-		fmt.Printf("\n%.3d |\t%s\n\t%s%c\n\n", l.line+1, lines[l.line], strings.Repeat(" ", spaces), '^')
+		fmt.Printf("\n%.3d |\t%s\n\t%s%s\n\n", l.line+1, lines[l.line], strings.Repeat(" ", spaces), strings.Repeat("^", iLen))
 	}
-	l.hasError = true
+	l.HasError = true
 }
 
 func (l *Lexer) string() Token {
@@ -180,7 +192,7 @@ func (l *Lexer) ident() (Token, error) {
 
 func (l *Lexer) float() (Token, error) {
 	builder := strings.Builder{}
-	for unicode.IsDigit(rune(l.chr)) || l.chr == '.' || l.chr == '_' || l.chr == 'e' {
+	for unicode.IsDigit(rune(l.chr)) || l.chr == '.' || l.chr == '_' || l.chr == 'e' || l.chr == '-' {
 		builder.WriteByte(l.chr)
 		l.advance()
 	}
