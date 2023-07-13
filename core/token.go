@@ -1,4 +1,4 @@
-package main
+package core
 
 var KEYWORDS = map[string]int{
 	"add":  ADD,
