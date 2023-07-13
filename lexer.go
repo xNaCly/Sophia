@@ -100,7 +100,7 @@ func (l *Lexer) error(errType uint, ident string) {
 
 	lines := strings.Split(string(l.input), "\n")
 
-	spaces := pos - 1
+	spaces := pos
 	if iLen > 0 {
 		spaces = pos - iLen
 	}
@@ -116,6 +116,10 @@ func (l *Lexer) error(errType uint, ident string) {
 		iLen += 1
 	}
 	if l.line-1 > -1 {
+		spaces -= 1
+		if spaces < 0 {
+			spaces = 0
+		}
 		fmt.Printf("\n%.3d |\t%s\n%.3d |\t%s\n\t%s%s\n\n", l.line, lines[l.line-1], l.line+1, lines[l.line], strings.Repeat(" ", spaces), strings.Repeat("^", iLen))
 	} else {
 		fmt.Printf("\n%.3d |\t%s\n\t%s%c\n\n", l.line+1, lines[l.line], strings.Repeat(" ", spaces), '^')
