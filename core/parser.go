@@ -42,7 +42,7 @@ func (p *Parser) parseStatment() Node {
 	}
 	p.peekError(LEFT_BRACE, "Missing statement start")
 	p.advance()
-	p.peekErrorMany(EXPECTED_KEYWORDS...)
+	p.peekErrorMany("Missing or unknown operator", EXPECTED_KEYWORDS...)
 	stmt.Token = p.peek()
 	p.advance()
 
@@ -57,7 +57,7 @@ func (p *Parser) parseStatment() Node {
 		if p.peekIs(LEFT_BRACE) {
 			child = p.parseStatment()
 		} else {
-			p.peekErrorMany(FLOAT, STRING)
+			p.peekErrorMany("Missing or unknown argument", FLOAT, STRING)
 			if p.peekIs(FLOAT) {
 				child = &Float{
 					Token: p.peek(),
@@ -99,7 +99,7 @@ func (p *Parser) peekIs(tokenType int) bool {
 	return p.peek().Type == tokenType
 }
 
-func (p *Parser) peekErrorMany(tokenType ...int) {
+func (p *Parser) peekErrorMany(error string, tokenType ...int) {
 	contains := false
 	for _, t := range tokenType {
 		if p.peekIs(t) {
@@ -112,14 +112,14 @@ func (p *Parser) peekErrorMany(tokenType ...int) {
 			o[i] = TOKEN_NAME_MAP[w]
 		}
 		wanted := strings.Join(o, ",")
-		log.Printf("err: Expected any of: '%s', got '%s' [l: %d:%d]", wanted, TOKEN_NAME_MAP[p.peek().Type], p.peek().Line, p.peek().Pos)
+		log.Printf("err: %s - Expected any of: '%s', got '%s' [l: %d:%d]", error, wanted, TOKEN_NAME_MAP[p.peek().Type], p.peek().Line, p.peek().Pos)
 		p.HasError = true
 	}
 }
 
 func (p *Parser) peekError(tokenType int, error string) {
 	if !p.peekIs(tokenType) {
-		log.Printf("err: Expected Token '%s' got '%s' - %s [l: %d:%d]", TOKEN_NAME_MAP[tokenType], TOKEN_NAME_MAP[p.peek().Type], error, p.peek().Line, p.peek().Pos)
+		log.Printf("err: %s - Expected Token '%s' got '%s' [l: %d:%d]", error, TOKEN_NAME_MAP[tokenType], TOKEN_NAME_MAP[p.peek().Type], p.peek().Line, p.peek().Pos)
 		p.HasError = true
 	}
 }

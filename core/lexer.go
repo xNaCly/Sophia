@@ -110,29 +110,29 @@ func (l *Lexer) error(errType uint, ident string) {
 	switch errType {
 	case 3:
 		pos = pos - iLen
-		log.Printf("err: Invalid floating point integer '%s' at [l %d:%d->%d]", ident, l.line+1, pos, l.linepos-1)
+		if pos < 0 {
+			pos = 0
+		}
+		log.Printf("err: Invalid floating point integer '%s' at [l %d:%d]", ident, l.line+1, pos)
 	case 2:
 		pos = pos - iLen
-		log.Printf("err: Unterminated String at [l %d:%d->%d]", l.line+1, pos, l.linepos-1)
+		if pos < 0 {
+			pos = 0
+		}
+		log.Printf("err: Unterminated String at [l %d:%d]", l.line+1, pos)
 	case 1:
 		pos = pos - iLen
-		log.Printf("err: UNKNOWN identifier '%s' at [l %d:%d->%d]", ident, l.line+1, pos, l.linepos-1)
-		pos++
+		if pos < 0 {
+			pos = 0
+		}
+		log.Printf("err: Unknown identifier '%s' at [l %d:%d]", ident, l.line+1, pos)
 	default:
-		log.Printf("err: UNKNOWN token '%c' at [l %d:%d]", l.chr, l.line+1, pos)
+		log.Printf("err: Unknown token '%c' at [l %d:%d]", l.chr, l.line+1, pos)
 	}
 
 	lines := strings.Split(string(l.input), "\n")
 
 	spaces := pos
-
-	if iLen > 0 {
-		spaces = pos - iLen
-	}
-
-	if spaces < 0 {
-		spaces = 0
-	}
 
 	// if string error highlight string start " and predicted end " with ^
 	if errType == 2 {
@@ -143,7 +143,6 @@ func (l *Lexer) error(errType uint, ident string) {
 	if iLen == 0 {
 		iLen += 1
 	}
-
 	if l.line-1 > -1 {
 		spaces -= 1
 		if spaces < 0 {
@@ -151,6 +150,10 @@ func (l *Lexer) error(errType uint, ident string) {
 		}
 		fmt.Printf("\n%.3d |\t%s\n%.3d |\t%s\n\t%s%s\n\n", l.line, lines[l.line-1], l.line+1, lines[l.line], strings.Repeat(" ", spaces), strings.Repeat("^", iLen))
 	} else {
+		if iLen == 1 {
+			spaces++
+		}
+
 		fmt.Printf("\n%.3d |\t%s\n\t%s%s\n\n", l.line+1, lines[l.line], strings.Repeat(" ", spaces), strings.Repeat("^", iLen))
 	}
 	l.HasError = true
