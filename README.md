@@ -58,7 +58,7 @@ Tips supports strings and 64 bit floating point integers.
 ## Progress
 
 - [x] lexing
-- [ ] parsing
+- [x] parsing
 - [ ] evaluation
 - [ ] variables
 - [ ] controlflow

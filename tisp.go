@@ -2,11 +2,29 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"flag"
 	"log"
 	"os"
 	"tisp/core"
 )
+
+func run(input []byte) error {
+	l := core.NewLexer(input)
+	tokens := l.Lex()
+	p := core.NewParser(tokens)
+	ast := p.Parse()
+	if l.HasError {
+		return errors.New("lexer error")
+	}
+	if p.HasError {
+		return errors.New("parser error")
+	}
+
+	v, _ := json.MarshalIndent(ast, "", "\t")
+	log.Printf("%s\n", v)
+	return nil
+}
 
 func main() {
 	log.SetFlags(log.Ltime)
@@ -18,17 +36,11 @@ func main() {
 		if err != nil {
 			log.Fatalf("Failed to open file: %s\n", err)
 		}
-
-		l := core.NewLexer(f)
-		tokens := l.Lex()
-
-		if l.HasError {
+		err = run(f)
+		if err != nil {
 			log.Fatalf("error in source file '%s' detected, stopping...", *file)
 		}
-
-		v, _ := json.MarshalIndent(tokens, "", "\t")
-		log.Println(string(v))
 	} else {
-		core.Repl()
+		core.Repl(run)
 	}
 }

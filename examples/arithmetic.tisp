@@ -13,16 +13,16 @@
 [putv [sub 25 [add 1 [mul 5 [div 5 2]]]]]
 
 ;; print -2.5
-[putv 
-    ;; subtract 3.5 from 1
-    [sub 1 
-        ;; add 1 to 2.5
-        [add 1 
-            ;; multiply 5 with 2.5
-            [mul 5   
-                ;; divide 5 by 2
-                [div 5 2]
-            ]
-        ]
-    ]
-]
+;;[putv 
+;;    ;; subtract 3.5 from 1
+;;    [sub 1 
+;;        ;; add 1 to 2.5
+;;        [add 1 
+;;            ;; multiply 5 with 2.5
+;;            [mul 5   
+;;                ;; divide 5 by 2
+;;                [div 5 2]
+;;            ]
+;;        ]
+;;    ]
+;;]

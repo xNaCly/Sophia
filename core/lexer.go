@@ -70,7 +70,7 @@ func (l *Lexer) Lex() []Token {
 					l.error(1, t.Raw)
 				}
 				continue
-			} else if unicode.IsDigit(rune(l.chr)) || l.chr == '-' || l.chr == '.' {
+			} else if unicode.IsDigit(rune(l.chr)) || l.chr == '.' {
 				if t, err := l.float(); err == nil {
 					token = append(token, t)
 				} else {
@@ -87,13 +87,19 @@ func (l *Lexer) Lex() []Token {
 		token = append(token, Token{
 			Pos:  l.pos,
 			Type: ttype,
+			Line: l.line,
 		})
 
 		l.advance()
 	}
 	if l.HasError {
-		return []Token{}
+		return []Token{
+			{Type: EOF, Line: l.line},
+		}
 	}
+	token = append(token, Token{
+		Type: EOF, Line: l.line,
+	})
 	return token
 }
 
@@ -168,6 +174,7 @@ func (l *Lexer) string() Token {
 		Pos:  l.pos - len(str),
 		Type: STRING,
 		Raw:  str,
+		Line: l.line,
 	}
 }
 
@@ -183,10 +190,12 @@ func (l *Lexer) ident() (Token, error) {
 			Pos:  l.pos - len(str),
 			Type: t,
 			Raw:  str,
+			Line: l.line,
 		}, nil
 	}
 	return Token{
-		Raw: str,
+		Raw:  str,
+		Line: l.line,
 	}, errors.New("failed to find identifier in keywords")
 }
 
@@ -200,7 +209,8 @@ func (l *Lexer) float() (Token, error) {
 	float, err := strconv.ParseFloat(str, 64)
 	if err != nil {
 		return Token{
-			Raw: str,
+			Raw:  str,
+			Line: l.line,
 		}, err
 	}
 	return Token{
@@ -208,6 +218,7 @@ func (l *Lexer) float() (Token, error) {
 		Type:  FLOAT,
 		Raw:   str,
 		Float: float,
+		Line:  l.line,
 	}, nil
 }
 
