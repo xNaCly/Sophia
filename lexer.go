@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 	"unicode"
 )
@@ -63,6 +64,13 @@ func (l *Lexer) Lex() []Token {
 					l.error(1, t.Raw)
 				}
 				continue
+			} else if unicode.IsDigit(rune(l.chr)) {
+				if t, err := l.float(); err == nil {
+					token = append(token, t)
+				} else {
+					l.error(3, t.Raw)
+				}
+				continue
 			}
 		}
 
@@ -88,6 +96,9 @@ func (l *Lexer) error(errType uint, ident string) {
 	iLen := len(ident)
 
 	switch errType {
+	case 3:
+		pos = pos - iLen
+		log.Printf("err: Invalid floating point integer '%s' at [l %d:%d->%d]", ident, l.line, pos, l.linepos)
 	case 2:
 		pos = pos - iLen
 		log.Printf("err: Unterminated String at [l %d:%d->%d]", l.line, pos, l.linepos)
@@ -167,9 +178,25 @@ func (l *Lexer) ident() (Token, error) {
 	}, errors.New("failed to find identifier in keywords")
 }
 
-// TODO:
-func (l *Lexer) float() Token {
-	return Token{}
+func (l *Lexer) float() (Token, error) {
+	builder := strings.Builder{}
+	for unicode.IsDigit(rune(l.chr)) || l.chr == '.' || l.chr == '_' || l.chr == 'e' {
+		builder.WriteByte(l.chr)
+		l.advance()
+	}
+	str := builder.String()
+	float, err := strconv.ParseFloat(str, 64)
+	if err != nil {
+		return Token{
+			Raw: str,
+		}, err
+	}
+	return Token{
+		Pos:   l.pos - len(str),
+		Type:  FLOAT,
+		Raw:   str,
+		Float: float,
+	}, nil
 }
 
 func (l *Lexer) peek() byte {
