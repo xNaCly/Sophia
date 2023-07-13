@@ -3,7 +3,7 @@
 ;;            12.07.2023            ;;
 ;; [[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]] ;;
 
-;; putv for put variable 
+;; putv for put value 
 [putv 25 12]
 
 ;; print 23 
