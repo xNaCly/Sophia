@@ -9,8 +9,8 @@ import (
 )
 
 func main() {
-	log.SetFlags(log.Lshortfile)
-	file := flag.String("f", "", "specifiy if following argument should be considered")
+	log.SetFlags(log.Ltime)
+	file := flag.String("f", "", "specifiy source file, if not specifiy start repl")
 	flag.Parse()
 
 	if len(*file) != 0 {
@@ -21,6 +21,10 @@ func main() {
 
 		l := core.NewLexer(f)
 		tokens := l.Lex()
+
+		if l.HasError {
+			log.Fatalf("error in source file '%s' detected, stopping...", *file)
+		}
 
 		v, _ := json.MarshalIndent(tokens, "", "\t")
 		log.Println(string(v))
