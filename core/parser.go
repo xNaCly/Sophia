@@ -51,10 +51,12 @@ func (p *Parser) parseStatment() Node {
 		if p.peekIs(RIGHT_BRACE) {
 			break
 		} else if p.peekIs(EOF) {
+			// BUG: this is buggy and can sometimes not work, i havent found
+			// the cause yet, i shouldnt have to return the statement here but
+			// somehow i do, this also enables ommitting closing braces which
+			// isnt really the behaviour i want: [putv [add 1 1]] <=> [putv [add 1 1
 			return stmt
-		}
-
-		if p.peekIs(LEFT_BRACE) {
+		} else if p.peekIs(LEFT_BRACE) {
 			child = p.parseStatment()
 		} else {
 			p.peekErrorMany("Missing or unknown argument", FLOAT, STRING)
@@ -68,6 +70,7 @@ func (p *Parser) parseStatment() Node {
 				}
 			}
 		}
+
 		stmt.Children = append(stmt.Children, child)
 		p.advance()
 	}
