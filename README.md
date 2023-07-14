@@ -34,8 +34,9 @@ tisp
 
 tisp currently supports arithmetics and the o in io :^)
 
-```lisp
-[putv "Hello World!"]
+```bash
+tisp -e '[putv "Hello World!"]'
+# [Hello World!]
 ```
 
 ### Keyword reference:
@@ -65,7 +66,7 @@ Tips supports strings and 64 bit floating point integers.
 
 - [x] lexing
 - [x] parsing
-- [ ] evaluation
+- [x] evaluation
 - [ ] variables
 - [ ] controlflow
 - [ ] functions

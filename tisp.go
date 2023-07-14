@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
 	"flag"
 	"log"
@@ -20,9 +19,8 @@ func run(input []byte) error {
 	if p.HasError {
 		return errors.New("parser error")
 	}
+	core.Eval(ast)
 
-	v, _ := json.MarshalIndent(ast, "", "\t")
-	log.Printf("%s\n", v)
 	return nil
 }
 
