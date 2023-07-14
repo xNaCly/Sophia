@@ -16,15 +16,15 @@ with a file:
 ```text
 $ tisp -f ./examples/helloworld.tisp
 
-[Hello World!]
+~ [Hello World!]
 ```
 
 with an expression:
 
 ```
-$ tisp -e '[putv "Hello World"]'
+$ tisp -e '[add "Hello World"]'
 
-[Hello World!]
+~ [Hello World!]
 ```
 
 as a repl:
@@ -34,7 +34,8 @@ $ tisp
 
 Welcome to the Tisp repl - press <CTRL-D> or <CTRL-C> to quit...
 τ :: [putv "Hi!"]
-[Hi!]
+~ [Hi!]
+= []
 τ ::
 ```
 
