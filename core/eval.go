@@ -31,11 +31,14 @@ func getValue(node Node) Value {
 }
 
 func printer(stmt Statement) {
-	fmt.Println(Eval(stmt.Children))
+	strOut, _ := Eval(stmt.Children)
+	fmt.Printf("~ %v\n", strOut)
 }
 
 func sumOperator(operator int, children []Node) float64 {
-
+	if len(children) == 0 {
+		return 0
+	}
 	val := getValue(children[0])
 	if !val.isFloat {
 		log.Printf("cant use a non float as a value")
@@ -85,7 +88,8 @@ func sumOperator(operator int, children []Node) float64 {
 	return res
 }
 
-func Eval(nodes []Node) []string {
+func Eval(nodes []Node) ([]string, []float64) {
+	resF := make([]float64, 0)
 	res := make([]string, 0)
 	for _, node := range nodes {
 		switch node.(type) {
@@ -98,13 +102,17 @@ func Eval(nodes []Node) []string {
 			case PUTV:
 				printer(*stmt)
 			default:
-				res = append(res, fmt.Sprint(sumOperator(node.GetToken().Type, stmt.Children)))
+				out := sumOperator(node.GetToken().Type, stmt.Children)
+				res = append(res, fmt.Sprint(out))
+				resF = append(resF, out)
 			}
 		case *Float:
-			res = append(res, fmt.Sprint(getValue(node).Float))
+			v := getValue(node).Float
+			resF = append(resF, v)
+			res = append(res, fmt.Sprint(v))
 		case *String:
 			res = append(res, getValue(node).String)
 		}
 	}
-	return res
+	return res, resF
 }
