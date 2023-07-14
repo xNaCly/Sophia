@@ -8,24 +8,34 @@ My take on a small lisp like programming language.
 
 ```bash
 git clone https://github.com/xnacly/tisp
+go build
 ```
 
 with a file:
 
-```bash
-tisp -f ./examples/helloworld.tisp
+```text
+$ tisp -f ./examples/helloworld.tisp
+
+[Hello World!]
 ```
 
 with an expression:
 
-```bash
-tisp -e '[putv "Hello World"]'
+```
+$ tisp -e '[putv "Hello World"]'
+
+[Hello World!]
 ```
 
 as a repl:
 
-```bash
-tisp
+```
+$ tisp
+
+Welcome to the Tisp repl - press <CTRL-D> or <CTRL-C> to quit...
+τ :: [putv "Hi!"]
+[Hi!]
+τ ::
 ```
 
 ## Reference
