@@ -12,20 +12,25 @@ func Repl(run func(input []byte) ([]float64, error)) {
 	prompt := "τ :: "
 	scanner := bufio.NewScanner(os.Stdin)
 	var last []float64
+loop:
 	for {
 		fmt.Print(prompt)
 		scanned := scanner.Scan()
 		if !scanned {
 			return
 		}
+
 		line := scanner.Bytes()
-		switch string(line) {
-		case ":last":
-			fmt.Println("=", last)
-			continue
-		case ":quit":
-			break
+		if line[0] == ':' {
+			switch string(line) {
+			case ":last":
+				fmt.Println("=", last)
+				continue
+			case ":quit":
+				break loop
+			}
 		}
+
 		val, error := run(line)
 		if error != nil {
 			log.Println("err: error in input")
