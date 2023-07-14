@@ -25,7 +25,6 @@ func getValue(node Node) Value {
 	default:
 		val.isFloat = true
 		val.Float = sumOperator(node.GetToken().Type, node.(*Statement).Children)
-		// log.Printf("err: unknown node of type '%T', can't get value", node)
 	}
 	return val
 }
@@ -36,53 +35,66 @@ func printer(stmt Statement) {
 }
 
 func sumOperator(operator int, children []Node) float64 {
+	var err bool
+	var errNode Value
 	if len(children) == 0 {
 		return 0
 	}
 	val := getValue(children[0])
 	if !val.isFloat {
-		log.Printf("cant use a non float as a value")
-		return 0
+		errNode = val
+		err = true
 	}
 	res := val.Float
 
-	switch operator {
-	case ADD:
-		for _, c := range children[1:] {
-			val := getValue(c)
-			if !val.isFloat {
-				log.Printf("cant use a non float as a value")
-				return 0
+	if !err {
+		switch operator {
+		case ADD:
+			for _, c := range children[1:] {
+				val := getValue(c)
+				if !val.isFloat {
+					err = true
+					errNode = val
+					break
+				}
+				res += val.Float
 			}
-			res += val.Float
-		}
-	case SUB:
-		for _, c := range children[1:] {
-			val := getValue(c)
-			if !val.isFloat {
-				log.Printf("cant use a non float as a value")
-				return 0
+		case SUB:
+			for _, c := range children[1:] {
+				val := getValue(c)
+				if !val.isFloat {
+					err = true
+					errNode = val
+					break
+				}
+				res -= val.Float
 			}
-			res -= val.Float
-		}
-	case DIV:
-		for _, c := range children[1:] {
-			val := getValue(c)
-			if !val.isFloat {
-				log.Printf("cant use a non float as a value")
-				return 0
+		case DIV:
+			for _, c := range children[1:] {
+				val := getValue(c)
+				if !val.isFloat {
+					err = true
+					errNode = val
+					break
+				}
+				res /= val.Float
 			}
-			res /= val.Float
-		}
-	case MUL:
-		for _, c := range children[1:] {
-			val := getValue(c)
-			if !val.isFloat {
-				log.Printf("cant use a non float as a value")
-				return 0
+		case MUL:
+			for _, c := range children[1:] {
+				val := getValue(c)
+				if !val.isFloat {
+					err = true
+					errNode = val
+					break
+				}
+				res *= val.Float
 			}
-			res *= val.Float
 		}
+	}
+
+	if err {
+		log.Printf("cant use a non float: '%s' as a value in '%s'-Operation", errNode.String, TOKEN_NAME_MAP[operator])
+		return 0
 	}
 
 	return res
@@ -114,5 +126,6 @@ func Eval(nodes []Node) ([]string, []float64) {
 			res = append(res, getValue(node).String)
 		}
 	}
+
 	return res, resF
 }
