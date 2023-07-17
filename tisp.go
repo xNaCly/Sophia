@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"tisp/core"
@@ -19,8 +21,11 @@ func run(input []byte) ([]float64, error) {
 	if p.HasError {
 		return []float64{}, errors.New("parser error")
 	}
-	_, fOut := core.Eval(ast)
-	return fOut, nil
+	// TODO: temp, until eval is done
+	res, _ := json.MarshalIndent(ast, "", "\t")
+	fmt.Println(string(res))
+	out := core.Eval(ast)
+	return out, nil
 }
 
 func main() {

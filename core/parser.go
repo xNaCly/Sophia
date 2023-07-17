@@ -37,25 +37,19 @@ func (p *Parser) Parse() []Node {
 }
 
 func (p *Parser) parseStatment() Node {
-	stmt := &Statement{
-		Children: make([]Node, 0),
-	}
+	childs := make([]Node, 0)
+	var stmt Node
 	p.peekError(LEFT_BRACE, "Missing statement start")
 	p.advance()
 	p.peekErrorMany("Missing or unknown operator", EXPECTED_KEYWORDS...)
-	stmt.Token = p.peek()
+	op := p.peek()
 	p.advance()
 
 	for {
 		var child Node
-		if p.peekIs(RIGHT_BRACE) {
+		if p.peekIs(RIGHT_BRACE) || p.peekIs(EOF) {
+			// BUG: this does not always work
 			break
-		} else if p.peekIs(EOF) {
-			// BUG: this is buggy and can sometimes not work, i havent found
-			// the cause yet, i shouldnt have to return the statement here but
-			// somehow i do, this also enables ommitting closing braces which
-			// isnt really the behaviour i want: [putv [add 1 1]] <=> [putv [add 1 1
-			return stmt
 		} else if p.peekIs(LEFT_BRACE) {
 			child = p.parseStatment()
 		} else {
@@ -71,8 +65,36 @@ func (p *Parser) parseStatment() Node {
 			}
 		}
 
-		stmt.Children = append(stmt.Children, child)
+		childs = append(childs, child)
 		p.advance()
+	}
+
+	switch op.Type {
+	case ADD:
+		stmt = &Add{
+			Token:    op,
+			Children: childs,
+		}
+	case SUB:
+		stmt = &Sub{
+			Token:    op,
+			Children: childs,
+		}
+	case DIV:
+		stmt = &Div{
+			Token:    op,
+			Children: childs,
+		}
+	case MUL:
+		stmt = &Mul{
+			Token:    op,
+			Children: childs,
+		}
+	case PUTV:
+		stmt = &Putv{
+			Token:    op,
+			Children: childs,
+		}
 	}
 
 	p.peekError(RIGHT_BRACE, "Missing statement end")
