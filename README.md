@@ -22,7 +22,7 @@ $ tisp -f ./examples/helloworld.tisp
 with an expression:
 
 ```
-$ tisp -e '[add "Hello World"]'
+$ tisp -e '[putv "Hello World"]'
 
 ~ [Hello World!]
 ```
