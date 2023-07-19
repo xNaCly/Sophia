@@ -1,6 +1,9 @@
 package core
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 type Node interface {
 	GetToken() Token
@@ -148,4 +151,44 @@ func (d *Div) Eval() float64 {
 		res /= c.Eval()
 	}
 	return res
+}
+
+type Pwr struct {
+	Token    Token
+	Children []Node
+}
+
+func (p *Pwr) GetToken() Token {
+	return p.Token
+}
+
+func (p *Pwr) Eval() float64 {
+	if len(p.Children) == 0 {
+		return 0
+	}
+	res := p.Children[0].Eval()
+	for _, c := range p.Children[1:] {
+		res = math.Pow(res, c.Eval())
+	}
+	return res
+}
+
+type Mod struct {
+	Token    Token
+	Children []Node
+}
+
+func (m *Mod) GetToken() Token {
+	return m.Token
+}
+
+func (m *Mod) Eval() float64 {
+	if len(m.Children) == 0 {
+		return 0
+	}
+	res := int(m.Children[0].Eval())
+	for _, c := range m.Children[1:] {
+		res = res % int(c.Eval())
+	}
+	return float64(res)
 }

@@ -51,6 +51,10 @@ func (l *Lexer) Lex() []Token {
 			ttype = DIV
 		case '*':
 			ttype = MUL
+		case '^':
+			ttype = PWR
+		case '%':
+			ttype = MOD
 		case '[':
 			ttype = LEFT_BRACE
 		case ']':

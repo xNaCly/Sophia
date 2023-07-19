@@ -8,7 +8,7 @@ import (
 )
 
 func TestLexerHelloWorld(t *testing.T) {
-	in := []byte(`[putv "Hello World!"]`)
+	in := []byte(`[. "Hello World!"]`)
 	l := core.NewLexer(in)
 	token := l.Lex()
 	if len(token) == 0 {
@@ -17,7 +17,7 @@ func TestLexerHelloWorld(t *testing.T) {
 
 	expected := []int{
 		core.LEFT_BRACE,
-		core.PUTV,
+		core.PUT,
 		core.STRING,
 		core.RIGHT_BRACE,
 		core.EOF,
@@ -37,8 +37,8 @@ func TestLexerFloats(t *testing.T) {
 	in := map[string]float64{
 		"10.0":      10.0,
 		"1_000_000": 1_000_000.0,
-		".01":       0.01,
-		".1e-3":     0.0001,
+		"0.01":      0.01,
+		"0.1e-3":    0.0001,
 		"1.2e-2":    0.012,
 		"15e4":      150_000,
 	}
@@ -55,7 +55,7 @@ func TestLexerFloats(t *testing.T) {
 }
 
 func TestLexerArithmetic(t *testing.T) {
-	in := []byte(`[add 1 [mul 1 [div 10 2]]]`)
+	in := []byte(`[+ 1 [* 1 [/ 1 [% 1 [^ 1]]]]]`)
 	l := core.NewLexer(in)
 	token := l.Lex()
 	if len(token) == 0 {
@@ -72,7 +72,14 @@ func TestLexerArithmetic(t *testing.T) {
 		core.LEFT_BRACE,
 		core.DIV,
 		core.FLOAT,
+		core.LEFT_BRACE,
+		core.MOD,
 		core.FLOAT,
+		core.LEFT_BRACE,
+		core.PWR,
+		core.FLOAT,
+		core.RIGHT_BRACE,
+		core.RIGHT_BRACE,
 		core.RIGHT_BRACE,
 		core.RIGHT_BRACE,
 		core.RIGHT_BRACE,
