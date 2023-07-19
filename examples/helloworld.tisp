@@ -1,2 +1,2 @@
 ;; prints hello world to stdout
-[putv "Hello World!"]
+[. "Hello World!"]

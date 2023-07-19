@@ -3,6 +3,6 @@
 ;;            12.07.2023            ;;
 ;; [[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]] ;;
 
-[putv "arithmetics examples"]
-[putv "adding floats together: [add .1 .1 .1 .1] ->" [add .1 .1 .1 .1]]
-;;[putv "nested arithmetics: [sub 25 [add 1 [mul 5 [div 5 2]]]] ->" [sub 25 [add 1 [mul 5 [div 5 2]]]]]
+[. "arithmetics examples"]
+[. "adding floats together: [+ 0.1 0.1 0.1 0.1] ->" [+ 0.1 0.1 0.1 0.1]]
+;; [putv "nested arithmetics: [- 25 [+ 1 [* 5 [/ 5 2]]]] ->" [- 25 [+ 1 [* 5 [/ 5 2]]]]]

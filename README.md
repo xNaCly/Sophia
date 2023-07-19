@@ -22,7 +22,7 @@ $ tisp -f ./examples/helloworld.tisp
 with an expression:
 
 ```
-$ tisp -e '[putv "Hello World"]'
+$ tisp -e '[. "Hello World"]'
 
 ~ [Hello World!]
 ```
@@ -33,7 +33,7 @@ as a repl:
 $ tisp
 
 Welcome to the Tisp repl - press <CTRL-D> or <CTRL-C> to quit...
-τ :: [putv "Hi!"]
+τ :: [. "Hi!"]
 ~ [Hi!]
 = []
 τ ::
@@ -46,7 +46,7 @@ Welcome to the Tisp repl - press <CTRL-D> or <CTRL-C> to quit...
 tisp currently supports arithmetics and the o in io :^)
 
 ```bash
-tisp -e '[putv "Hello World!"]'
+tisp -e '[. "Hello World!"]'
 # [Hello World!]
 ```
 
@@ -54,21 +54,25 @@ tisp -e '[putv "Hello World!"]'
 
 | keyword | description                                                        |
 | ------- | ------------------------------------------------------------------ |
-| `putv`  | prints all arguments to stdout, supports floats, bools and strings |
-| `add`   | adds all arguments together                                        |
-| `sub`   | subtracts all arguments                                            |
-| `mul`   | multiplies all arguments                                           |
-| `div`   | divides all arguments                                              |
+| `.`     | prints all arguments to stdout, supports floats, bools and strings |
+| `+`     | adds all arguments together                                        |
+| `-`     | subtracts all arguments                                            |
+| `*`     | multiplies all arguments                                           |
+| `/`     | divides all arguments                                              |
+| `^`     | raises all arguments to the following power                        |
+| `%`     | modulo for current argument with the following argument            |
 
 ### Execution direction
 
 All execution is done left to right, meaning:
 
 ```lisp
-[add 2 3 4] ;; results in 2+3+4 -> 9
-[sub 2 3 4] ;; results in 2-3-4 -> -5
-[mul 2 3 4] ;; results in 2*3*4 -> 24
-[div 2 3 4] ;; results in 2/3/4 -> 0.166667
+[+ 2 3 4] ;; results in 2+3+4 -> 9
+[- 2 3 4] ;; results in 2-3-4 -> -5
+[* 2 3 4] ;; results in 2*3*4 -> 24
+[/ 2 3 4] ;; results in 2/3/4 -> 0.166667
+[^ 2 3 4] ;; results in 2^3^4 -> 2417851639229258349412352
+[% 2 3 4] ;; results in 2%3%4 -> 2
 ```
 
 Tips supports strings and 64 bit floating point integers.

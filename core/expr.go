@@ -47,16 +47,16 @@ func (s *String) Eval() float64 {
 	return 0
 }
 
-type Putv struct {
+type Put struct {
 	Token    Token
 	Children []Node
 }
 
-func (p *Putv) GetToken() Token {
+func (p *Put) GetToken() Token {
 	return p.Token
 }
 
-func (p *Putv) Eval() float64 {
+func (p *Put) Eval() float64 {
 	res := make([]any, 0)
 	for _, c := range p.Children {
 		switch c.(type) {

@@ -90,8 +90,8 @@ func (p *Parser) parseStatment() Node {
 			Token:    op,
 			Children: childs,
 		}
-	case PUTV:
-		stmt = &Putv{
+	case PUT:
+		stmt = &Put{
 			Token:    op,
 			Children: childs,
 		}

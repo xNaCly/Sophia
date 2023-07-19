@@ -41,6 +41,16 @@ func (l *Lexer) Lex() []Token {
 		ttype := UNKNOWN
 
 		switch l.chr {
+		case '.':
+			ttype = PUT
+		case '+':
+			ttype = ADD
+		case '-':
+			ttype = SUB
+		case '/':
+			ttype = DIV
+		case '*':
+			ttype = MUL
 		case '[':
 			ttype = LEFT_BRACE
 		case ']':

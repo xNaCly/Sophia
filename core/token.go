@@ -1,20 +1,14 @@
 package core
 
-var KEYWORDS = map[string]int{
-	"add":  ADD,
-	"sub":  SUB,
-	"div":  DIV,
-	"mul":  MUL,
-	"putv": PUTV,
-}
+var KEYWORDS = map[string]int{}
 
-var EXPECTED_KEYWORDS = func() []int {
-	words := make([]int, 0)
-	for _, v := range KEYWORDS {
-		words = append(words, v)
-	}
-	return words
-}()
+var EXPECTED_KEYWORDS = []int{
+	ADD,
+	SUB,
+	DIV,
+	MUL,
+	PUT,
+}
 
 type Token struct {
 	Pos   int
@@ -32,7 +26,7 @@ const (
 	SUB
 	DIV
 	MUL
-	PUTV
+	PUT
 	LEFT_BRACE  // [
 	RIGHT_BRACE // ]
 	EOF
@@ -42,12 +36,12 @@ var TOKEN_NAME_MAP = map[int]string{
 	UNKNOWN:     "UNKNOWN",
 	FLOAT:       "FLOAT",
 	STRING:      "STRING",
-	ADD:         "ADD",
-	SUB:         "SUB",
-	DIV:         "DIV",
-	MUL:         "MUL",
-	PUTV:        "PUTV",
-	LEFT_BRACE:  "LEFT_BRACE",
-	RIGHT_BRACE: "RIGHT_BRACE",
+	ADD:         "+",
+	SUB:         "-",
+	DIV:         "/",
+	MUL:         "*",
+	PUT:         ".",
+	LEFT_BRACE:  "[",
+	RIGHT_BRACE: "]",
 	EOF:         "EOF",
 }
