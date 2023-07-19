@@ -71,7 +71,7 @@ All execution is done left to right, meaning:
 [- 2 3 4] ;; results in 2-3-4 -> -5
 [* 2 3 4] ;; results in 2*3*4 -> 24
 [/ 2 3 4] ;; results in 2/3/4 -> 0.166667
-[^ 2 3 4] ;; results in 2^3^4 -> 2417851639229258349412352
+[^ 2 3 4] ;; results in 2^3^4 -> 4096
 [% 2 3 4] ;; results in 2%3%4 -> 2
 ```
 
