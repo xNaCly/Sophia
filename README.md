@@ -84,8 +84,6 @@ All execution is done left to right, meaning:
 [% 2 3 4] ;; results in 2%3%4 -> 2
 ```
 
-Tips supports strings and 64 bit floating point integers.
-
 ## Progress
 
 - [x] lexing
