@@ -1,0 +1,3 @@
+[. "function examples"]
+[# square [a] [* a a]]
+[: b [square 5]]
