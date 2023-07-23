@@ -36,6 +36,7 @@ func (p *Parser) Parse() []Node {
 	return res
 }
 
+// INFO: @SamuelScheit fixed this, i dont even know how and he doesnt either
 func (p *Parser) parseStatment() Node {
 	childs := make([]Node, 0)
 	var stmt Node
@@ -47,11 +48,11 @@ func (p *Parser) parseStatment() Node {
 
 	for {
 		var child Node
-		if p.peekIs(RIGHT_BRACE) || p.peekIs(EOF) {
-			// BUG: this does not always work
+		if p.peekIs(EOF) || p.peekIs(RIGHT_BRACE) {
 			break
 		} else if p.peekIs(LEFT_BRACE) {
-			child = p.parseStatment()
+			childs = append(childs, p.parseStatment())
+			continue
 		} else {
 			p.peekErrorMany("Missing or unknown argument", FLOAT, STRING)
 			if p.peekIs(FLOAT) {

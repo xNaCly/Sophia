@@ -13,6 +13,7 @@ import (
 func run(input []byte) ([]float64, error) {
 	l := core.NewLexer(input)
 	tokens := l.Lex()
+
 	p := core.NewParser(tokens)
 	ast := p.Parse()
 	if l.HasError {
@@ -21,6 +22,7 @@ func run(input []byte) ([]float64, error) {
 	if p.HasError {
 		return []float64{}, errors.New("parser error")
 	}
+
 	// TODO: temp, until eval is done
 	res, _ := json.MarshalIndent(ast, "", "\t")
 	fmt.Println(string(res))
