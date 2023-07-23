@@ -1,52 +1,51 @@
-# Tisp
+# Sophia
 
-> teo+lisp = tisp (τ)
-
-My take on a small lisp like programming language.
+My take on a small lisp like programming language with single characters as
+keywords and operators.
 
 ## Try
 
 ```bash
-git clone https://github.com/xnacly/tisp
+git clone https://github.com/xnacly/sophia
 go build
 ```
 
-with a file:
+With a file:
 
 ```text
-$ tisp -f ./examples/helloworld.tisp
+$ sophia -f ./examples/helloworld.sophia
 
 ~ [Hello World!]
 ```
 
-with an expression:
+With an expression:
 
 ```
-$ tisp -e '[. "Hello World"]'
+$ sophia -e '[. "Hello World"]'
 
 ~ [Hello World!]
 ```
 
-as a repl:
+As a repl:
 
 ```
-$ tisp
+$ sophia
 
-Welcome to the Tisp repl - press <CTRL-D> or <CTRL-C> to quit...
-τ :: [. "Hi!"]
+Welcome to the Sophia repl - press <CTRL-D> or <CTRL-C> to quit...
+ß :: [. "Hi!"]
 ~ [Hi!]
 = []
-τ ::
+ß ::
 ```
 
 ## Reference
 
+Sophia currently supports arithmetics, strings and the o in io :^)
+
 ### Hello world:
 
-tisp currently supports arithmetics and the o in io :^)
-
 ```bash
-tisp -e '[. "Hello World!"]'
+sophia -e '[. "Hello World!"]'
 # [Hello World!]
 ```
 
@@ -61,6 +60,16 @@ tisp -e '[. "Hello World!"]'
 | `/`     | divides all arguments                                              |
 | `^`     | raises all arguments to the following power                        |
 | `%`     | modulo for current argument with the following argument            |
+
+#### Planned keywords:
+
+| keyword | description                                                                                                      |
+| ------- | ---------------------------------------------------------------------------------------------------------------- |
+| `#`     | defines a function, with the first argument as the name, the second as the argument and the third as the body    |
+| `:`     | defines a variable, with the first argument as the name and the second argument as the value                     |
+| `?`     | defines a condition, evaluates the first argument, evaluates the second argument if the first argument is truthy |
+| `&`     | returns true if all arguments are true                                                                           |
+| `\|`    | returns true if one of the arguments is true                                                                     |
 
 ### Execution direction
 

@@ -8,8 +8,8 @@ import (
 )
 
 func Repl(run func(input []byte) ([]float64, error)) {
-	fmt.Println(`Welcome to the Tisp repl - press <CTRL-D> or <CTRL-C> to quit...`)
-	prompt := "τ :: "
+	fmt.Println(`Welcome to the Sophia repl - press <CTRL-D> or <CTRL-C> to quit...`)
+	prompt := "ß :: "
 	scanner := bufio.NewScanner(os.Stdin)
 	var last []float64
 loop:

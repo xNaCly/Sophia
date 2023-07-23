@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"tisp/core"
+	"sophia/core"
 )
 
 func run(input []byte) ([]float64, error) {

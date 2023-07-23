@@ -3,8 +3,8 @@ package tests
 import (
 	"log"
 	"os"
+	"sophia/core"
 	"testing"
-	"tisp/core"
 )
 
 func TestLexerHelloWorld(t *testing.T) {
