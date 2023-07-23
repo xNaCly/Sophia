@@ -13,7 +13,7 @@ go build
 With a file:
 
 ```text
-$ sophia -f ./examples/helloworld.sophia
+$ sophia ./examples/helloworld.sophia
 
 ~ [Hello World!]
 ```
@@ -65,8 +65,8 @@ sophia -e '[. "Hello World!"]'
 
 | keyword | description                                                                                                      |
 | ------- | ---------------------------------------------------------------------------------------------------------------- |
-| `#`     | defines a function, with the first argument as the name, the second as the argument and the third as the body    |
 | `:`     | defines a variable, with the first argument as the name and the second argument as the value                     |
+| `#`     | defines a function, with the first argument as the name, the second as the argument and the third as the body    |
 | `?`     | defines a condition, evaluates the first argument, evaluates the second argument if the first argument is truthy |
 | `&`     | returns true if all arguments are true                                                                           |
 | `\|`    | returns true if one of the arguments is true                                                                     |
