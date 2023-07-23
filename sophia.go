@@ -32,7 +32,7 @@ func main() {
 
 	if len(*execute) != 0 {
 		run([]byte(*execute))
-	} else if len(os.Args) != 0 {
+	} else if len(os.Args) > 1 {
 		file := os.Args[1]
 		f, err := os.ReadFile(file)
 		if err != nil {

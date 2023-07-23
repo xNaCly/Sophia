@@ -5,9 +5,9 @@
 ;; printing to stdout
 [. 3.15]
 ;; nesting prints
-[.
-    [.
-        [.]
+[. 3 "will be printed at last"
+    [. 2 "will be printed second"
+        [. 1 "will be printed first"] 
     ]
 ]
 
