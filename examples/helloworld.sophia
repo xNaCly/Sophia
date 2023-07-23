@@ -1,2 +1,0 @@
-;; prints hello world to stdout
-[. "Hello World!"]
