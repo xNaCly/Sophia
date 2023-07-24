@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"math"
+	"strings"
 )
 
 type Node interface {
@@ -60,16 +61,19 @@ func (p *Put) GetToken() Token {
 }
 
 func (p *Put) Eval() float64 {
-	res := make([]any, 0)
-	for _, c := range p.Children {
+	b := strings.Builder{}
+	for i, c := range p.Children {
+		if i != 0 {
+			b.WriteRune(' ')
+		}
 		switch c.(type) {
 		case *String:
-			res = append(res, c.GetToken().Raw)
+			b.WriteString(c.GetToken().Raw)
 			continue
 		}
-		res = append(res, c.Eval())
+		b.WriteString(fmt.Sprint(c.Eval()))
 	}
-	fmt.Printf("~ %v\n", res)
+	fmt.Printf("%s\n", b.String())
 	return 0
 }
 
