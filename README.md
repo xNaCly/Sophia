@@ -51,21 +51,21 @@ sophia -exp '[. "Hello World!"]'
 
 ### Keyword reference:
 
-| keyword | description                                                        |
-| ------- | ------------------------------------------------------------------ |
-| `.`     | prints all arguments to stdout, supports floats, bools and strings |
-| `+`     | adds all arguments together                                        |
-| `-`     | subtracts all arguments                                            |
-| `*`     | multiplies all arguments                                           |
-| `/`     | divides all arguments                                              |
-| `^`     | raises all arguments to the following power                        |
-| `%`     | modulo for current argument with the following argument            |
+| keyword | description                                                                                  |
+| ------- | -------------------------------------------------------------------------------------------- |
+| `.`     | prints all arguments to stdout, supports floats, bools and strings                           |
+| `+`     | adds all arguments together                                                                  |
+| `-`     | subtracts all arguments                                                                      |
+| `*`     | multiplies all arguments                                                                     |
+| `/`     | divides all arguments                                                                        |
+| `^`     | raises all arguments to the following power                                                  |
+| `%`     | modulo for current argument with the following argument                                      |
+| `:`     | defines a variable, with the first argument as the name and the second argument as the value |
 
 #### Planned keywords:
 
 | keyword | description                                                                                                      |
 | ------- | ---------------------------------------------------------------------------------------------------------------- |
-| `:`     | defines a variable, with the first argument as the name and the second argument as the value                     |
 | `#`     | defines a function, with the first argument as the name, the second as the argument and the third as the body    |
 | `?`     | defines a condition, evaluates the first argument, evaluates the second argument if the first argument is truthy |
 | `&`     | returns true if all arguments are true                                                                           |

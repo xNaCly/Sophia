@@ -54,7 +54,7 @@ func (p *Parser) parseStatment() Node {
 			childs = append(childs, p.parseStatment())
 			continue
 		} else {
-			p.peekErrorMany("Missing or unknown argument", FLOAT, STRING)
+			p.peekErrorMany("Missing or unknown argument", FLOAT, STRING, IDENT)
 			if p.peekIs(FLOAT) {
 				child = &Float{
 					Token: p.peek(),
@@ -62,6 +62,11 @@ func (p *Parser) parseStatment() Node {
 			} else if p.peekIs(STRING) {
 				child = &String{
 					Token: p.peek(),
+				}
+			} else if p.peekIs(IDENT) {
+				child = &Ident{
+					Token: p.peek(),
+					Name:  p.peek().Raw,
 				}
 			}
 		}
@@ -71,6 +76,24 @@ func (p *Parser) parseStatment() Node {
 	}
 
 	switch op.Type {
+	case COLON:
+		if len(childs) != 2 {
+			log.Printf("expected two arguments for variable declaration, got %d", len(childs))
+			p.HasError = true
+			return nil
+		}
+		ident := childs[0]
+		if ident.GetToken().Type != IDENT {
+			log.Printf("expected 'IDENT' as first argument, got %s", TOKEN_NAME_MAP[ident.GetToken().Type])
+			p.HasError = true
+			return nil
+		}
+		val := childs[1]
+		stmt = &Var{
+			Token: op,
+			Name:  ident.GetToken().Raw,
+			Value: val,
+		}
 	case ADD:
 		stmt = &Add{
 			Token:    op,

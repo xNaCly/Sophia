@@ -1,7 +1,6 @@
 package core
 
-var KEYWORDS = map[string]int{}
-
+// operators
 var EXPECTED_KEYWORDS = []int{
 	ADD,
 	SUB,
@@ -10,6 +9,7 @@ var EXPECTED_KEYWORDS = []int{
 	PWR,
 	MOD,
 	PUT,
+	COLON,
 }
 
 type Token struct {
@@ -21,18 +21,20 @@ type Token struct {
 }
 
 const (
-	UNKNOWN = iota + 1
-	FLOAT   // 0.0
-	STRING  // "text"
-	ADD
-	SUB
-	DIV
-	MUL
-	PUT
-	PWR
-	MOD
+	UNKNOWN     = iota + 1
+	FLOAT       // 0.0
+	STRING      // "text"
+	ADD         // +
+	SUB         // -
+	DIV         // /
+	MUL         // *
+	PUT         // .
+	PWR         // ^
+	MOD         // %
+	COLON       // :
 	LEFT_BRACE  // [
 	RIGHT_BRACE // ]
+	IDENT       // ([a-z]|_)+
 	EOF
 )
 
@@ -47,6 +49,8 @@ var TOKEN_NAME_MAP = map[int]string{
 	PUT:         ".",
 	PWR:         "^",
 	MOD:         "%",
+	COLON:       ":",
+	IDENT:       "IDENT",
 	LEFT_BRACE:  "[",
 	RIGHT_BRACE: "]",
 	EOF:         "EOF",

@@ -1,7 +1,6 @@
 package core
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"strconv"
@@ -51,6 +50,8 @@ func (l *Lexer) Lex() []Token {
 			ttype = DIV
 		case '*':
 			ttype = MUL
+		case ':':
+			ttype = COLON
 		case '^':
 			ttype = PWR
 		case '%':
@@ -202,18 +203,12 @@ func (l *Lexer) ident() (Token, error) {
 		l.advance()
 	}
 	str := builder.String()
-	if t, ok := KEYWORDS[str]; ok {
-		return Token{
-			Pos:  l.pos - len(str),
-			Type: t,
-			Raw:  str,
-			Line: l.line,
-		}, nil
-	}
 	return Token{
+		Pos:  l.pos - len(str),
+		Type: IDENT,
 		Raw:  str,
 		Line: l.line,
-	}, errors.New("failed to find identifier in keywords")
+	}, nil
 }
 
 func (l *Lexer) float() (Token, error) {

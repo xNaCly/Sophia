@@ -2,8 +2,10 @@
 
 ;; hello world
 [. "hello world"]
+
 ;; printing to stdout
 [. 3.15]
+
 ;; nesting prints
 [. 3 "will be printed at last"
     [. 2 "will be printed second"
@@ -12,17 +14,16 @@
 ]
 
 ;; ------------- arithmetics ------------- 
-;; you wont see any output without the . operator
-[+ 1 2]
-[- 1 2]
-[* 1 2]
-[/ 1 2]
+[. "1+2=" [+ 1 2]]
+[. "1-2=" [- 1 2]]
+[. "1*2=" [* 1 2]]
+[. "1/2=" [/ 1 2]]
 
 ;; raising 1 to the power of 2
-[^ 1 2] 
+[. "1^2=" [^ 1 2]]
 
 ;; remainder operator
-[% 1 2] 
+[. "1%2=" [% 1 2]]
 
 ;; nested operations are of course possible
 [- 25 
@@ -36,10 +37,21 @@
 ;; ------------- definitions ------------- 
 
 ;; defining a variable
-;;[: 
-;;    pi ;; <- variable name
-;;    3.1514 ;; <- variable value
-;;]
+[.
+    "pi:"
+    [:                  ;; <- definition keyword
+        pi              ;; <- variable name
+        3.1514          ;; <- variable value
+    ]
+]
+[. "pi^pi" [^ pi pi]]
+
+;; defining a variable
+[. 
+    "version:" 
+    [: v "v1.1.1"]      ;; <- defining a string variable 
+    v                   ;; <- using the variable
+]
 
 ;; defining a function 
 ;;[# 

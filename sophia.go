@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
@@ -18,12 +19,16 @@ func run(input []byte) ([]float64, error) {
 	if DEBUG {
 		tl := len(tokens)
 		for i, t := range tokens {
-			fmt.Printf("[%d/%d] %s at l=%d:p=%d\n", i, tl, core.TOKEN_NAME_MAP[t.Type], t.Line, t.Pos)
+			fmt.Printf("dbg: [%d/%d] %s at l=%d:p=%d with '%v'\n", i+1, tl, core.TOKEN_NAME_MAP[t.Type], t.Line, t.Pos, t.Raw)
 		}
 	}
 
 	p := core.NewParser(tokens)
 	ast := p.Parse()
+	if DEBUG {
+		v, _ := json.MarshalIndent(ast, "", "\t")
+		fmt.Printf("dbg: %s", v)
+	}
 	if l.HasError {
 		return []float64{}, errors.New("lexer error")
 	}
