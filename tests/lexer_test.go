@@ -114,9 +114,9 @@ func TestLexerErrorsOnUnknownTokenAndIntegers(t *testing.T) {
 	os.Stdout = null
 	log.SetOutput(null)
 	in := []string{
-		"[t]",
+		"!",
 		`;;comment
-[putc "test?"]`,
+?[putc "test"]`,
 	}
 	for _, v := range in {
 		l := core.NewLexer([]byte(v))

@@ -76,6 +76,7 @@ func (p *Parser) parseStatment() Node {
 	}
 
 	switch op.Type {
+	// TODO: this is messy
 	case COLON:
 		if len(childs) != 2 {
 			log.Printf("expected two arguments for variable declaration, got %d", len(childs))

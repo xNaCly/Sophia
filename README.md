@@ -1,7 +1,9 @@
 # Sophia
 
 My take on a small lisp like programming language with single characters as
-keywords and operators.
+keywords and operators which is named after my girlfriend.
+
+View [examples/so.phia] for a sophia by example.
 
 ## Try
 
@@ -13,7 +15,7 @@ go build
 With a file:
 
 ```text
-$ sophia ./examples/helloworld.sophia
+$ sophia ./examples/helloworld.phia
 
 Hello World!
 ```
@@ -89,6 +91,6 @@ All execution is done left to right, meaning:
 - [x] lexing
 - [x] parsing
 - [x] evaluation
-- [ ] variables
+- [x] variables
 - [ ] controlflow
 - [ ] functions
