@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"sophia/core"
@@ -12,7 +11,8 @@ import (
 func run(input []byte) (f []float64, e error) {
 	defer func() {
 		if err := recover(); err != nil {
-			e = errors.New(fmt.Sprintf("runtime err: %s", err))
+			log.Printf("err: %s", err)
+			e = errors.New("runtime error")
 			return
 		}
 	}()
