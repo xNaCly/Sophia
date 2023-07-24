@@ -3,14 +3,24 @@ package main
 import (
 	"errors"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"sophia/core"
 )
 
+var DEBUG = false
+
 func run(input []byte) ([]float64, error) {
 	l := core.NewLexer(input)
 	tokens := l.Lex()
+
+	if DEBUG {
+		tl := len(tokens)
+		for i, t := range tokens {
+			fmt.Printf("[%d/%d] %s at l=%d:p=%d\n", i, tl, core.TOKEN_NAME_MAP[t.Type], t.Line, t.Pos)
+		}
+	}
 
 	p := core.NewParser(tokens)
 	ast := p.Parse()
@@ -27,7 +37,8 @@ func run(input []byte) ([]float64, error) {
 
 func main() {
 	log.SetFlags(log.Ltime)
-	execute := flag.String("e", "", "specifiy expression to execute")
+	execute := flag.String("exp", "", "specifiy expression to execute")
+	flag.BoolVar(&DEBUG, "dbg", false, "enable debug mode, prints lexing, parsing and eval information as well as timestamps")
 	flag.Parse()
 
 	if len(*execute) != 0 {

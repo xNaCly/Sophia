@@ -15,15 +15,15 @@ With a file:
 ```text
 $ sophia ./examples/helloworld.sophia
 
-~ [Hello World!]
+Hello World!
 ```
 
 With an expression:
 
 ```
-$ sophia -e '[. "Hello World"]'
+$ sophia -exp '[. "Hello World"]'
 
-~ [Hello World!]
+Hello World!
 ```
 
 As a repl:
@@ -33,7 +33,7 @@ $ sophia
 
 Welcome to the Sophia repl - press <CTRL-D> or <CTRL-C> to quit...
 ß :: [. "Hi!"]
-~ [Hi!]
+Hi!
 = []
 ß ::
 ```
@@ -45,7 +45,7 @@ Sophia currently supports arithmetics, strings and the o in io :^)
 ### Hello world:
 
 ```bash
-sophia -e '[. "Hello World!"]'
+sophia -exp '[. "Hello World!"]'
 # [Hello World!]
 ```
 
