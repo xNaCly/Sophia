@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
@@ -10,52 +9,50 @@ import (
 	"sophia/core"
 )
 
-var DEBUG = false
-
-func run(input []byte) ([]float64, error) {
+func run(input []byte) (f []float64, e error) {
+	defer func() {
+		if err := recover(); err != nil {
+			e = errors.New(fmt.Sprintf("runtime err: %s", err))
+			return
+		}
+	}()
 	l := core.NewLexer(input)
 	tokens := l.Lex()
 
-	if DEBUG {
-		tl := len(tokens)
-		for i, t := range tokens {
-			fmt.Printf("dbg: [%d/%d] %s at l=%d:p=%d with '%v'\n", i+1, tl, core.TOKEN_NAME_MAP[t.Type], t.Line, t.Pos, t.Raw)
-		}
-	}
-
 	p := core.NewParser(tokens)
 	ast := p.Parse()
-	if DEBUG {
-		v, _ := json.MarshalIndent(ast, "", "\t")
-		fmt.Printf("dbg: %s", v)
-	}
 	if l.HasError {
-		return []float64{}, errors.New("lexer error")
+		e = errors.New("lexer error")
+		return
 	}
 	if p.HasError {
-		return []float64{}, errors.New("parser error")
+		e = errors.New("parser error")
+		return
 	}
 
-	out := core.Eval(ast)
-	return out, nil
+	f = core.Eval(ast)
+	return
 }
 
 func main() {
 	log.SetFlags(log.Ltime)
 	execute := flag.String("exp", "", "specifiy expression to execute")
-	flag.BoolVar(&DEBUG, "dbg", false, "enable debug mode, prints lexing, parsing and eval information as well as timestamps")
 	flag.Parse()
 
 	if len(*execute) != 0 {
-		run([]byte(*execute))
-	} else if len(os.Args) > 1 {
-		file := os.Args[1]
+		_, err := run([]byte(*execute))
+		if err != nil {
+			log.Fatalln(err)
+		}
+	} else if len(flag.Args()) == 1 {
+		file := flag.Args()[0]
 		f, err := os.ReadFile(file)
 		if err != nil {
 			log.Fatalf("Failed to open file: %s\n", err)
 		}
 		_, err = run(f)
 		if err != nil {
+			log.Println(err)
 			log.Fatalf("error in source file '%s' detected, stopping...", file)
 		}
 	} else {

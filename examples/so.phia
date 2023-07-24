@@ -50,7 +50,7 @@
 [. 
     "version:" 
     [: v "v1.1.1"]      ;; <- defining a string variable 
-    v                   ;; <- using the variable
+    v
 ]
 
 ;; defining a function 

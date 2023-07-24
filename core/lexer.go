@@ -79,11 +79,7 @@ func (l *Lexer) Lex() []Token {
 			}
 		default:
 			if unicode.IsLetter(rune(l.chr)) || l.chr == '_' {
-				if t, err := l.ident(); err == nil {
-					token = append(token, t)
-				} else {
-					l.error(1, t.Raw)
-				}
+				token = append(token, l.ident())
 				continue
 			} else if unicode.IsDigit(rune(l.chr)) || l.chr == '.' {
 				if t, err := l.float(); err == nil {
@@ -196,7 +192,7 @@ func (l *Lexer) string() Token {
 	}
 }
 
-func (l *Lexer) ident() (Token, error) {
+func (l *Lexer) ident() Token {
 	builder := strings.Builder{}
 	for unicode.IsLetter(rune(l.chr)) || l.chr == '_' {
 		builder.WriteByte(l.chr)
@@ -208,7 +204,7 @@ func (l *Lexer) ident() (Token, error) {
 		Type: IDENT,
 		Raw:  str,
 		Line: l.line,
-	}, nil
+	}
 }
 
 func (l *Lexer) float() (Token, error) {

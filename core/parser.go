@@ -5,6 +5,8 @@ import (
 	"strings"
 )
 
+// TODO: error display like in the lexer
+
 type Parser struct {
 	token    []Token
 	pos      int
@@ -79,13 +81,13 @@ func (p *Parser) parseStatment() Node {
 	// TODO: this is messy
 	case COLON:
 		if len(childs) != 2 {
-			log.Printf("expected two arguments for variable declaration, got %d", len(childs))
+			log.Printf("err: expected two arguments for variable declaration, got %d", len(childs))
 			p.HasError = true
 			return nil
 		}
 		ident := childs[0]
 		if ident.GetToken().Type != IDENT {
-			log.Printf("expected 'IDENT' as first argument, got %s", TOKEN_NAME_MAP[ident.GetToken().Type])
+			log.Printf("err: expected 'IDENT' as first argument, got %s", TOKEN_NAME_MAP[ident.GetToken().Type])
 			p.HasError = true
 			return nil
 		}

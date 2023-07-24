@@ -2,19 +2,18 @@ package core
 
 import (
 	"fmt"
-	"log"
 	"math"
 	"strings"
 )
 
-func checkIfType[T any](in any, op int) (T, bool) {
+// TODO: error display
+func checkIfType[T any](in any, op int) T {
 	val, ok := in.(T)
 	if !ok {
 		var e T
-		log.Printf("can not use variable of type %T in current operation (%s), expected %T for value %q", in, TOKEN_NAME_MAP[op], e, in)
-		return e, false
+		panic(fmt.Sprintf("can not use variable of type %T in current operation (%s), expected %T for value %q", in, TOKEN_NAME_MAP[op], e, in))
 	}
-	return val, true
+	return val
 }
 
 type Node interface {
@@ -101,15 +100,9 @@ func (a *Add) Eval() any {
 	if len(a.Children) == 0 {
 		return 0.0
 	}
-	res, ok := checkIfType[float64](a.Children[0].Eval(), ADD)
-	if !ok {
-		return 0.0
-	}
+	res := checkIfType[float64](a.Children[0].Eval(), ADD)
 	for _, c := range a.Children[1:] {
-		val, ok := checkIfType[float64](c.Eval(), ADD)
-		if !ok {
-			return 0.0
-		}
+		val := checkIfType[float64](c.Eval(), ADD)
 		res += val
 	}
 	return res
@@ -128,15 +121,9 @@ func (s *Sub) Eval() any {
 	if len(s.Children) == 0 {
 		return 0.0
 	}
-	res, ok := checkIfType[float64](s.Children[0].Eval(), SUB)
-	if !ok {
-		return 0.0
-	}
+	res := checkIfType[float64](s.Children[0].Eval(), SUB)
 	for _, c := range s.Children[1:] {
-		val, ok := checkIfType[float64](c.Eval(), SUB)
-		if !ok {
-			return 0.0
-		}
+		val := checkIfType[float64](c.Eval(), SUB)
 		res -= val
 	}
 	return res
@@ -155,15 +142,9 @@ func (m *Mul) Eval() any {
 	if len(m.Children) == 0 {
 		return 0.0
 	}
-	res, ok := checkIfType[float64](m.Children[0].Eval(), MUL)
-	if !ok {
-		return 0.0
-	}
+	res := checkIfType[float64](m.Children[0].Eval(), MUL)
 	for _, c := range m.Children[1:] {
-		val, ok := checkIfType[float64](c.Eval(), MUL)
-		if !ok {
-			return 0.0
-		}
+		val := checkIfType[float64](c.Eval(), MUL)
 		res *= val
 	}
 	return res
@@ -182,15 +163,9 @@ func (d *Div) Eval() any {
 	if len(d.Children) == 0 {
 		return 0.0
 	}
-	res, ok := checkIfType[float64](d.Children[0].Eval(), DIV)
-	if !ok {
-		return 0.0
-	}
+	res := checkIfType[float64](d.Children[0].Eval(), DIV)
 	for _, c := range d.Children[1:] {
-		val, ok := checkIfType[float64](c.Eval(), DIV)
-		if !ok {
-			return 0.0
-		}
+		val := checkIfType[float64](c.Eval(), DIV)
 		res /= val
 	}
 	return res
@@ -209,15 +184,9 @@ func (p *Pwr) Eval() any {
 	if len(p.Children) == 0 {
 		return 0.0
 	}
-	res, ok := checkIfType[float64](p.Children[0].Eval(), PWR)
-	if !ok {
-		return 0.0
-	}
+	res := checkIfType[float64](p.Children[0].Eval(), PWR)
 	for _, c := range p.Children[1:] {
-		val, ok := checkIfType[float64](c.Eval(), PWR)
-		if !ok {
-			return 0.0
-		}
+		val := checkIfType[float64](c.Eval(), PWR)
 		res += math.Pow(res, val)
 	}
 	return res
@@ -236,16 +205,10 @@ func (m *Mod) Eval() any {
 	if len(m.Children) == 0 {
 		return 0.0
 	}
-	r, ok := checkIfType[float64](m.Children[0].Eval(), MOD)
-	if !ok {
-		return 0.0
-	}
+	r := checkIfType[float64](m.Children[0].Eval(), MOD)
 	res := int(r)
 	for _, c := range m.Children[1:] {
-		val, ok := checkIfType[float64](c.Eval(), MOD)
-		if !ok {
-			return 0.0
-		}
+		val := checkIfType[float64](c.Eval(), MOD)
 		res = res % int(val)
 	}
 	return float64(res)
@@ -263,7 +226,7 @@ func (i *Ident) GetToken() Token {
 func (i *Ident) Eval() any {
 	val, ok := SYMBOL_TABLE[i.Name]
 	if !ok {
-		log.Printf("variable '%s' is not defined!", i.Name)
+		panic(fmt.Sprintf("variable '%s' is not defined!", i.Name))
 	}
 	return val
 }
