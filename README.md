@@ -3,7 +3,7 @@
 My take on a small lisp like programming language with single characters as
 keywords and operators which is named after my girlfriend.
 
-View [examples/so.phia](examples/so.phia) for a sophia by example.
+View [examples/so.phia](examples/so.phia) for sophia by example and [this blog article](https://xnacly.me/posts/2023/write-your-own-programming-language/) for a short overview.
 
 ## Try
 
