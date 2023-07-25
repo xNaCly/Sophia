@@ -54,6 +54,67 @@ func TestLexerFloats(t *testing.T) {
 	}
 }
 
+func TestLexerIdent(t *testing.T) {
+	in := []byte(`b a abc abcdefghijklmnopqrstuvwxyz`)
+	l := core.NewLexer(in)
+	token := l.Lex()
+	if len(token) == 0 {
+		t.Error("Lexer found error, token empty")
+	}
+
+	expectedType := []int{
+		core.IDENT,
+		core.IDENT,
+		core.IDENT,
+		core.IDENT,
+		core.EOF,
+	}
+
+	expectedRaw := []string{
+		"b",
+		"a",
+		"abc",
+		"abcdefghijklmnopqrstuvwxyz",
+		"",
+	}
+
+	for i, tok := range token {
+		if tok.Type != expectedType[i] {
+			t.Errorf("given token '%+v' of type '%d' at pos '%d' does not match expected token '%d'", tok, tok.Type, i, expectedType[i])
+		}
+		if tok.Raw != expectedRaw[i] {
+			t.Errorf("given raw content '%s' at pos '%d' does not match expected content '%s'", tok.Raw, i, expectedRaw[i])
+		}
+	}
+}
+
+func TestLexerOperators(t *testing.T) {
+	in := []byte(`.+-/*^%:`)
+	l := core.NewLexer(in)
+	token := l.Lex()
+	if len(token) == 0 {
+		t.Error("Lexer found error, token empty")
+	}
+
+	expected := []int{
+		core.PUT,
+		core.ADD,
+		core.SUB,
+		core.DIV,
+		core.MUL,
+		core.PWR,
+		core.MOD,
+		core.COLON,
+		core.EOF,
+	}
+
+	for i, tok := range token {
+		if tok.Type != expected[i] {
+			t.Errorf("given token '%+v' of type '%d' at pos '%d' does not match expected token '%d'", tok, tok.Type, i, expected[i])
+		}
+	}
+}
+
 func TestLexerArithmetic(t *testing.T) {
 	in := []byte(`[+ 1 [* 1 [/ 1 [% 1 [^ 1]]]]]`)
 	l := core.NewLexer(in)
