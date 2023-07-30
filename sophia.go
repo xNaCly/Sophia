@@ -1,5 +1,8 @@
 package main
 
+// TODO: remove PWR operator
+// TODO: update ops to accept arrays, due all variables being arrays
+
 import (
 	"errors"
 	"flag"
@@ -8,7 +11,7 @@ import (
 	"sophia/core"
 )
 
-func run(input []byte) (f []float64, e error) {
+func run(input []byte) (s []string, e error) {
 	defer func() {
 		if err := recover(); err != nil {
 			log.Printf("err: %s", err)
@@ -30,7 +33,7 @@ func run(input []byte) (f []float64, e error) {
 		return
 	}
 
-	f = core.Eval(ast)
+	s = core.Eval(ast)
 	return
 }
 

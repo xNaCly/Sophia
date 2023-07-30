@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-func Repl(run func(input []byte) ([]float64, error)) {
+func Repl(run func(input []byte) ([]string, error)) {
 	fmt.Println(`Welcome to the Sophia repl - press <CTRL-D> or <CTRL-C> to quit...`)
 	prompt := "ß :: "
 	scanner := bufio.NewScanner(os.Stdin)

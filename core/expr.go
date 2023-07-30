@@ -214,6 +214,7 @@ func (m *Mod) Eval() any {
 	return float64(res)
 }
 
+// using a variable
 type Ident struct {
 	Token Token
 	Name  string
@@ -231,6 +232,7 @@ func (i *Ident) Eval() any {
 	return val
 }
 
+// defining a variable
 type Var struct {
 	Token Token
 	Name  string
@@ -247,6 +249,8 @@ func (v *Var) Eval() any {
 		val[i] = c.Eval()
 	}
 	if _, ok := SYMBOL_TABLE[v.Name]; ok {
+		// TODO: variables should be immutable by default, maybe create mutable
+		// vars another way
 		panic(fmt.Sprintf("variable '%s' is already defined", v.Name))
 	} else {
 		SYMBOL_TABLE[v.Name] = val

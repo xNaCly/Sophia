@@ -1,13 +1,13 @@
 package core
 
+import "fmt"
+
 var SYMBOL_TABLE = map[string]any{}
 
-func Eval(ast []Node) []float64 {
-	out := make([]float64, 0)
-	for _, c := range ast {
-		if val, ok := c.Eval().(float64); ok {
-			out = append(out, val)
-		}
+func Eval(ast []Node) []string {
+	out := make([]string, len(ast))
+	for i, c := range ast {
+		out[i] = fmt.Sprint(c.Eval())
 	}
 	return out
 }
