@@ -11,7 +11,7 @@ func checkIfType[T any](in any, op int) T {
 	val, ok := in.(T)
 	if !ok {
 		var e T
-		panic(fmt.Sprintf("can not use variable of type %T in current operation (%s), expected %T for value %q", in, TOKEN_NAME_MAP[op], e, in))
+		panic(fmt.Sprintf("can not use variable of type %T in current operation (%s), expected %T for value %+v", in, TOKEN_NAME_MAP[op], e, in))
 	}
 	return val
 }
@@ -234,7 +234,7 @@ func (i *Ident) Eval() any {
 type Var struct {
 	Token Token
 	Name  string
-	Value Node
+	Value []Node
 }
 
 func (v *Var) GetToken() Token {
@@ -242,9 +242,12 @@ func (v *Var) GetToken() Token {
 }
 
 func (v *Var) Eval() any {
-	val := v.Value.Eval()
+	val := make([]any, len(v.Value))
+	for i, c := range v.Value {
+		val[i] = c.Eval()
+	}
 	if _, ok := SYMBOL_TABLE[v.Name]; ok {
-		SYMBOL_TABLE[v.Name] = val
+		panic(fmt.Sprintf("variable '%s' is already defined", v.Name))
 	} else {
 		SYMBOL_TABLE[v.Name] = val
 	}

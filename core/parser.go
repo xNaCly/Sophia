@@ -80,22 +80,21 @@ func (p *Parser) parseStatment() Node {
 	switch op.Type {
 	// TODO: this is messy
 	case COLON:
-		if len(childs) != 2 {
-			log.Printf("err: expected two arguments for variable declaration, got %d", len(childs))
+		if len(childs) == 0 {
+			log.Printf("err: expected at least one argument for variable declaration, got %d", len(childs))
 			p.HasError = true
 			return nil
 		}
 		ident := childs[0]
 		if ident.GetToken().Type != IDENT {
-			log.Printf("err: expected 'IDENT' as first argument, got %s", TOKEN_NAME_MAP[ident.GetToken().Type])
+			log.Printf("err: expected 'IDENT' as first argument in variable declaration, got %s", TOKEN_NAME_MAP[ident.GetToken().Type])
 			p.HasError = true
 			return nil
 		}
-		val := childs[1]
 		stmt = &Var{
 			Token: op,
 			Name:  ident.GetToken().Raw,
-			Value: val,
+			Value: childs[1:],
 		}
 	case ADD:
 		stmt = &Add{
