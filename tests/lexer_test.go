@@ -8,7 +8,7 @@ import (
 )
 
 func TestLexerHelloWorld(t *testing.T) {
-	in := []byte(`[. "Hello World!"]`)
+	in := []byte(`(. "Hello World!")`)
 	l := core.NewLexer(in)
 	token := l.Lex()
 	if len(token) == 0 {
@@ -89,7 +89,7 @@ func TestLexerIdent(t *testing.T) {
 }
 
 func TestLexerOperators(t *testing.T) {
-	in := []byte(`.+-/*%:[]`)
+	in := []byte(`.+-/*%:()`)
 	l := core.NewLexer(in)
 	token := l.Lex()
 	if len(token) == 0 {
@@ -117,7 +117,7 @@ func TestLexerOperators(t *testing.T) {
 }
 
 func TestLexerArithmetic(t *testing.T) {
-	in := []byte(`[+ 1 [* 1 [/ 1 [% 1]]]]`)
+	in := []byte(`(+ 1 (* 1 (/ 1 (% 1))))`)
 	l := core.NewLexer(in)
 	token := l.Lex()
 	if len(token) == 0 {

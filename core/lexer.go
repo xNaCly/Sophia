@@ -54,9 +54,9 @@ func (l *Lexer) Lex() []Token {
 			ttype = COLON
 		case '%':
 			ttype = MOD
-		case '[':
+		case '(':
 			ttype = LEFT_BRACE
-		case ']':
+		case ')':
 			ttype = RIGHT_BRACE
 		case ' ', '\t', '\r', '\n':
 			if l.chr == '\n' {

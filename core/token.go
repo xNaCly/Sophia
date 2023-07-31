@@ -30,8 +30,8 @@ const (
 	PUT         // .
 	MOD         // %
 	COLON       // :
-	LEFT_BRACE  // [
-	RIGHT_BRACE // ]
+	LEFT_BRACE  // (
+	RIGHT_BRACE // )
 	IDENT       // ([a-z]|_)+
 	EOF
 )
@@ -48,7 +48,7 @@ var TOKEN_NAME_MAP = map[int]string{
 	MOD:         "%",
 	COLON:       ":",
 	IDENT:       "IDENT",
-	LEFT_BRACE:  "[",
-	RIGHT_BRACE: "]",
+	LEFT_BRACE:  "(",
+	RIGHT_BRACE: ")",
 	EOF:         "EOF",
 }

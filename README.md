@@ -23,7 +23,7 @@ Hello World!
 With an expression:
 
 ```
-$ sophia -exp '[. "Hello World"]'
+$ sophia -exp '(. "Hello World")'
 
 Hello World!
 ```
@@ -34,7 +34,7 @@ As a repl:
 $ sophia
 
 Welcome to the Sophia repl - press <CTRL-D> or <CTRL-C> to quit...
-ß :: [. "Hi!"]
+ß :: (. "Hi!")
 Hi!
 = []
 ß ::
@@ -47,8 +47,8 @@ Sophia currently supports arithmetics, strings and the o in io :^)
 ### Hello world:
 
 ```bash
-sophia -exp '[. "Hello World!"]'
-# [Hello World!]
+sophia -exp '(. "Hello World!")'
+# Hello World!
 ```
 
 ### Keyword reference:
@@ -77,11 +77,11 @@ sophia -exp '[. "Hello World!"]'
 All execution is done left to right, meaning:
 
 ```lisp
-[+ 2 3 4] ;; results in 2+3+4 -> 9
-[- 2 3 4] ;; results in 2-3-4 -> -5
-[* 2 3 4] ;; results in 2*3*4 -> 24
-[/ 2 3 4] ;; results in 2/3/4 -> 0.166667
-[% 2 3 4] ;; results in 2%3%4 -> 2
+(+ 2 3 4) ;; results in 2+3+4 -> 9
+(- 2 3 4) ;; results in 2-3-4 -> -5
+(* 2 3 4) ;; results in 2*3*4 -> 24
+(/ 2 3 4) ;; results in 2/3/4 -> 0.166667
+(% 2 3 4) ;; results in 2%3%4 -> 2
 ```
 
 ## Progress
