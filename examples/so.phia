@@ -1,8 +1,7 @@
 ;; ============= Sophia by example ==============
 
 ;; hello world
-
-(. "hello world")
+(. "hello" "world")
 
 ;; printing to stdout
 (. 3.15)
@@ -13,22 +12,24 @@
         (. 1 "will be printed first")))
 
 ;; ------------- arithmetics ------------- 
-(. "1+2=" (+ 1 2))
-(. "1-2=" (- 1 2))
-(. "1*2=" (* 1 2))
-(. "1/2=" (/ 1 2))
+(. 
+    "1+2=" (+ 1 2))
+(. 
+    "1-2=" (- 1 2))
+(. 
+    "1*2=" (* 1 2))
+(.
+    "1/2=" (/ 1 2))
 
 ;; remainder operator
-(. "1%2=" (% 1 2))
+(. 
+    "1%2=" (% 1 2))
 
 ;; nested operations are of course possible
 (- 25 
     (+ 1 
         (* 5 
-            (/ 5 2)
-        )
-    )
-)
+            (/ 5 2))))
 
 ;; ------------- definitions ------------- 
 
@@ -40,7 +41,8 @@
         3.1514          ;; <- variable value
     )
 )
-(. "pi*pi" (* pi pi))
+(. 
+    "pi*pi" (* pi pi))
 
 ;; defining a variable
 (. 

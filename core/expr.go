@@ -10,12 +10,20 @@ import (
 // attempts to cast `in` to `T`, returns `in` cast to `T` if successful. If
 // cast fails, panics.
 func castPanicIfNotType[T any](in any, op int) T {
+	val, ok := isType[T](in)
+	if !ok {
+		panic(fmt.Sprintf("can not use variable of type %T in current operation (%s), expected %T for value %+v", in, TOKEN_NAME_MAP[op], val, in))
+	}
+	return val
+}
+
+func isType[T any](in any) (T, bool) {
 	val, ok := in.(T)
 	if !ok {
 		var e T
-		panic(fmt.Sprintf("can not use variable of type %T in current operation (%s), expected %T for value %+v", in, TOKEN_NAME_MAP[op], e, in))
+		return e, false
 	}
-	return val
+	return val, true
 }
 
 type Node interface {
@@ -97,10 +105,17 @@ func (a *Add) Eval() any {
 	if len(a.Children) == 0 {
 		return 0.0
 	}
-	res := castPanicIfNotType[float64](a.Children[0].Eval(), ADD)
+	// TODO: assign the first value of the children to this
+	res := 0.0
 	for _, c := range a.Children[1:] {
-		val := castPanicIfNotType[float64](c.Eval(), ADD)
-		res += val
+		if idt, ok := isType[*Ident](c); ok {
+			arr := castPanicIfNotType[[]interface{}](idt.Eval(), ADD)
+			for _, i := range arr {
+				res += castPanicIfNotType[float64](i, ADD)
+			}
+		} else {
+			res += castPanicIfNotType[float64](c.Eval(), ADD)
+		}
 	}
 	return res
 }
@@ -118,10 +133,17 @@ func (s *Sub) Eval() any {
 	if len(s.Children) == 0 {
 		return 0.0
 	}
-	res := castPanicIfNotType[float64](s.Children[0].Eval(), SUB)
-	for _, c := range s.Children[1:] {
-		val := castPanicIfNotType[float64](c.Eval(), SUB)
-		res -= val
+	// TODO: assign the first value of the children to this
+	res := 0.0
+	for _, c := range s.Children {
+		if idt, ok := isType[*Ident](c); ok {
+			arr := castPanicIfNotType[[]interface{}](idt.Eval(), SUB)
+			for _, i := range arr {
+				res -= castPanicIfNotType[float64](i, SUB)
+			}
+		} else {
+			res -= castPanicIfNotType[float64](c.Eval(), SUB)
+		}
 	}
 	return res
 }
@@ -139,10 +161,17 @@ func (m *Mul) Eval() any {
 	if len(m.Children) == 0 {
 		return 0.0
 	}
-	res := castPanicIfNotType[float64](m.Children[0].Eval(), MUL)
-	for _, c := range m.Children[1:] {
-		val := castPanicIfNotType[float64](c.Eval(), MUL)
-		res *= val
+	// TODO: assign the first value of the children to this
+	res := 1.0
+	for _, c := range m.Children {
+		if idt, ok := isType[*Ident](c); ok {
+			arr := castPanicIfNotType[[]interface{}](idt.Eval(), MUL)
+			for _, i := range arr {
+				res *= castPanicIfNotType[float64](i, MUL)
+			}
+		} else {
+			res *= castPanicIfNotType[float64](c.Eval(), MUL)
+		}
 	}
 	return res
 }
@@ -160,10 +189,17 @@ func (d *Div) Eval() any {
 	if len(d.Children) == 0 {
 		return 0.0
 	}
-	res := castPanicIfNotType[float64](d.Children[0].Eval(), DIV)
-	for _, c := range d.Children[1:] {
-		val := castPanicIfNotType[float64](c.Eval(), DIV)
-		res /= val
+	// TODO: assign the first value of the children to this
+	res := 0.0
+	for _, c := range d.Children {
+		if idt, ok := isType[*Ident](c); ok {
+			arr := castPanicIfNotType[[]interface{}](idt.Eval(), DIV)
+			for _, i := range arr {
+				res /= castPanicIfNotType[float64](i, DIV)
+			}
+		} else {
+			res /= castPanicIfNotType[float64](c.Eval(), DIV)
+		}
 	}
 	return res
 }
@@ -181,13 +217,19 @@ func (m *Mod) Eval() any {
 	if len(m.Children) == 0 {
 		return 0.0
 	}
-	r := castPanicIfNotType[float64](m.Children[0].Eval(), MOD)
-	res := int(r)
-	for _, c := range m.Children[1:] {
-		val := castPanicIfNotType[float64](c.Eval(), MOD)
-		res = res % int(val)
+	// TODO:
+	res := 0
+	for _, c := range m.Children {
+		if idt, ok := isType[*Ident](c); ok {
+			arr := castPanicIfNotType[[]interface{}](idt.Eval(), MOD)
+			for _, i := range arr {
+				res = res % int(castPanicIfNotType[float64](i, MOD))
+			}
+		} else {
+			res = res % int(castPanicIfNotType[float64](c.Eval(), MOD))
+		}
 	}
-	return float64(res)
+	return res
 }
 
 // using a variable

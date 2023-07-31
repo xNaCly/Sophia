@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"sophia/core"
@@ -75,6 +76,7 @@ func main() {
 			log.Fatalf("error in source file '%s' detected, stopping...", file)
 		}
 	} else {
+		fmt.Print(core.ASCII_ART, "\n")
 		core.DbgLog("go nothing, starting repl...")
 		core.Repl(run)
 	}

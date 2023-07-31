@@ -2,6 +2,16 @@ package core
 
 import "log"
 
+const ASCII_ART = `
+  +####
+ +\    #
++  \ ß  #
++   \   # <-> ß-calculus
++ ß  \  #
+ +    \#
+  ++++#
+`
+
 type Config struct {
 	Debug bool // enable debug logs
 }
