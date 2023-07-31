@@ -6,7 +6,6 @@ var EXPECTED_KEYWORDS = []int{
 	SUB,
 	DIV,
 	MUL,
-	PWR,
 	MOD,
 	PUT,
 	COLON,
@@ -29,7 +28,6 @@ const (
 	DIV         // /
 	MUL         // *
 	PUT         // .
-	PWR         // ^
 	MOD         // %
 	COLON       // :
 	LEFT_BRACE  // [
@@ -47,7 +45,6 @@ var TOKEN_NAME_MAP = map[int]string{
 	DIV:         "/",
 	MUL:         "*",
 	PUT:         ".",
-	PWR:         "^",
 	MOD:         "%",
 	COLON:       ":",
 	IDENT:       "IDENT",

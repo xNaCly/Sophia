@@ -1,6 +1,5 @@
 package main
 
-// TODO: remove PWR operator
 // TODO: update ops to accept arrays, due all variables being arrays
 
 import (

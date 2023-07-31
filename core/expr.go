@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-	"math"
 	"strings"
 )
 
@@ -167,27 +166,6 @@ func (d *Div) Eval() any {
 	for _, c := range d.Children[1:] {
 		val := checkIfType[float64](c.Eval(), DIV)
 		res /= val
-	}
-	return res
-}
-
-type Pwr struct {
-	Token    Token
-	Children []Node
-}
-
-func (p *Pwr) GetToken() Token {
-	return p.Token
-}
-
-func (p *Pwr) Eval() any {
-	if len(p.Children) == 0 {
-		return 0.0
-	}
-	res := checkIfType[float64](p.Children[0].Eval(), PWR)
-	for _, c := range p.Children[1:] {
-		val := checkIfType[float64](c.Eval(), PWR)
-		res += math.Pow(res, val)
 	}
 	return res
 }

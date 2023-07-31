@@ -19,9 +19,6 @@
 [. "1*2=" [* 1 2]]
 [. "1/2=" [/ 1 2]]
 
-;; raising 1 to the power of 2
-[. "1^2=" [^ 1 2]]
-
 ;; remainder operator
 [. "1%2=" [% 1 2]]
 

@@ -89,7 +89,7 @@ func TestLexerIdent(t *testing.T) {
 }
 
 func TestLexerOperators(t *testing.T) {
-	in := []byte(`.+-/*^%:`)
+	in := []byte(`.+-/*%:[]`)
 	l := core.NewLexer(in)
 	token := l.Lex()
 	if len(token) == 0 {
@@ -102,9 +102,10 @@ func TestLexerOperators(t *testing.T) {
 		core.SUB,
 		core.DIV,
 		core.MUL,
-		core.PWR,
 		core.MOD,
 		core.COLON,
+		core.LEFT_BRACE,
+		core.RIGHT_BRACE,
 		core.EOF,
 	}
 
@@ -116,7 +117,7 @@ func TestLexerOperators(t *testing.T) {
 }
 
 func TestLexerArithmetic(t *testing.T) {
-	in := []byte(`[+ 1 [* 1 [/ 1 [% 1 [^ 1]]]]]`)
+	in := []byte(`[+ 1 [* 1 [/ 1 [% 1]]]]`)
 	l := core.NewLexer(in)
 	token := l.Lex()
 	if len(token) == 0 {
@@ -136,10 +137,6 @@ func TestLexerArithmetic(t *testing.T) {
 		core.LEFT_BRACE,
 		core.MOD,
 		core.FLOAT,
-		core.LEFT_BRACE,
-		core.PWR,
-		core.FLOAT,
-		core.RIGHT_BRACE,
 		core.RIGHT_BRACE,
 		core.RIGHT_BRACE,
 		core.RIGHT_BRACE,

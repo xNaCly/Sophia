@@ -78,7 +78,6 @@ func (p *Parser) parseStatment() Node {
 	}
 
 	switch op.Type {
-	// TODO: this is messy
 	case COLON:
 		if len(childs) == 0 {
 			log.Printf("err: expected at least one argument for variable declaration, got %d", len(childs))
@@ -113,11 +112,6 @@ func (p *Parser) parseStatment() Node {
 		}
 	case MUL:
 		stmt = &Mul{
-			Token:    op,
-			Children: childs,
-		}
-	case PWR:
-		stmt = &Pwr{
 			Token:    op,
 			Children: childs,
 		}
