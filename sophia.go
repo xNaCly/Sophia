@@ -3,6 +3,7 @@ package main
 // TODO: update ops to accept arrays, due all variables being arrays
 
 import (
+	"encoding/json"
 	"errors"
 	"flag"
 	"log"
@@ -18,9 +19,16 @@ func run(input []byte) (s []string, e error) {
 			return
 		}
 	}()
+	core.DbgLog("starting lexer")
 	l := core.NewLexer(input)
 	tokens := l.Lex()
+	core.DbgLog("lexed", len(tokens), "token")
+	if core.CONF.Debug {
+		v, _ := json.MarshalIndent(tokens, "", "  ")
+		core.DbgLog(string(v))
+	}
 
+	core.DbgLog("starting parser")
 	p := core.NewParser(tokens)
 	ast := p.Parse()
 	if l.HasError {
@@ -32,21 +40,30 @@ func run(input []byte) (s []string, e error) {
 		return
 	}
 
+	if core.CONF.Debug {
+		v, _ := json.MarshalIndent(ast, "", "  ")
+		core.DbgLog(string(v))
+	}
+	core.DbgLog("done parsing - no errors, starting eval")
 	s = core.Eval(ast)
 	return
 }
 
 func main() {
-	log.SetFlags(log.Ltime)
+	log.SetFlags(log.Ltime | log.Lmicroseconds)
 	execute := flag.String("exp", "", "specifiy expression to execute")
+	dbg := flag.Bool("dbg", false, "enable debug logs")
 	flag.Parse()
+	core.CONF.Debug = *dbg
 
 	if len(*execute) != 0 {
+		core.DbgLog("got -exp flag, running...")
 		_, err := run([]byte(*execute))
 		if err != nil {
 			log.Fatalln(err)
 		}
 	} else if len(flag.Args()) == 1 {
+		core.DbgLog("got file, running...")
 		file := flag.Args()[0]
 		f, err := os.ReadFile(file)
 		if err != nil {
@@ -58,6 +75,7 @@ func main() {
 			log.Fatalf("error in source file '%s' detected, stopping...", file)
 		}
 	} else {
+		core.DbgLog("go nothing, starting repl...")
 		core.Repl(run)
 	}
 }

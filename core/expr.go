@@ -6,7 +6,10 @@ import (
 )
 
 // TODO: error display
-func checkIfType[T any](in any, op int) T {
+
+// attempts to cast `in` to `T`, returns `in` cast to `T` if successful. If
+// cast fails, panics.
+func castPanicIfNotType[T any](in any, op int) T {
 	val, ok := in.(T)
 	if !ok {
 		var e T
@@ -75,11 +78,6 @@ func (p *Put) Eval() any {
 		if i != 0 {
 			b.WriteRune(' ')
 		}
-		switch c.(type) {
-		case *String:
-			b.WriteString(c.GetToken().Raw)
-			continue
-		}
 		b.WriteString(fmt.Sprint(c.Eval()))
 	}
 	fmt.Printf("%s\n", b.String())
@@ -99,9 +97,9 @@ func (a *Add) Eval() any {
 	if len(a.Children) == 0 {
 		return 0.0
 	}
-	res := checkIfType[float64](a.Children[0].Eval(), ADD)
+	res := castPanicIfNotType[float64](a.Children[0].Eval(), ADD)
 	for _, c := range a.Children[1:] {
-		val := checkIfType[float64](c.Eval(), ADD)
+		val := castPanicIfNotType[float64](c.Eval(), ADD)
 		res += val
 	}
 	return res
@@ -120,9 +118,9 @@ func (s *Sub) Eval() any {
 	if len(s.Children) == 0 {
 		return 0.0
 	}
-	res := checkIfType[float64](s.Children[0].Eval(), SUB)
+	res := castPanicIfNotType[float64](s.Children[0].Eval(), SUB)
 	for _, c := range s.Children[1:] {
-		val := checkIfType[float64](c.Eval(), SUB)
+		val := castPanicIfNotType[float64](c.Eval(), SUB)
 		res -= val
 	}
 	return res
@@ -141,9 +139,9 @@ func (m *Mul) Eval() any {
 	if len(m.Children) == 0 {
 		return 0.0
 	}
-	res := checkIfType[float64](m.Children[0].Eval(), MUL)
+	res := castPanicIfNotType[float64](m.Children[0].Eval(), MUL)
 	for _, c := range m.Children[1:] {
-		val := checkIfType[float64](c.Eval(), MUL)
+		val := castPanicIfNotType[float64](c.Eval(), MUL)
 		res *= val
 	}
 	return res
@@ -162,9 +160,9 @@ func (d *Div) Eval() any {
 	if len(d.Children) == 0 {
 		return 0.0
 	}
-	res := checkIfType[float64](d.Children[0].Eval(), DIV)
+	res := castPanicIfNotType[float64](d.Children[0].Eval(), DIV)
 	for _, c := range d.Children[1:] {
-		val := checkIfType[float64](c.Eval(), DIV)
+		val := castPanicIfNotType[float64](c.Eval(), DIV)
 		res /= val
 	}
 	return res
@@ -183,10 +181,10 @@ func (m *Mod) Eval() any {
 	if len(m.Children) == 0 {
 		return 0.0
 	}
-	r := checkIfType[float64](m.Children[0].Eval(), MOD)
+	r := castPanicIfNotType[float64](m.Children[0].Eval(), MOD)
 	res := int(r)
 	for _, c := range m.Children[1:] {
-		val := checkIfType[float64](c.Eval(), MOD)
+		val := castPanicIfNotType[float64](c.Eval(), MOD)
 		res = res % int(val)
 	}
 	return float64(res)
@@ -226,10 +224,9 @@ func (v *Var) Eval() any {
 	for i, c := range v.Value {
 		val[i] = c.Eval()
 	}
+
 	if _, ok := SYMBOL_TABLE[v.Name]; ok {
-		// TODO: variables should be immutable by default, maybe create mutable
-		// vars another way
-		panic(fmt.Sprintf("variable '%s' is already defined", v.Name))
+		SYMBOL_TABLE[v.Name] = val
 	} else {
 		SYMBOL_TABLE[v.Name] = val
 	}

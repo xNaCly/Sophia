@@ -1,6 +1,7 @@
 ;; ============= Sophia by example ==============
 
 ;; hello world
+
 [. "hello world"]
 
 ;; printing to stdout
@@ -41,12 +42,14 @@
         3.1514          ;; <- variable value
     ]
 ]
-[. "pi^pi" [^ pi pi]]
+[. "pi*pi" [* pi pi]]
 
 ;; defining a variable
 [. 
     "version:" 
     [: v "v1.1.1"]      ;; <- defining a string variable 
+    v
+    [: v "1"]           ;; <- multable variables
     v
 ]
 
