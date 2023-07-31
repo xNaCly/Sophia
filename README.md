@@ -60,7 +60,6 @@ sophia -exp '[. "Hello World!"]'
 | `-`     | subtracts all arguments                                                                      |
 | `*`     | multiplies all arguments                                                                     |
 | `/`     | divides all arguments                                                                        |
-| `^`     | raises all arguments to the following power                                                  |
 | `%`     | modulo for current argument with the following argument                                      |
 | `:`     | defines a variable, with the first argument as the name and the second argument as the value |
 
@@ -82,7 +81,6 @@ All execution is done left to right, meaning:
 [- 2 3 4] ;; results in 2-3-4 -> -5
 [* 2 3 4] ;; results in 2*3*4 -> 24
 [/ 2 3 4] ;; results in 2/3/4 -> 0.166667
-[^ 2 3 4] ;; results in 2^3^4 -> 4096
 [% 2 3 4] ;; results in 2%3%4 -> 2
 ```
 
