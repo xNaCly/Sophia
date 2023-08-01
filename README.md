@@ -53,15 +53,15 @@ sophia -exp '(. "Hello World!")'
 
 ### Keyword reference:
 
-| keyword | description                                                                                  |
-| ------- | -------------------------------------------------------------------------------------------- |
-| `.`     | prints all arguments to stdout, supports floats, bools and strings                           |
-| `+`     | adds all arguments together                                                                  |
-| `-`     | subtracts all arguments                                                                      |
-| `*`     | multiplies all arguments                                                                     |
-| `/`     | divides all arguments                                                                        |
-| `%`     | modulo for current argument with the following argument                                      |
-| `:`     | defines a variable, with the first argument as the name and the second argument as the value |
+| keyword | description                                                                                     |
+| ------- | ----------------------------------------------------------------------------------------------- |
+| `.`     | prints all arguments to stdout                                                                  |
+| `+`     | adds all arguments together                                                                     |
+| `-`     | subtracts all arguments                                                                         |
+| `*`     | multiplies all arguments                                                                        |
+| `/`     | divides all arguments                                                                           |
+| `%`     | modulo all arguments                                                                            |
+| `:`     | defines a variable, with the first argument as the name and the remaining argument as the value |
 
 #### Planned keywords:
 

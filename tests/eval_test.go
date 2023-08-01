@@ -1,0 +1,84 @@
+package tests
+
+import (
+	"sophia/core"
+	"testing"
+)
+
+func TestEvalAritmetic(t *testing.T) {
+	input := []struct {
+		str string
+		exp string
+	}{
+		{
+			str: "(+ 6 6)",
+			exp: "12",
+		},
+		{
+			str: "(+ (- 3 3) 6)",
+			exp: "6",
+		},
+		{
+			str: "(- (* 3 3) 6)",
+			exp: "3",
+		},
+		{
+			str: "(/ 0 (- 5 5))",
+			exp: "NaN",
+		},
+		{
+			str: "(/ 1 0)",
+			exp: "+Inf",
+		},
+		{
+			str: "(* (+ 6 (- 13 3)) (* 2 (+ 2 (- 8 2))))",
+			exp: "256",
+		},
+	}
+	for _, i := range input {
+		l := core.NewLexer([]byte(i.str))
+		p := core.NewParser(l.Lex())
+		r := core.Eval(p.Parse())
+		if len(r) == 0 {
+			t.Errorf("eval result empty")
+		}
+		if i.exp != r[0] {
+			t.Errorf("%q not equal to %q", i.exp, r[0])
+		}
+	}
+}
+
+func TestEvalVariables(t *testing.T) {
+	input := []struct {
+		str string
+		exp string
+	}{
+		{
+			str: "(: a 6)",
+			exp: "[6]",
+		},
+		{
+			str: "(: b 1 2 3)",
+			exp: "[1 2 3]",
+		},
+		{
+			str: "(: c (* 5 5))",
+			exp: "[25]",
+		},
+		{
+			str: "(: d (: e (+ 5 5)))",
+			exp: "[[10]]",
+		},
+	}
+	for _, i := range input {
+		l := core.NewLexer([]byte(i.str))
+		p := core.NewParser(l.Lex())
+		r := core.Eval(p.Parse())
+		if len(r) == 0 {
+			t.Errorf("eval result empty")
+		}
+		if i.exp != r[0] {
+			t.Errorf("%q not equal to %q", i.exp, r[0])
+		}
+	}
+}
