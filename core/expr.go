@@ -17,6 +17,8 @@ func castPanicIfNotType[T any](in any, op int) T {
 	return val
 }
 
+// checks if `in` is castable to `T`, returns casted value and true if
+// castable, zero value of `T` and false if not
 func isType[T any](in any) (T, bool) {
 	val, ok := in.(T)
 	if !ok {
@@ -24,6 +26,35 @@ func isType[T any](in any) (T, bool) {
 		return e, false
 	}
 	return val, true
+}
+
+func extractChild(n Node, op int) float64 {
+	var val float64
+	if idt, ok := isType[*Ident](n); ok {
+		arr := castPanicIfNotType[[]interface{}](idt.Eval(), op)
+		for i, item := range arr {
+			t := castPanicIfNotType[float64](item, op)
+			if i == 0 {
+				val = t
+				continue
+			}
+			switch op {
+			case ADD:
+				val += t
+			case SUB:
+				val -= t
+			case DIV:
+				val /= t
+			case MUL:
+				val *= t
+			case MOD:
+				val = float64(int(val) % int(t))
+			}
+		}
+	} else {
+		val = castPanicIfNotType[float64](n.Eval(), op)
+	}
+	return val
 }
 
 type Node interface {
@@ -105,17 +136,9 @@ func (a *Add) Eval() any {
 	if len(a.Children) == 0 {
 		return 0.0
 	}
-	// TODO: assign the first value of the children to this
-	res := 0.0
+	res := extractChild(a.Children[0], ADD)
 	for _, c := range a.Children[1:] {
-		if idt, ok := isType[*Ident](c); ok {
-			arr := castPanicIfNotType[[]interface{}](idt.Eval(), ADD)
-			for _, i := range arr {
-				res += castPanicIfNotType[float64](i, ADD)
-			}
-		} else {
-			res += castPanicIfNotType[float64](c.Eval(), ADD)
-		}
+		res += extractChild(c, ADD)
 	}
 	return res
 }
@@ -133,17 +156,9 @@ func (s *Sub) Eval() any {
 	if len(s.Children) == 0 {
 		return 0.0
 	}
-	// TODO: assign the first value of the children to this
-	res := 0.0
-	for _, c := range s.Children {
-		if idt, ok := isType[*Ident](c); ok {
-			arr := castPanicIfNotType[[]interface{}](idt.Eval(), SUB)
-			for _, i := range arr {
-				res -= castPanicIfNotType[float64](i, SUB)
-			}
-		} else {
-			res -= castPanicIfNotType[float64](c.Eval(), SUB)
-		}
+	res := extractChild(s.Children[0], SUB)
+	for _, c := range s.Children[1:] {
+		res -= extractChild(c, SUB)
 	}
 	return res
 }
@@ -161,17 +176,9 @@ func (m *Mul) Eval() any {
 	if len(m.Children) == 0 {
 		return 0.0
 	}
-	// TODO: assign the first value of the children to this
-	res := 1.0
-	for _, c := range m.Children {
-		if idt, ok := isType[*Ident](c); ok {
-			arr := castPanicIfNotType[[]interface{}](idt.Eval(), MUL)
-			for _, i := range arr {
-				res *= castPanicIfNotType[float64](i, MUL)
-			}
-		} else {
-			res *= castPanicIfNotType[float64](c.Eval(), MUL)
-		}
+	res := extractChild(m.Children[0], MUL)
+	for _, c := range m.Children[1:] {
+		res *= extractChild(c, MUL)
 	}
 	return res
 }
@@ -189,17 +196,9 @@ func (d *Div) Eval() any {
 	if len(d.Children) == 0 {
 		return 0.0
 	}
-	// TODO: assign the first value of the children to this
-	res := 0.0
-	for _, c := range d.Children {
-		if idt, ok := isType[*Ident](c); ok {
-			arr := castPanicIfNotType[[]interface{}](idt.Eval(), DIV)
-			for _, i := range arr {
-				res /= castPanicIfNotType[float64](i, DIV)
-			}
-		} else {
-			res /= castPanicIfNotType[float64](c.Eval(), DIV)
-		}
+	res := extractChild(d.Children[0], DIV)
+	for _, c := range d.Children[1:] {
+		res /= extractChild(c, DIV)
 	}
 	return res
 }
@@ -217,17 +216,10 @@ func (m *Mod) Eval() any {
 	if len(m.Children) == 0 {
 		return 0.0
 	}
-	// TODO:
-	res := 0
-	for _, c := range m.Children {
-		if idt, ok := isType[*Ident](c); ok {
-			arr := castPanicIfNotType[[]interface{}](idt.Eval(), MOD)
-			for _, i := range arr {
-				res = res % int(castPanicIfNotType[float64](i, MOD))
-			}
-		} else {
-			res = res % int(castPanicIfNotType[float64](c.Eval(), MOD))
-		}
+
+	res := extractChild(m.Children[0], MOD)
+	for _, c := range m.Children[1:] {
+		res = float64(int(res) % int(extractChild(c, MOD)))
 	}
 	return res
 }

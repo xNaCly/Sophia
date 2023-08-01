@@ -1,7 +1,5 @@
 package main
 
-// TODO: update ops to accept arrays, due all variables being arrays
-
 import (
 	"encoding/json"
 	"errors"
