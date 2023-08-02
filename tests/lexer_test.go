@@ -43,14 +43,16 @@ func TestLexerFloats(t *testing.T) {
 		"15e4":      150_000,
 	}
 	for k, v := range in {
-		l := core.NewLexer([]byte(k))
-		o := l.Lex()
-		if l.HasError {
-			t.Fatalf("failed to lex float for input '%s', expected '%f'\n", k, v)
-		}
-		if o[0].Float != v {
-			t.Fatalf("lexed float '%f' not equal to '%f' for input '%s'\n", o[0].Float, v, k)
-		}
+		t.Run(k, func(t *testing.T) {
+			l := core.NewLexer([]byte(k))
+			o := l.Lex()
+			if l.HasError {
+				t.Fatalf("failed to lex float for input '%s', expected '%f'\n", k, v)
+			}
+			if o[0].Float != v {
+				t.Fatalf("lexed float '%f' not equal to '%f' for input '%s'\n", o[0].Float, v, k)
+			}
+		})
 	}
 }
 
@@ -159,11 +161,13 @@ func TestLexerIgnoreCharsAndComments(t *testing.T) {
 		"      ",
 	}
 	for _, v := range in {
-		l := core.NewLexer([]byte(v))
-		o := l.Lex()
-		if len(o) != 1 {
-			t.Errorf("lexer output for '%s' should be empty due to a comment, but contains '%v' of size '%d'", v, o, len(o))
-		}
+		t.Run(v, func(t *testing.T) {
+			l := core.NewLexer([]byte(v))
+			o := l.Lex()
+			if len(o) != 1 {
+				t.Errorf("lexer output for '%s' should be empty due to a comment, but contains '%v' of size '%d'", v, o, len(o))
+			}
+		})
 	}
 }
 
@@ -177,10 +181,12 @@ func TestLexerErrorsOnUnknownTokenAndIntegers(t *testing.T) {
 ?[putc "test"]`,
 	}
 	for _, v := range in {
-		l := core.NewLexer([]byte(v))
-		o := l.Lex()
-		if len(o) != 1 {
-			t.Errorf("lexer output for '%s' should be empty due to a syntax error, but contains '%v' of size '%d'", v, o, len(o))
-		}
+		t.Run(v, func(t *testing.T) {
+			l := core.NewLexer([]byte(v))
+			o := l.Lex()
+			if len(o) != 1 {
+				t.Errorf("lexer output for '%s' should be empty due to a syntax error, but contains '%v' of size '%d'", v, o, len(o))
+			}
+		})
 	}
 }
