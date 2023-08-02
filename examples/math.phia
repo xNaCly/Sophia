@@ -1,0 +1,21 @@
+;; ------------- arithmetics ------------- 
+(. 
+    "1+2=" (+ 1 2))
+(. 
+    "1-2=" (- 1 2))
+(. 
+    "1*2=" (* 1 2))
+(.
+    "1/2=" (/ 1 2))
+
+;; remainder operator
+(. 
+    "1%2=" (% 1 2))
+
+;; nested operations are of course possible
+(- 25 
+    (+ 1 
+        (* 5 
+            (/ 5 2))))
+
+;; vim: syntax=lisp

@@ -1,0 +1,32 @@
+;; ------------- variables ------------- 
+
+(.
+    "pi:"
+    (:                  ;; <- definition keyword
+        pi              ;; <- variable name
+        3.1514          ;; <- variable value 1
+        3.1514          ;; <- variable value 2
+    )
+)
+
+(. 
+    "pi*pi" (* pi pi))
+
+(. 
+    "version:" 
+    (: v "v1.1.1")      ;; <- defining a string variable 
+    v
+    (: v "1")           ;; <- multable variables
+    v
+)
+
+;; ------------- functions ------------- 
+
+;; defining a function 
+;;(# 
+;;    square 
+;;    (a) ;; <- parameters, which can be a list such as (a b)
+;;    (* a a) ;; <- function body, which always returns the outer most statement
+;;)
+
+;; vim: syntax=lisp
