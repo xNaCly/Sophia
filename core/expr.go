@@ -90,7 +90,7 @@ func (f *Float) GetToken() Token {
 func (f *Float) Eval() any {
 	float, err := strconv.ParseFloat(f.Token.Raw, 64)
 	if err != nil {
-		panic(err)
+		panic(fmt.Sprint("failed to parse float: ", err))
 	}
 	return float
 }
@@ -137,7 +137,7 @@ func (p *Put) Eval() any {
 		b.WriteString(fmt.Sprint(c.Eval()))
 	}
 	fmt.Printf("%s\n", b.String())
-	return 0.0
+	return nil
 }
 
 type Add struct {

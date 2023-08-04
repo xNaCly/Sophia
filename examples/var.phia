@@ -20,6 +20,12 @@
     v
 )
 
+(. 
+    "boolean variables:"
+    (: bool true)
+    (. bool)
+)
+
 ;; ------------- functions ------------- 
 
 ;; defining a function 
