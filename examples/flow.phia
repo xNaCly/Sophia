@@ -1,20 +1,36 @@
 ;; ------------- control flow ------------- 
-;; conditional statement
+;; conditional operator
 
 (? 
     true                    ;; <- condition
     (. "condition met")     ;; <- executed if condition is met
-    (. "condition met")     ;; <- executed if condition is met
-    (. "condition met")     ;; <- executed if condition is met
-)
-(? 
-    (= 1 1)                 ;; <- condition
-    (. "1 is equal to 1")   ;; <- executed if condition is met
 )
 
-;; equals 
+(? 
+    false                 ;; <- condition
+    (. "condition not met")   ;; <- executed if condition is met
+)
+
+;; comparison operators
+
+;; equals works for normal values, such as strings, floats, booleans
 (. 
-    (= true true false))
+    "all equal ->"
+    (= 1 1)
+    (= "equal" "equal")
+    (= true true))
+
+;; and for variables
+(: a 1 2)
+(: b 2 1)
+(. 
+    "not equal ->"
+    (= a a)
+    "not equal ->"
+    (= a b))
+;; but not how you think... Sophia merges the lists in the variables to compare
+;; into a singular list and checks if all elements in it are the same thats why
+;; a is not equal to a itself
 
 ;; and
 ;; (. 
