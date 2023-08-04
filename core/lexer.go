@@ -59,6 +59,10 @@ func (l *Lexer) Lex() []Token {
 			ttype = RIGHT_BRACE
 		case '?':
 			ttype = IF
+		case '|':
+			ttype = OR
+		case '&':
+			ttype = AND
 		case '=':
 			ttype = EQUAL
 		case ' ', '\t', '\r', '\n':

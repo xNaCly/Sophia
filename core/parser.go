@@ -116,6 +116,16 @@ func (p *Parser) parseStatment() Node {
 			Token:    op,
 			Children: childs,
 		}
+	case OR:
+		stmt = &Or{
+			Token:    op,
+			Children: childs,
+		}
+	case AND:
+		stmt = &And{
+			Token:    op,
+			Children: childs,
+		}
 	case ADD:
 		stmt = &Add{
 			Token:    op,

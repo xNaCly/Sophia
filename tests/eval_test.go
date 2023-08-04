@@ -112,6 +112,34 @@ func TestEvalConditional(t *testing.T) {
 			str: "(= 1 2)",
 			exp: "false",
 		},
+		{
+			str: "(= true false)",
+			exp: "false",
+		},
+		{
+			str: "(& true true)",
+			exp: "true",
+		},
+		{
+			str: "(& false true)",
+			exp: "false",
+		},
+		{
+			str: "(& false false)",
+			exp: "false",
+		},
+		{
+			str: "(| true true)",
+			exp: "true",
+		},
+		{
+			str: "(| false true)",
+			exp: "true",
+		},
+		{
+			str: "(| false false)",
+			exp: "false",
+		},
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {

@@ -331,3 +331,61 @@ func (e *Equal) Eval() any {
 	}
 	return true
 }
+
+type Or struct {
+	Token    Token
+	Children []Node
+}
+
+func (o *Or) GetToken() Token {
+	return o.Token
+}
+
+func (o *Or) Eval() any {
+	list := make([]bool, 0)
+	for _, c := range o.Children {
+		ev := c.Eval()
+		if val, ok := isType[[]interface{}](ev); ok {
+			for _, v := range val {
+				list = append(list, castPanicIfNotType[bool](v, OR))
+			}
+		} else {
+			list = append(list, castPanicIfNotType[bool](ev, OR))
+		}
+	}
+	for _, v := range list {
+		if v {
+			return true
+		}
+	}
+	return false
+}
+
+type And struct {
+	Token    Token
+	Children []Node
+}
+
+func (a *And) GetToken() Token {
+	return a.Token
+}
+
+func (a *And) Eval() any {
+	list := make([]bool, 0)
+	for _, c := range a.Children {
+		ev := c.Eval()
+		if val, ok := isType[[]interface{}](ev); ok {
+			for _, v := range val {
+				list = append(list, castPanicIfNotType[bool](v, AND))
+			}
+		} else {
+			list = append(list, castPanicIfNotType[bool](ev, AND))
+		}
+	}
+	for _, v := range list {
+		if !v {
+			return false
+		}
+	}
+	return true
+}

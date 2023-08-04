@@ -1,43 +1,48 @@
-;; ------------- control flow ------------- 
-;; conditional operator
+;; ============= control flow ============= 
+
+;; -------------  conditional ------------- 
 
 (? 
     true                    ;; <- condition
-    (. "condition met")     ;; <- executed if condition is met
+    (. "the condition is true")     ;; <- executed if condition is met
 )
 
 (? 
-    false                 ;; <- condition
-    (. "condition not met")   ;; <- executed if condition is met
+    false                   ;; <- condition
+    (. "?") ;; <- executed if condition is met
 )
 
-;; comparison operators
-
+;; ------------- equal ------------- 
 ;; equals works for normal values, such as strings, floats, booleans
-(. 
-    "all equal ->"
-    (= 1 1)
-    (= "equal" "equal")
-    (= true true))
+(= 1 1)
+(= "equal" "equal")
+(= true true)
 
 ;; and for variables
 (: a 1 2)
-(: b 2 1)
 (. 
-    "not equal ->"
-    (= a a)
-    "not equal ->"
-    (= a b))
+    "a == a -> "
+    (= a a))
+
 ;; but not how you think... Sophia merges the lists in the variables to compare
 ;; into a singular list and checks if all elements in it are the same thats why
 ;; a is not equal to a itself
 
-;; and
-;; (. 
-;;     (& true false))
+;; ------------- or ------------- 
+;; works the same as equals, but only for booleans
+(| false true false)
 
-;; or
-;; (. 
-;;     (| true false))
+(: a false false)
+(. 
+    "a | a | true -> "
+    (| a a true))
+
+;; ------------- and ------------ 
+(& true true)
+
+(: a true false)
+(. 
+    "a & a -> "
+    (& a a))
 
 ;; vim: syntax=lisp
