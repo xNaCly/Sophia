@@ -57,6 +57,8 @@ func (l *Lexer) Lex() []Token {
 			ttype = LEFT_BRACE
 		case ')':
 			ttype = RIGHT_BRACE
+		case '?':
+			ttype = IF
 		case ' ', '\t', '\r', '\n':
 			if l.chr == '\n' {
 				l.linepos = 0

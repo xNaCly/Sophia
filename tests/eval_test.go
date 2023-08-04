@@ -94,3 +94,32 @@ func TestEvalVariables(t *testing.T) {
 		})
 	}
 }
+
+func TestEvalConditional(t *testing.T) {
+	input := []struct {
+		str string
+		exp string
+	}{
+		{
+			str: "(? true (. 1))",
+			exp: "<nil>",
+		},
+		{
+			str: "(? true (: a 5)(. a))",
+			exp: "<nil>",
+		},
+	}
+	for _, i := range input {
+		t.Run(i.str, func(t *testing.T) {
+			l := core.NewLexer([]byte(i.str))
+			p := core.NewParser(l.Lex())
+			r := core.Eval(p.Parse())
+			if len(r) == 0 {
+				t.Errorf("eval result empty")
+			}
+			if i.exp != r[0] {
+				t.Errorf("%q not equal to %q", i.exp, r[0])
+			}
+		})
+	}
+}

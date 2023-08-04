@@ -82,6 +82,18 @@ func (p *Parser) parseStatment() Node {
 	}
 
 	switch op.Type {
+	case IF:
+		if len(childs) == 0 {
+			log.Printf("err: expected at least two argument for condition, got %d", len(childs))
+			p.HasError = true
+			return nil
+		}
+		cond := childs[0]
+		stmt = &If{
+			Token:     op,
+			Condition: cond,
+			Body:      childs[1:],
+		}
 	case COLON:
 		if len(childs) == 0 {
 			log.Printf("err: expected at least one argument for variable declaration, got %d", len(childs))

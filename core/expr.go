@@ -283,3 +283,22 @@ func (v *Var) Eval() any {
 	}
 	return val
 }
+
+type If struct {
+	Token     Token
+	Condition Node
+	Body      []Node
+}
+
+func (i *If) GetToken() Token {
+	return i.Token
+}
+
+func (i *If) Eval() any {
+	if castPanicIfNotType[bool](i.Condition.Eval(), IF) {
+		for _, c := range i.Body {
+			c.Eval()
+		}
+	}
+	return nil
+}

@@ -9,6 +9,7 @@ var EXPECTED_KEYWORDS = []int{
 	MOD,
 	PUT,
 	COLON,
+	IF,
 }
 
 type Token struct {
@@ -31,6 +32,7 @@ const (
 	COLON       // :
 	LEFT_BRACE  // (
 	RIGHT_BRACE // )
+	IF          // ?
 	IDENT       // ([a-z]|_)+
 	BOOL        // true | false
 	EOF
@@ -47,6 +49,7 @@ var TOKEN_NAME_MAP = map[int]string{
 	PUT:         ".",
 	MOD:         "%",
 	COLON:       ":",
+	IF:          "?",
 	IDENT:       "IDENT",
 	LEFT_BRACE:  "(",
 	RIGHT_BRACE: ")",
