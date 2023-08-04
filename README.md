@@ -69,6 +69,7 @@ sophia -exp '(. "Hello World!")'
 | `%`     | modulo all arguments                                                                                                |
 | `:`     | defines a variable, with the first argument as the name and the remaining argument as the value                     |
 | `?`     | defines a condition, evaluates the first argument, evaluates all following argument if the first argument is truthy |
+| `=`     | returns true if all arguments are equal to each other                                                               |
 
 #### Planned keywords:
 
