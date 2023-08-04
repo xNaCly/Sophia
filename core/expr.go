@@ -302,3 +302,25 @@ func (i *If) Eval() any {
 	}
 	return nil
 }
+
+type Equal struct {
+	Token    Token
+	Children []Node
+}
+
+func (e *Equal) GetToken() Token {
+	return e.Token
+}
+
+func (e *Equal) Eval() any {
+	list := make([]any, len(e.Children))
+	for i, c := range e.Children {
+		list[i] = c.Eval()
+		if i > 0 {
+			if list[i] != list[i-1] {
+				return false
+			}
+		}
+	}
+	return true
+}

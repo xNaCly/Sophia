@@ -111,6 +111,11 @@ func (p *Parser) parseStatment() Node {
 			Name:  ident.GetToken().Raw,
 			Value: childs[1:],
 		}
+	case EQUAL:
+		stmt = &Equal{
+			Token:    op,
+			Children: childs,
+		}
 	case ADD:
 		stmt = &Add{
 			Token:    op,

@@ -1,27 +1,20 @@
 ;; ------------- control flow ------------- 
-
 ;; conditional statement
 
 (? 
-    true ;; <- condition
-    (. "condition met") ;; <- executed if condition is met
-    (. "condition met") ;; <- executed if condition is met
-    (. "condition met") ;; <- executed if condition is met
+    true                    ;; <- condition
+    (. "condition met")     ;; <- executed if condition is met
+    (. "condition met")     ;; <- executed if condition is met
+    (. "condition met")     ;; <- executed if condition is met
 )
 (? 
-    false ;; <- condition
-    (. "condition not met") ;; <- executed if condition is met
-)
-
-(: a true) 
-(? 
-    a ;; <- condition
-    (. "condition not met") ;; <- executed if condition is met
+    (= 1 1)                 ;; <- condition
+    (. "1 is equal to 1")   ;; <- executed if condition is met
 )
 
 ;; equals 
-;; (. 
-;;     (= true false))
+(. 
+    (= true true false))
 
 ;; and
 ;; (. 
