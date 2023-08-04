@@ -56,7 +56,7 @@ func (p *Parser) parseStatment() Node {
 			childs = append(childs, p.parseStatment())
 			continue
 		} else {
-			p.peekErrorMany("Missing or unknown argument", FLOAT, STRING, IDENT)
+			p.peekErrorMany("Missing or unknown argument", FLOAT, STRING, IDENT, BOOL)
 			if p.peekIs(FLOAT) {
 				child = &Float{
 					Token: p.peek(),
@@ -69,6 +69,10 @@ func (p *Parser) parseStatment() Node {
 				child = &Ident{
 					Token: p.peek(),
 					Name:  p.peek().Raw,
+				}
+			} else if p.peekIs(BOOL) {
+				child = &Boolean{
+					Token: p.peek(),
 				}
 			}
 		}

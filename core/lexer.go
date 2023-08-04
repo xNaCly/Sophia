@@ -197,9 +197,16 @@ func (l *Lexer) ident() Token {
 		l.advance()
 	}
 	str := builder.String()
+	ttype := UNKNOWN
+	switch str {
+	case "true", "false":
+		ttype = BOOL
+	default:
+		ttype = IDENT
+	}
 	return Token{
 		Pos:  l.pos - len(str),
-		Type: IDENT,
+		Type: ttype,
 		Raw:  str,
 		Line: l.line,
 	}

@@ -12,6 +12,9 @@ import (
 
 func run(input []byte) (s []string, e error) {
 	defer func() {
+		if core.CONF.Debug {
+			return
+		}
 		if err := recover(); err != nil {
 			log.Printf("err: %s", err)
 			e = errors.New("runtime error")

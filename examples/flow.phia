@@ -9,14 +9,14 @@
 
 ;; equals 
 ;; (. 
-;;     (= 1 1))
+;;     (= true false))
 
 ;; and
 ;; (. 
-;;     (& 1 1))
+;;     (& true false))
 
 ;; or
 ;; (. 
-;;     (| 1 1))
+;;     (| true false))
 
 ;; vim: syntax=lisp

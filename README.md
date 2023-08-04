@@ -42,7 +42,13 @@ Hi!
 
 ## Reference
 
-Sophia currently supports arithmetics, strings and the o in io :^)
+Sophia currently supports:
+
+- the o in io :^)
+- floats
+- strings
+- booleans
+- arithmetics
 
 ### Hello world:
 
@@ -67,10 +73,10 @@ sophia -exp '(. "Hello World!")'
 
 | keyword | description                                                                                                      |
 | ------- | ---------------------------------------------------------------------------------------------------------------- |
-| `#`     | defines a function, with the first argument as the name, the second as the argument and the third as the body    |
 | `?`     | defines a condition, evaluates the first argument, evaluates the second argument if the first argument is truthy |
 | `&`     | returns true if all arguments are true                                                                           |
 | `\|`    | returns true if one of the arguments is true                                                                     |
+| `#`     | defines a function, with the first argument as the name, the second as the argument and the third as the body    |
 
 ### Execution direction
 

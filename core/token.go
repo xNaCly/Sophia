@@ -33,6 +33,7 @@ const (
 	LEFT_BRACE  // (
 	RIGHT_BRACE // )
 	IDENT       // ([a-z]|_)+
+	BOOL        // true | false
 	EOF
 )
 
@@ -50,5 +51,6 @@ var TOKEN_NAME_MAP = map[int]string{
 	IDENT:       "IDENT",
 	LEFT_BRACE:  "(",
 	RIGHT_BRACE: ")",
+	BOOL:        "BOOL",
 	EOF:         "EOF",
 }

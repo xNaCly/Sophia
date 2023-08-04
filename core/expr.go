@@ -90,6 +90,18 @@ func (f *Float) Eval() any {
 	return f.Token.Float
 }
 
+type Boolean struct {
+	Token Token
+}
+
+func (b *Boolean) GetToken() Token {
+	return b.Token
+}
+
+func (b *Boolean) Eval() any {
+	return b.Token.Raw == "true"
+}
+
 type String struct {
 	Token Token
 }
