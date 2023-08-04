@@ -59,24 +59,24 @@ sophia -exp '(. "Hello World!")'
 
 ### Keyword reference:
 
-| keyword | description                                                                                     |
-| ------- | ----------------------------------------------------------------------------------------------- |
-| `.`     | prints all arguments to stdout                                                                  |
-| `+`     | adds all arguments together                                                                     |
-| `-`     | subtracts all arguments                                                                         |
-| `*`     | multiplies all arguments                                                                        |
-| `/`     | divides all arguments                                                                           |
-| `%`     | modulo all arguments                                                                            |
-| `:`     | defines a variable, with the first argument as the name and the remaining argument as the value |
+| keyword | description                                                                                                         |
+| ------- | ------------------------------------------------------------------------------------------------------------------- |
+| `.`     | prints all arguments to stdout                                                                                      |
+| `+`     | adds all arguments together                                                                                         |
+| `-`     | subtracts all arguments                                                                                             |
+| `*`     | multiplies all arguments                                                                                            |
+| `/`     | divides all arguments                                                                                               |
+| `%`     | modulo all arguments                                                                                                |
+| `:`     | defines a variable, with the first argument as the name and the remaining argument as the value                     |
+| `?`     | defines a condition, evaluates the first argument, evaluates all following argument if the first argument is truthy |
 
 #### Planned keywords:
 
-| keyword | description                                                                                                      |
-| ------- | ---------------------------------------------------------------------------------------------------------------- |
-| `?`     | defines a condition, evaluates the first argument, evaluates the second argument if the first argument is truthy |
-| `&`     | returns true if all arguments are true                                                                           |
-| `\|`    | returns true if one of the arguments is true                                                                     |
-| `#`     | defines a function, with the first argument as the name, the second as the argument and the third as the body    |
+| keyword | description                                                                                                   |
+| ------- | ------------------------------------------------------------------------------------------------------------- |
+| `&`     | returns true if all arguments are true                                                                        |
+| `\|`    | returns true if one of the arguments is true                                                                  |
+| `#`     | defines a function, with the first argument as the name, the second as the argument and the third as the body |
 
 ### Execution direction
 
