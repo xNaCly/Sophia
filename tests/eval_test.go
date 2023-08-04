@@ -71,6 +71,14 @@ func TestEvalVariables(t *testing.T) {
 			str: "(: d (: e (+ 5 5)))",
 			exp: "[[10]]",
 		},
+		{
+			str: "(: f true)",
+			exp: "[true]",
+		},
+		{
+			str: "(: g false)",
+			exp: "[false]",
+		},
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {

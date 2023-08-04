@@ -190,3 +190,33 @@ func TestLexerErrorsOnUnknownTokenAndIntegers(t *testing.T) {
 		})
 	}
 }
+
+func TestLexerBooleans(t *testing.T) {
+	in := []byte(`true false`)
+	l := core.NewLexer(in)
+	token := l.Lex()
+	if len(token) == 0 {
+		t.Error("Lexer found error, token empty")
+	}
+
+	expectedType := []int{
+		core.BOOL,
+		core.BOOL,
+		core.EOF,
+	}
+
+	expectedRaw := []string{
+		"true",
+		"false",
+		"",
+	}
+
+	for i, tok := range token {
+		if tok.Type != expectedType[i] {
+			t.Errorf("given token '%+v' of type '%d' at pos '%d' does not match expected token '%d'", tok, tok.Type, i, expectedType[i])
+		}
+		if tok.Raw != expectedRaw[i] {
+			t.Errorf("given raw content '%s' at pos '%d' does not match expected content '%s'", tok.Raw, i, expectedRaw[i])
+		}
+	}
+}
