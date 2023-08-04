@@ -3,7 +3,6 @@ package core
 import (
 	"fmt"
 	"log"
-	"strconv"
 	"strings"
 	"unicode"
 )
@@ -219,19 +218,11 @@ func (l *Lexer) float() (Token, error) {
 		l.advance()
 	}
 	str := builder.String()
-	float, err := strconv.ParseFloat(str, 64)
-	if err != nil {
-		return Token{
-			Raw:  str,
-			Line: l.line,
-		}, err
-	}
 	return Token{
-		Pos:   l.pos - len(str),
-		Type:  FLOAT,
-		Raw:   str,
-		Float: float,
-		Line:  l.line,
+		Pos:  l.pos - len(str),
+		Type: FLOAT,
+		Raw:  str,
+		Line: l.line,
 	}, nil
 }
 

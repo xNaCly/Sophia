@@ -12,11 +12,10 @@ var EXPECTED_KEYWORDS = []int{
 }
 
 type Token struct {
-	Pos   int
-	Line  int
-	Type  int
-	Raw   string
-	Float float64
+	Pos  int
+	Line int
+	Type int
+	Raw  string
 }
 
 const (

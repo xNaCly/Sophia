@@ -31,26 +31,23 @@ func TestLexerHelloWorld(t *testing.T) {
 }
 
 func TestLexerFloats(t *testing.T) {
-	null, _ := os.Open(os.DevNull)
-	os.Stdout = null
-	log.SetOutput(null)
-	in := map[string]float64{
-		"10.0":      10.0,
-		"1_000_000": 1_000_000.0,
-		"0.01":      0.01,
-		"0.1e-3":    0.0001,
-		"1.2e-2":    0.012,
-		"15e4":      150_000,
+	in := []string{
+		"10.0",
+		"1_000_000",
+		"0.01",
+		"0.1e-3",
+		"1.2e-2",
+		"15e4",
 	}
-	for k, v := range in {
-		t.Run(k, func(t *testing.T) {
-			l := core.NewLexer([]byte(k))
+	for _, v := range in {
+		t.Run(v, func(t *testing.T) {
+			l := core.NewLexer([]byte(v))
 			o := l.Lex()
-			if l.HasError {
-				t.Fatalf("failed to lex float for input '%s', expected '%f'\n", k, v)
+			if l.HasError || len(o) == 0 {
+				t.Fatalf("failed to lex float for input '%s'\n", v)
 			}
-			if o[0].Float != v {
-				t.Fatalf("lexed float '%f' not equal to '%f' for input '%s'\n", o[0].Float, v, k)
+			if o[0].Type != core.FLOAT {
+				t.Fatalf("'%s' was not lexed as a float, got %s", v, core.TOKEN_NAME_MAP[o[0].Type])
 			}
 		})
 	}

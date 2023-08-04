@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -87,7 +88,11 @@ func (f *Float) GetToken() Token {
 }
 
 func (f *Float) Eval() any {
-	return f.Token.Float
+	float, err := strconv.ParseFloat(f.Token.Raw, 64)
+	if err != nil {
+		panic(err)
+	}
+	return float
 }
 
 type Boolean struct {
