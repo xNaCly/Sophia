@@ -3,7 +3,18 @@
 My take on a small lisp like programming language with single characters as
 keywords and operators which is named after my girlfriend.
 
-View [examples/so.phia](examples/so.phia) for sophia by example and [this blog article](https://xnacly.me/posts/2023/write-your-own-programming-language/) for a short overview.
+View [examples/so.phia](examples/so.phia) for sophia by example and [this blog
+article](https://xnacly.me/posts/2023/write-your-own-programming-language/) for
+a short overview.
+
+```lisp
+(: a 1)
+(: b 1)
+(?
+    (= a b)
+    (. "a equal b")
+)
+```
 
 ## Try
 
@@ -72,6 +83,7 @@ sophia -exp '(. "Hello World!")'
 | `=`     | returns true if all arguments are equal to each other                                                               |
 | `&`     | returns true if all arguments are true                                                                              |
 | `\|`    | returns true if one of the arguments is true                                                                        |
+| `!`     | negates the first argument, returns the first argument                                                              |
 
 #### Planned keywords:
 
@@ -97,5 +109,5 @@ All execution is done left to right, meaning:
 - [x] parsing
 - [x] evaluation
 - [x] variables
-- [ ] controlflow
+- [x] controlflow
 - [ ] functions

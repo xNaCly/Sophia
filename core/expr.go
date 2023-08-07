@@ -389,3 +389,17 @@ func (a *And) Eval() any {
 	}
 	return true
 }
+
+type Neg struct {
+	Token    Token
+	Children Node
+}
+
+func (n *Neg) GetToken() Token {
+	return n.Token
+}
+
+func (n *Neg) Eval() any {
+	ev := n.Children.Eval()
+	return !castPanicIfNotType[bool](ev, NEG)
+}

@@ -45,4 +45,13 @@
     "a & a -> "
     (& a a))
 
+;; ----------- negation ----------- 
+(!                  ;; <- negates the first argument, evaluates to true
+    (= 1 2))        ;; <- evaluates to false
+
+(. 
+    "!(&a) -> " 
+    (!              ;; <- evaluates to true
+        (= a)))     ;; <- evaluates to false
+
 ;; vim: syntax=lisp

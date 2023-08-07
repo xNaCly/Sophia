@@ -116,6 +116,16 @@ func (p *Parser) parseStatment() Node {
 			Token:    op,
 			Children: childs,
 		}
+	case NEG:
+		if len(childs) != 1 {
+			log.Printf("err: expected exactly one argument for negation, got %d", len(childs))
+			p.HasError = true
+			return nil
+		}
+		stmt = &Neg{
+			Token:    op,
+			Children: childs[0],
+		}
 	case OR:
 		stmt = &Or{
 			Token:    op,

@@ -88,7 +88,7 @@ func TestLexerIdent(t *testing.T) {
 }
 
 func TestLexerOperators(t *testing.T) {
-	in := []byte(`.+-/*%:()?=|&`)
+	in := []byte(`.+-/*%:()?=|&!`)
 	l := core.NewLexer(in)
 	token := l.Lex()
 	if len(token) == 0 {
@@ -109,6 +109,7 @@ func TestLexerOperators(t *testing.T) {
 		core.EQUAL,
 		core.OR,
 		core.AND,
+		core.NEG,
 		core.EOF,
 	}
 
@@ -177,7 +178,7 @@ func TestLexerErrorsOnUnknownTokenAndIntegers(t *testing.T) {
 	os.Stdout = null
 	log.SetOutput(null)
 	in := []string{
-		"!",
+		"ß",
 		`;;comment
 ?[putc "test"]`,
 	}
