@@ -1,8 +1,6 @@
 package lexer
 
 import (
-	"log"
-	"os"
 	"sophia/core/token"
 	"testing"
 )
@@ -174,9 +172,6 @@ func TestLexerIgnoreCharsAndComments(t *testing.T) {
 }
 
 func TestLexerErrorsOnUnknownTokenAndIntegers(t *testing.T) {
-	null, _ := os.Open(os.DevNull)
-	os.Stdout = null
-	log.SetOutput(null)
 	in := []string{
 		"ß",
 		`;;comment

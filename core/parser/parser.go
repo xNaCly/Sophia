@@ -79,7 +79,9 @@ func (p *Parser) parseStatment() expr.Node {
 			}
 		}
 
-		childs = append(childs, child)
+		if child != nil {
+			childs = append(childs, child)
+		}
 		p.advance()
 	}
 

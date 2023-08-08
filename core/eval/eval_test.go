@@ -41,8 +41,13 @@ func TestEvalAritmetic(t *testing.T) {
 			l := lexer.New([]byte(i.str))
 			p := parser.New(l.Lex())
 			r := Eval(p.Parse())
+			if l.HasError || p.HasError {
+				t.Errorf("lexer or parser error for %q", i.str)
+				return
+			}
 			if len(r) == 0 {
-				t.Errorf("eval result empty")
+				t.Errorf("eval result empty for %q", i.str)
+				return
 			}
 			if i.exp != r[0] {
 				t.Errorf("%q not equal to %q", i.exp, r[0])
