@@ -1,27 +1,4 @@
-package core
-
-// operators
-var EXPECTED_KEYWORDS = []int{
-	ADD,
-	SUB,
-	DIV,
-	MUL,
-	MOD,
-	PUT,
-	COLON,
-	IF,
-	EQUAL,
-	OR,
-	AND,
-	NEG,
-}
-
-type Token struct {
-	Pos  int
-	Line int
-	Type int
-	Raw  string
-}
+package token
 
 const (
 	UNKNOWN     = iota + 1

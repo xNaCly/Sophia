@@ -1,8 +1,9 @@
-package core
+package lexer
 
 import (
 	"fmt"
 	"log"
+	"sophia/core/token"
 	"strings"
 	"unicode"
 )
@@ -33,40 +34,40 @@ func NewLexer(input []byte) Lexer {
 	}
 }
 
-func (l *Lexer) Lex() []Token {
-	token := make([]Token, 0)
+func (l *Lexer) Lex() []token.Token {
+	t := make([]token.Token, 0)
 	for l.chr != 0 {
-		ttype := UNKNOWN
+		ttype := token.UNKNOWN
 
 		switch l.chr {
 		case '.':
-			ttype = PUT
+			ttype = token.PUT
 		case '+':
-			ttype = ADD
+			ttype = token.ADD
 		case '-':
-			ttype = SUB
+			ttype = token.SUB
 		case '/':
-			ttype = DIV
+			ttype = token.DIV
 		case '*':
-			ttype = MUL
+			ttype = token.MUL
 		case ':':
-			ttype = COLON
+			ttype = token.COLON
 		case '%':
-			ttype = MOD
+			ttype = token.MOD
 		case '(':
-			ttype = LEFT_BRACE
+			ttype = token.LEFT_BRACE
 		case ')':
-			ttype = RIGHT_BRACE
+			ttype = token.RIGHT_BRACE
 		case '?':
-			ttype = IF
+			ttype = token.IF
 		case '|':
-			ttype = OR
+			ttype = token.OR
 		case '!':
-			ttype = NEG
+			ttype = token.NEG
 		case '&':
-			ttype = AND
+			ttype = token.AND
 		case '=':
-			ttype = EQUAL
+			ttype = token.EQUAL
 		case ' ', '\t', '\r', '\n':
 			if l.chr == '\n' {
 				l.linepos = 0
@@ -75,7 +76,7 @@ func (l *Lexer) Lex() []Token {
 			l.advance()
 			continue
 		case '"':
-			token = append(token, l.string())
+			t = append(t, l.string())
 			continue
 		case ';':
 			if l.peek() == ';' {
@@ -86,23 +87,23 @@ func (l *Lexer) Lex() []Token {
 			}
 		default:
 			if unicode.IsLetter(rune(l.chr)) || l.chr == '_' {
-				token = append(token, l.ident())
+				t = append(t, l.ident())
 				continue
 			} else if unicode.IsDigit(rune(l.chr)) || l.chr == '.' {
-				if t, err := l.float(); err == nil {
-					token = append(token, t)
+				if tok, err := l.float(); err == nil {
+					t = append(t, tok)
 				} else {
-					l.error(3, t.Raw)
+					l.error(3, tok.Raw)
 				}
 				continue
 			}
 		}
 
-		if ttype == UNKNOWN {
+		if ttype == token.UNKNOWN {
 			l.error(0, "")
 		}
 
-		token = append(token, Token{
+		t = append(t, token.Token{
 			Pos:  l.pos,
 			Type: ttype,
 			Line: l.line,
@@ -111,14 +112,14 @@ func (l *Lexer) Lex() []Token {
 		l.advance()
 	}
 	if l.HasError {
-		return []Token{
-			{Type: EOF, Line: l.line},
+		return []token.Token{
+			{Type: token.EOF, Line: l.line},
 		}
 	}
-	token = append(token, Token{
-		Type: EOF, Line: l.line,
+	t = append(t, token.Token{
+		Type: token.EOF, Line: l.line,
 	})
-	return token
+	return t
 }
 
 func (l *Lexer) error(errType uint, ident string) {
@@ -177,7 +178,7 @@ func (l *Lexer) error(errType uint, ident string) {
 	l.HasError = true
 }
 
-func (l *Lexer) string() Token {
+func (l *Lexer) string() token.Token {
 	l.advance()
 	b := strings.Builder{}
 	for l.chr != '"' && l.chr != '\n' && l.chr != 0 {
@@ -191,29 +192,29 @@ func (l *Lexer) string() Token {
 		l.advance()
 	}
 
-	return Token{
+	return token.Token{
 		Pos:  l.pos - len(str),
-		Type: STRING,
+		Type: token.STRING,
 		Raw:  str,
 		Line: l.line,
 	}
 }
 
-func (l *Lexer) ident() Token {
+func (l *Lexer) ident() token.Token {
 	builder := strings.Builder{}
 	for unicode.IsLetter(rune(l.chr)) || l.chr == '_' {
 		builder.WriteByte(l.chr)
 		l.advance()
 	}
 	str := builder.String()
-	ttype := UNKNOWN
+	ttype := token.UNKNOWN
 	switch str {
 	case "true", "false":
-		ttype = BOOL
+		ttype = token.BOOL
 	default:
-		ttype = IDENT
+		ttype = token.IDENT
 	}
-	return Token{
+	return token.Token{
 		Pos:  l.pos - len(str),
 		Type: ttype,
 		Raw:  str,
@@ -221,16 +222,16 @@ func (l *Lexer) ident() Token {
 	}
 }
 
-func (l *Lexer) float() (Token, error) {
+func (l *Lexer) float() (token.Token, error) {
 	builder := strings.Builder{}
 	for unicode.IsDigit(rune(l.chr)) || l.chr == '.' || l.chr == '_' || l.chr == 'e' || l.chr == '-' {
 		builder.WriteByte(l.chr)
 		l.advance()
 	}
 	str := builder.String()
-	return Token{
+	return token.Token{
 		Pos:  l.pos - len(str),
-		Type: FLOAT,
+		Type: token.FLOAT,
 		Raw:  str,
 		Line: l.line,
 	}, nil
