@@ -1,7 +1,8 @@
-package tests
+package eval
 
 import (
-	"sophia/core"
+	"sophia/core/lexer"
+	"sophia/core/parser"
 	"testing"
 )
 
@@ -37,9 +38,9 @@ func TestEvalAritmetic(t *testing.T) {
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
-			l := core.NewLexer([]byte(i.str))
-			p := core.NewParser(l.Lex())
-			r := core.Eval(p.Parse())
+			l := lexer.New([]byte(i.str))
+			p := parser.New(l.Lex())
+			r := Eval(p.Parse())
 			if len(r) == 0 {
 				t.Errorf("eval result empty")
 			}
@@ -82,9 +83,9 @@ func TestEvalVariables(t *testing.T) {
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
-			l := core.NewLexer([]byte(i.str))
-			p := core.NewParser(l.Lex())
-			r := core.Eval(p.Parse())
+			l := lexer.New([]byte(i.str))
+			p := parser.New(l.Lex())
+			r := Eval(p.Parse())
 			if len(r) == 0 {
 				t.Errorf("eval result empty")
 			}
@@ -151,9 +152,9 @@ func TestEvalConditional(t *testing.T) {
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
-			l := core.NewLexer([]byte(i.str))
-			p := core.NewParser(l.Lex())
-			r := core.Eval(p.Parse())
+			l := lexer.New([]byte(i.str))
+			p := parser.New(l.Lex())
+			r := Eval(p.Parse())
 			if len(r) == 0 {
 				t.Errorf("eval result empty")
 			}

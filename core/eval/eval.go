@@ -1,10 +1,11 @@
-package core
+package eval
 
-import "fmt"
+import (
+	"fmt"
+	"sophia/core/expr"
+)
 
-var SYMBOL_TABLE = map[string]any{}
-
-func Eval(ast []Node) []string {
+func Eval(ast []expr.Node) []string {
 	out := make([]string, len(ast))
 	for i, c := range ast {
 		out[i] = fmt.Sprint(c.Eval())

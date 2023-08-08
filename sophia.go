@@ -8,6 +8,9 @@ import (
 	"log"
 	"os"
 	"sophia/core"
+	"sophia/core/eval"
+	"sophia/core/lexer"
+	"sophia/core/parser"
 )
 
 func run(input []byte) (s []string, e error) {
@@ -22,7 +25,7 @@ func run(input []byte) (s []string, e error) {
 		}
 	}()
 	core.DbgLog("starting lexer")
-	l := core.NewLexer(input)
+	l := lexer.New(input)
 	tokens := l.Lex()
 	core.DbgLog("lexed", len(tokens), "token")
 	if core.CONF.Debug {
@@ -31,7 +34,7 @@ func run(input []byte) (s []string, e error) {
 	}
 
 	core.DbgLog("starting parser")
-	p := core.NewParser(tokens)
+	p := parser.New(tokens)
 	ast := p.Parse()
 	if l.HasError {
 		e = errors.New("lexer error")
@@ -47,7 +50,7 @@ func run(input []byte) (s []string, e error) {
 		core.DbgLog(string(v))
 	}
 	core.DbgLog("done parsing - no errors, starting eval")
-	s = core.Eval(ast)
+	s = eval.Eval(ast)
 	return
 }
 
