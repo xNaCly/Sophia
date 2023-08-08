@@ -15,7 +15,7 @@ type Parser struct {
 	HasError bool
 }
 
-func NewParser(token []token.Token) Parser {
+func New(token []token.Token) Parser {
 	if len(token) == 0 {
 		log.Println("Parser got no tokens, stopping...")
 		return Parser{

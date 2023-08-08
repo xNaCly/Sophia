@@ -25,7 +25,7 @@ func run(input []byte) (s []string, e error) {
 		}
 	}()
 	core.DbgLog("starting lexer")
-	l := lexer.NewLexer(input)
+	l := lexer.New(input)
 	tokens := l.Lex()
 	core.DbgLog("lexed", len(tokens), "token")
 	if core.CONF.Debug {
@@ -34,7 +34,7 @@ func run(input []byte) (s []string, e error) {
 	}
 
 	core.DbgLog("starting parser")
-	p := parser.NewParser(tokens)
+	p := parser.New(tokens)
 	ast := p.Parse()
 	if l.HasError {
 		e = errors.New("lexer error")
