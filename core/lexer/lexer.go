@@ -17,7 +17,7 @@ type Lexer struct {
 	HasError bool
 }
 
-func NewLexer(input []byte) Lexer {
+func New(input []byte) Lexer {
 	if len(input) == 0 || len(strings.TrimSpace(string(input))) == 0 {
 		log.Println("err: input is empty, stopping")
 		return Lexer{

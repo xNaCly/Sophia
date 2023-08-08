@@ -9,7 +9,7 @@ import (
 
 func TestParserHelloWorld(t *testing.T) {
 	in := []byte(`(. "Hello World!")`)
-	l := lexer.NewLexer(in)
+	l := lexer.New(in)
 	token := l.Lex()
 
 	p := NewParser(token)
@@ -35,7 +35,7 @@ func TestParserErrors(t *testing.T) {
 	}
 	for _, s := range in {
 		t.Run(s, func(t *testing.T) {
-			l := lexer.NewLexer([]byte(s))
+			l := lexer.New([]byte(s))
 			p := NewParser(l.Lex())
 			a := p.Parse()
 			if !p.HasError || len(a) != 0 {

@@ -9,7 +9,7 @@ import (
 
 func TestLexerHelloWorld(t *testing.T) {
 	in := []byte(`(. "Hello World!")`)
-	l := NewLexer(in)
+	l := New(in)
 	tok := l.Lex()
 	if len(tok) == 0 {
 		t.Error("Lexer found error, token empty")
@@ -41,7 +41,7 @@ func TestLexerFloats(t *testing.T) {
 	}
 	for _, v := range in {
 		t.Run(v, func(t *testing.T) {
-			l := NewLexer([]byte(v))
+			l := New([]byte(v))
 			o := l.Lex()
 			if l.HasError || len(o) == 0 {
 				t.Fatalf("failed to lex float for input '%s'\n", v)
@@ -55,7 +55,7 @@ func TestLexerFloats(t *testing.T) {
 
 func TestLexerIdent(t *testing.T) {
 	in := []byte(`b a abc abcdefghijklmnopqrstuvwxyz`)
-	l := NewLexer(in)
+	l := New(in)
 	to := l.Lex()
 	if len(to) == 0 {
 		t.Error("Lexer found error, token empty")
@@ -89,7 +89,7 @@ func TestLexerIdent(t *testing.T) {
 
 func TestLexerOperators(t *testing.T) {
 	in := []byte(`.+-/*%:()?=|&!`)
-	l := NewLexer(in)
+	l := New(in)
 	tok := l.Lex()
 	if len(tok) == 0 {
 		t.Error("Lexer found error, token empty")
@@ -122,7 +122,7 @@ func TestLexerOperators(t *testing.T) {
 
 func TestLexerArithmetic(t *testing.T) {
 	in := []byte(`(+ 1 (* 1 (/ 1 (% 1))))`)
-	l := NewLexer(in)
+	l := New(in)
 	tok := l.Lex()
 	if len(tok) == 0 {
 		t.Error("Lexer found error, token empty")
@@ -164,7 +164,7 @@ func TestLexerIgnoreCharsAndComments(t *testing.T) {
 	}
 	for _, v := range in {
 		t.Run(v, func(t *testing.T) {
-			l := NewLexer([]byte(v))
+			l := New([]byte(v))
 			o := l.Lex()
 			if len(o) != 1 {
 				t.Errorf("lexer output for '%s' should be empty due to a comment, but contains '%v' of size '%d'", v, o, len(o))
@@ -184,7 +184,7 @@ func TestLexerErrorsOnUnknownTokenAndIntegers(t *testing.T) {
 	}
 	for _, v := range in {
 		t.Run(v, func(t *testing.T) {
-			l := NewLexer([]byte(v))
+			l := New([]byte(v))
 			o := l.Lex()
 			if len(o) != 1 {
 				t.Errorf("lexer output for '%s' should be empty due to a syntax error, but contains '%v' of size '%d'", v, o, len(o))
@@ -195,7 +195,7 @@ func TestLexerErrorsOnUnknownTokenAndIntegers(t *testing.T) {
 
 func TestLexerBooleans(t *testing.T) {
 	in := []byte(`true false`)
-	l := NewLexer(in)
+	l := New(in)
 	tok := l.Lex()
 	if len(tok) == 0 {
 		t.Error("Lexer found error, token empty")

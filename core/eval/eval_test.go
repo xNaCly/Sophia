@@ -38,7 +38,7 @@ func TestEvalAritmetic(t *testing.T) {
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
-			l := lexer.NewLexer([]byte(i.str))
+			l := lexer.New([]byte(i.str))
 			p := parser.NewParser(l.Lex())
 			r := Eval(p.Parse())
 			if len(r) == 0 {
@@ -83,7 +83,7 @@ func TestEvalVariables(t *testing.T) {
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
-			l := lexer.NewLexer([]byte(i.str))
+			l := lexer.New([]byte(i.str))
 			p := parser.NewParser(l.Lex())
 			r := Eval(p.Parse())
 			if len(r) == 0 {
@@ -152,7 +152,7 @@ func TestEvalConditional(t *testing.T) {
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
-			l := lexer.NewLexer([]byte(i.str))
+			l := lexer.New([]byte(i.str))
 			p := parser.NewParser(l.Lex())
 			r := Eval(p.Parse())
 			if len(r) == 0 {
