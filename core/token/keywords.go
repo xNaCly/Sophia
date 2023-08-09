@@ -14,4 +14,5 @@ var EXPECTED_KEYWORDS = []int{
 	OR,
 	AND,
 	NEG,
+	CONCAT,
 }

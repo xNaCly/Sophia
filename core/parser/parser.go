@@ -115,6 +115,11 @@ func (p *Parser) parseStatment() expr.Node {
 			Name:  ident.GetToken().Raw,
 			Value: childs[1:],
 		}
+	case token.CONCAT:
+		stmt = &expr.Concat{
+			Token:    op,
+			Children: childs,
+		}
 	case token.EQUAL:
 		stmt = &expr.Equal{
 			Token:    op,

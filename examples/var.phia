@@ -26,6 +26,11 @@
     (. bool)
 )
 
+;; string concatination
+(: world "world")
+(: ex "!")
+(. 
+    (, "hello" world ex))
 ;; ------------- functions ------------- 
 
 ;; defining a function 

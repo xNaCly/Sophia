@@ -64,6 +64,8 @@ func (l *Lexer) Lex() []token.Token {
 			ttype = token.OR
 		case '!':
 			ttype = token.NEG
+		case ',':
+			ttype = token.CONCAT
 		case '&':
 			ttype = token.AND
 		case '=':
