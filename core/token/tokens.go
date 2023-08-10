@@ -19,6 +19,8 @@ const (
 	AND         // &
 	NEG         // !
 	CONCAT      // ,
+	FUNC        // #
+	PARAM       // _
 	IDENT       // ([a-z]|_)+
 	BOOL        // true | false
 	EOF
@@ -41,6 +43,8 @@ var TOKEN_NAME_MAP = map[int]string{
 	NEG:         "!",
 	AND:         "&",
 	CONCAT:      ",",
+	FUNC:        "$",
+	PARAM:       "_",
 	IDENT:       "IDENT",
 	LEFT_BRACE:  "(",
 	RIGHT_BRACE: ")",

@@ -29,7 +29,10 @@ func isType[T any](in any) (T, bool) {
 func extractChild(n Node, op int) float64 {
 	var val float64
 	if idt, ok := isType[*Ident](n); ok {
-		arr := castPanicIfNotType[[]interface{}](idt.Eval(), op)
+		arr, ok := isType[[]interface{}](idt.Eval())
+		if !ok {
+			val = castPanicIfNotType[float64](n.Eval(), op)
+		}
 		for i, item := range arr {
 			t := castPanicIfNotType[float64](item, op)
 			if i == 0 {

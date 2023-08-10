@@ -169,3 +169,46 @@ func TestEvalConditional(t *testing.T) {
 		})
 	}
 }
+
+func TestEvalFunction(t *testing.T) {
+	input := []struct {
+		str string
+		exp string
+	}{
+		{
+			str: "($ square (_ a) (* a a))(square 12)",
+			exp: "144",
+		},
+		{
+			str: "($ sum (_ a b) (+ a b))(sum 12 12)",
+			exp: "24",
+		},
+		{
+			str: "($ print (_ a) (. a))(: y 12 23 12)(print y)",
+			exp: "<nil>",
+		},
+		{
+			str: `($ concat (_ a) (, a))(: y "a" "b" "c" "d")(concat y)`,
+			exp: "abcd",
+		},
+	}
+	for _, i := range input {
+		t.Run(i.str, func(t *testing.T) {
+			l := lexer.New([]byte(i.str))
+			p := parser.New(l.Lex())
+			r := Eval(p.Parse())
+			if l.HasError || p.HasError {
+				t.Errorf("lexer or parser error for %q", i.str)
+				return
+			}
+			if len(r) == 0 {
+				t.Errorf("eval result empty for %q", i.str)
+				return
+			}
+			got := r[len(r)-1]
+			if i.exp != got {
+				t.Errorf("got %q, wanted %q", got, i.exp)
+			}
+		})
+	}
+}

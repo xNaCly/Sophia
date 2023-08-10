@@ -68,6 +68,10 @@ func (l *Lexer) Lex() []token.Token {
 			ttype = token.CONCAT
 		case '&':
 			ttype = token.AND
+		case '$':
+			ttype = token.FUNC
+		case '_':
+			ttype = token.PARAM
 		case '=':
 			ttype = token.EQUAL
 		case ' ', '\t', '\r', '\n':
@@ -88,7 +92,7 @@ func (l *Lexer) Lex() []token.Token {
 				continue
 			}
 		default:
-			if unicode.IsLetter(rune(l.chr)) || l.chr == '_' {
+			if unicode.IsLetter(rune(l.chr)) {
 				t = append(t, l.ident())
 				continue
 			} else if unicode.IsDigit(rune(l.chr)) || l.chr == '.' {
@@ -109,6 +113,7 @@ func (l *Lexer) Lex() []token.Token {
 			Pos:  l.pos,
 			Type: ttype,
 			Line: l.line,
+			Raw:  string(l.chr),
 		})
 
 		l.advance()

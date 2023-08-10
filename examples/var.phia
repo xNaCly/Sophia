@@ -34,10 +34,15 @@
 ;; ------------- functions ------------- 
 
 ;; defining a function 
-;;(# 
-;;    square 
-;;    (a) ;; <- parameters, which can be a list such as (a b)
-;;    (* a a) ;; <- function body, which always returns the outer most statement
-;;)
+($ 
+    square 
+    (_ a) ;; <- parameters
+    (* a a) ;; <- function body, which always returns the outer most statement
+)
+
+(. 
+    "function call:"
+    (square 12))
+
 
 ;; vim: syntax=lisp

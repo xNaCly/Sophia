@@ -22,10 +22,6 @@ func (v *Var) Eval() any {
 		val[i] = c.Eval()
 	}
 
-	if _, ok := consts.SYMBOL_TABLE[v.Name]; ok {
-		consts.SYMBOL_TABLE[v.Name] = val
-	} else {
-		consts.SYMBOL_TABLE[v.Name] = val
-	}
+	consts.SYMBOL_TABLE[v.Name] = val
 	return val
 }

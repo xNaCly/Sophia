@@ -86,6 +86,46 @@ func (p *Parser) parseStatment() expr.Node {
 	}
 
 	switch op.Type {
+	case token.IDENT:
+		stmt = &expr.Call{
+			Token:  op,
+			Params: childs,
+		}
+	case token.PARAM:
+		for _, c := range childs {
+			t := c.GetToken().Type
+			if t != token.IDENT {
+				log.Printf("err: expected identifier for parameter definition, got %q", token.TOKEN_NAME_MAP[t])
+				p.HasError = true
+				return nil
+			}
+		}
+		stmt = &expr.Params{
+			Token:    op,
+			Children: childs,
+		}
+	case token.FUNC:
+		if len(childs) < 2 {
+			log.Printf("err: expected at least two argument for function definition, got %d", len(childs))
+			p.HasError = true
+			return nil
+		}
+		if childs[0].GetToken().Type != token.IDENT {
+			log.Printf("err: expected the first argument for function definition to be of type IDENT, got %q", token.TOKEN_NAME_MAP[childs[0].GetToken().Type])
+			p.HasError = true
+			return nil
+		}
+		if childs[1].GetToken().Type != token.PARAM {
+			log.Printf("err: expected the second argument for function definition to be of type PARAM, got %q", token.TOKEN_NAME_MAP[childs[0].GetToken().Type])
+			p.HasError = true
+			return nil
+		}
+		stmt = &expr.Func{
+			Token:  op,
+			Name:   childs[0],
+			Params: childs[1],
+			Body:   childs[2:],
+		}
 	case token.IF:
 		if len(childs) == 0 {
 			log.Printf("err: expected at least two argument for condition, got %d", len(childs))

@@ -8,12 +8,15 @@ article](https://xnacly.me/posts/2023/write-your-own-programming-language/) for
 a short overview.
 
 ```lisp
-(: a 1)
-(: b 1)
-(?
-    (= a b)
-    (. "a equal b")
+($
+    square
+    (_ t)
+    (* t t)
 )
+(: a 12)
+(.
+    "a*a is"
+    (square 12))
 ```
 
 ## Try
@@ -85,12 +88,8 @@ sophia -exp '(. "Hello World!")'
 | `&`     | returns true if all arguments are true                                                                              |
 | `\|`    | returns true if one of the arguments is true                                                                        |
 | `!`     | negates the first argument, returns the first argument                                                              |
-
-#### Planned keywords:
-
-| keyword | description                                                                                                   |
-| ------- | ------------------------------------------------------------------------------------------------------------- |
-| `#`     | defines a function, with the first argument as the name, the second as the argument and the third as the body |
+| `$`     | defines a function, first param name, second param parameters, rest function body                                   |
+| `_`     | defines the parameters of a function                                                                                |
 
 ### Execution direction
 
@@ -111,4 +110,4 @@ All execution is done left to right, meaning:
 - [x] evaluation
 - [x] variables
 - [x] controlflow
-- [ ] functions
+- [x] functions

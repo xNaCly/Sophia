@@ -15,4 +15,7 @@ var EXPECTED_KEYWORDS = []int{
 	AND,
 	NEG,
 	CONCAT,
+	FUNC,
+	PARAM,
+	IDENT,
 }
