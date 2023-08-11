@@ -10,6 +10,5 @@ func Eval(ast []expr.Node) []string {
 	for i, c := range ast {
 		out[i] = fmt.Sprint(c.Eval())
 	}
-	fmt.Println(out)
 	return out
 }

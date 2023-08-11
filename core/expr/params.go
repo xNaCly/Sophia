@@ -12,6 +12,5 @@ func (p *Params) GetToken() token.Token {
 }
 
 func (p *Params) Eval() any {
-	// TODO: add params to symbol table, somehow :(
 	return nil
 }
