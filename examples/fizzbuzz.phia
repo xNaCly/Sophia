@@ -1,29 +1,19 @@
-(fun fizzBuzz (_) 
-    (let modThree (eq 0 (% i 3)))
-    (let modFive (eq 0 (% i 5)))
+(fun fizzBuzz (_ n)
+    (let modThree (eq 0 (% n 3)))
+    (let modFive (eq 0 (% n 5)))
 
-    (if modThree
-         (put "Fizz"))
+    (if modThree (put "Fizz"))
 
-    (if modFive
-         (put "Buzz"))
+    (if modFive (put "Buzz"))
 
-    (if (and modThree modFive)
+    (if (and modThree modFive) 
         (put "FizzBuzz"))
 
-    (if 
-        (and 
-            (not modThree) 
-            (not modFive))
-        (put i))
+    (if (and (not modThree) (not modFive))
+        (put n))
 
-    (if (not (eq i 15))
-        (let i 
-            (+ i 1))
-        (fizzBuzz))
+    (if (not (eq n 15)) 
+        (fizzBuzz (+ n 1)))
 )
-
-(let i 1)
-(fizzBuzz)
-
+(fizzBuzz 1)
 ;; vim: syntax=lisp
