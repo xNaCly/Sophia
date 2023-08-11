@@ -15,9 +15,13 @@ func (s *Sub) Eval() any {
 	if len(s.Children) == 0 {
 		return 0.0
 	}
-	res := extractChild(s.Children[0], token.SUB)
-	for _, c := range s.Children[1:] {
-		res -= extractChild(c, token.SUB)
+	res := 0.0
+	for i, c := range s.Children {
+		if i == 0 {
+			res = castPanicIfNotType[float64](c.Eval(), token.SUB)
+		} else {
+			res -= castPanicIfNotType[float64](c.Eval(), token.SUB)
+		}
 	}
 	return res
 }

@@ -17,9 +17,14 @@ func (v *Var) GetToken() token.Token {
 }
 
 func (v *Var) Eval() any {
-	val := make([]any, len(v.Value))
-	for i, c := range v.Value {
-		val[i] = c.Eval()
+	var val any
+	if len(v.Value) > 1 {
+		val = make([]any, len(v.Value))
+		for i, c := range v.Value {
+			val.([]any)[i] = c.Eval()
+		}
+	} else {
+		val = v.Value[0].Eval()
 	}
 
 	consts.SYMBOL_TABLE[v.Name] = val
