@@ -1,15 +1,15 @@
 ;; ------------- arithmetics ------------- 
-(. 
+(put 
     "1+2=" (+ 1 2))
-(. 
+(put 
     "1-2=" (- 1 2))
-(. 
+(put 
     "1*2=" (* 1 2))
-(.
+(put
     "1/2=" (/ 1 2))
 
 ;; remainder operator
-(. 
+(put 
     "1%2=" (% 1 2))
 
 ;; nested operations are of course possible

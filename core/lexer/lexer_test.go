@@ -6,7 +6,7 @@ import (
 )
 
 func TestLexerHelloWorld(t *testing.T) {
-	in := []byte(`(. "Hello World!")`)
+	in := []byte(`(put "Hello World!")`)
 	l := New(in)
 	tok := l.Lex()
 	if len(tok) == 0 {
@@ -86,7 +86,7 @@ func TestLexerIdent(t *testing.T) {
 }
 
 func TestLexerOperators(t *testing.T) {
-	in := []byte(`.+-/*%:()?=|&!,$_`)
+	in := []byte(`put +-/*% let () if eq or and not concat fun _`)
 	l := New(in)
 	tok := l.Lex()
 	if len(tok) == 0 {
@@ -100,7 +100,7 @@ func TestLexerOperators(t *testing.T) {
 		token.DIV,
 		token.MUL,
 		token.MOD,
-		token.COLON,
+		token.LET,
 		token.LEFT_BRACE,
 		token.RIGHT_BRACE,
 		token.IF,

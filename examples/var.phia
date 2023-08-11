@@ -1,45 +1,45 @@
 ;; ------------- variables ------------- 
 
-(.
+(put
     "pi:"
-    (:                  ;; <- definition keyword
+    (let                  ;; <- definition keyword
         pi              ;; <- variable name
         3.1514          ;; <- variable value
     )
 )
 
-(. 
+(put 
     "pi*pi" (* pi pi))
 
-(. 
+(put 
     "version:" 
-    (: v "v1.1.1")      ;; <- defining a string variable 
+    (let v "v1.1.1")      ;; <- defining a string variable 
     v
-    (: v "1")           ;; <- multable variables
+    (let v "1")           ;; <- multable variables
     v
 )
 
-(. 
+(put 
     "boolean variables:"
-    (: bool true)
-    (. bool)
+    (let bool true)
+    (put bool)
 )
 
 ;; string concatination
-(: world "world")
-(: ex "!")
-(. 
-    (, "hello" " " world " "ex))
+(let world "world")
+(let ex "!")
+(put 
+    (concat "hello" " " world " "ex))
 ;; ------------- functions ------------- 
 
 ;; defining a function 
-($ 
+(fun
     square 
     (_ a) ;; <- parameters
     (* a a) ;; <- function body, which always returns the outer most statement
 )
 
-(. 
+(put 
     "function call:"
     (square 12))
 

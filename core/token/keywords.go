@@ -8,7 +8,7 @@ var EXPECTED_KEYWORDS = []int{
 	MUL,
 	MOD,
 	PUT,
-	COLON,
+	LET,
 	IF,
 	EQUAL,
 	OR,
@@ -18,4 +18,18 @@ var EXPECTED_KEYWORDS = []int{
 	FUNC,
 	PARAM,
 	IDENT,
+}
+
+var KEYWORD_MAP = map[string]int{
+	"put":    PUT,
+	"let":    LET,
+	"if":     IF,
+	"eq":     EQUAL,
+	"or":     OR,
+	"and":    AND,
+	"not":    NEG,
+	"concat": CONCAT,
+	"fun":    FUNC,
+	"param":  PARAM,
+	"ident":  IDENT,
 }

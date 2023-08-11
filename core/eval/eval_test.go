@@ -62,27 +62,27 @@ func TestEvalVariables(t *testing.T) {
 		exp string
 	}{
 		{
-			str: "(: a 6)",
+			str: "(let a 6)",
 			exp: "6",
 		},
 		{
-			str: "(: b 1 2 3)",
+			str: "(let b 1 2 3)",
 			exp: "[1 2 3]",
 		},
 		{
-			str: "(: c (* 5 5))",
+			str: "(let c (* 5 5))",
 			exp: "25",
 		},
 		{
-			str: "(: d (: e (+ 5 5)))",
+			str: "(let d (let e (+ 5 5)))",
 			exp: "10",
 		},
 		{
-			str: "(: f true)",
+			str: "(let f true)",
 			exp: "true",
 		},
 		{
-			str: "(: g false)",
+			str: "(let g false)",
 			exp: "false",
 		},
 	}
@@ -107,51 +107,51 @@ func TestEvalConditional(t *testing.T) {
 		exp string
 	}{
 		{
-			str: "(? true (. 1))",
+			str: "(if true (put 1))",
 			exp: "<nil>",
 		},
 		{
-			str: "(? true (: a 5)(. a))",
+			str: "(if true (let a 5)(put a))",
 			exp: "<nil>",
 		},
 		{
-			str: "(= 1 2)",
+			str: "(eq 1 2)",
 			exp: "false",
 		},
 		{
-			str: "(= true false)",
+			str: "(eq true false)",
 			exp: "false",
 		},
 		{
-			str: "(& true true)",
+			str: "(and true true)",
 			exp: "true",
 		},
 		{
-			str: "(& false true)",
+			str: "(and false true)",
 			exp: "false",
 		},
 		{
-			str: "(& false false)",
+			str: "(and false false)",
 			exp: "false",
 		},
 		{
-			str: "(| true true)",
+			str: "(or true true)",
 			exp: "true",
 		},
 		{
-			str: "(| false true)",
+			str: "(or false true)",
 			exp: "true",
 		},
 		{
-			str: "(| false false)",
+			str: "(or false false)",
 			exp: "false",
 		},
 		{
-			str: "(! false)",
+			str: "(not false)",
 			exp: "true",
 		},
 		{
-			str: "(! true)",
+			str: "(not true)",
 			exp: "false",
 		},
 	}
@@ -176,19 +176,19 @@ func TestEvalFunction(t *testing.T) {
 		exp string
 	}{
 		{
-			str: "($ square (_ a) (* a a))(square 12)",
+			str: "(fun square (_ a) (* a a))(square 12)",
 			exp: "144",
 		},
 		{
-			str: "($ sum (_ a b) (+ a b))(sum 12 12)",
+			str: "(fun sum (_ a b) (+ a b))(sum 12 12)",
 			exp: "24",
 		},
 		{
-			str: "($ print (_ a) (. a))(: y 12 23 12)(print y)",
+			str: "(fun print (_ a) (put a))(let y 12 23 12)(print y)",
 			exp: "<nil>",
 		},
 		{
-			str: `($ concat (_ a b c) (, a b c))(: y "a")(concat y y y)`,
+			str: `(fun conc (_ a b c) (concat a b c))(let y "a")(conc y y y)`,
 			exp: "aaa",
 		},
 	}

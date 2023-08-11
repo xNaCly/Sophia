@@ -40,8 +40,6 @@ func (l *Lexer) Lex() []token.Token {
 		ttype := token.UNKNOWN
 
 		switch l.chr {
-		case '.':
-			ttype = token.PUT
 		case '+':
 			ttype = token.ADD
 		case '-':
@@ -50,30 +48,14 @@ func (l *Lexer) Lex() []token.Token {
 			ttype = token.DIV
 		case '*':
 			ttype = token.MUL
-		case ':':
-			ttype = token.COLON
 		case '%':
 			ttype = token.MOD
 		case '(':
 			ttype = token.LEFT_BRACE
 		case ')':
 			ttype = token.RIGHT_BRACE
-		case '?':
-			ttype = token.IF
-		case '|':
-			ttype = token.OR
-		case '!':
-			ttype = token.NEG
-		case ',':
-			ttype = token.CONCAT
-		case '&':
-			ttype = token.AND
-		case '$':
-			ttype = token.FUNC
 		case '_':
 			ttype = token.PARAM
-		case '=':
-			ttype = token.EQUAL
 		case ' ', '\t', '\r', '\n':
 			if l.chr == '\n' {
 				l.linepos = 0
@@ -220,6 +202,9 @@ func (l *Lexer) ident() token.Token {
 		ttype = token.BOOL
 	default:
 		ttype = token.IDENT
+	}
+	if tokenType, ok := token.KEYWORD_MAP[str]; ok {
+		ttype = tokenType
 	}
 	return token.Token{
 		Pos:  l.pos - len(str),

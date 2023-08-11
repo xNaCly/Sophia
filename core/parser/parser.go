@@ -138,7 +138,7 @@ func (p *Parser) parseStatment() expr.Node {
 			Condition: cond,
 			Body:      childs[1:],
 		}
-	case token.COLON:
+	case token.LET:
 		if len(childs) == 0 {
 			log.Printf("err: expected at least one argument for variable declaration, got %d", len(childs))
 			p.HasError = true

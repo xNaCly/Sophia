@@ -6,7 +6,7 @@ import (
 )
 
 func TestParserHelloWorld(t *testing.T) {
-	in := []byte(`(. "Hello World!")`)
+	in := []byte(`(put "Hello World!")`)
 	l := lexer.New(in)
 	token := l.Lex()
 
