@@ -1,19 +1,29 @@
+;; function fizzBuzz accepts one argument
 (fun fizzBuzz (_ n)
+    ;; declare mod3 which contains n%3==0
     (let mod3 (eq 0 (% n 3)))
+
+    ;; declare mod3 which contains n%5==0
     (let mod5 (eq 0 (% n 5)))
 
-    (if mod3 (put "Fizz"))
+    (let r n)
 
-    (if mod5 (put "Buzz"))
+    (if mod3
+        (let r "Fizz"))
 
-    (if (and mod3 mod5) 
-        (put "FizzBuzz"))
+    (if mod5
+        (let r "Buzz")) 
 
-    (if (and (not mod3) (not mod5))
-        (put n))
+    (if (and mod3 mod5)
+        (let r "FizzBuzz"))
 
-    (if (not (eq n 15)) 
+    (put r)
+
+    ;; if n!=15 call fizzBuzz recursively with incremented n
+    (if (not (eq n 15))
         (fizzBuzz (+ n 1)))
 )
+
+;; initial fizzBuzz call with 1 as the starting value
 (fizzBuzz 1)
 ;; vim: syntax=lisp
