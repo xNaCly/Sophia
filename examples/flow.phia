@@ -2,52 +2,52 @@
 
 ;; -------------  conditional ------------- 
 
-(? 
+(if 
     true                    ;; <- condition
-    (. "the condition is true")     ;; <- executed if condition is met
+    (put "the condition is true")     ;; <- executed if condition is met
 )
 
-(? 
+(if 
     false                   ;; <- condition
-    (. "?") ;; <- executed if condition is met
+    (put "?") ;; <- executed if condition is met
 )
 
 ;; ------------- equal ------------- 
 ;; equals works for normal values, such as strings, floats, booleans
-(= 1 1)             ;; true
-(= "equal" "equal") ;; true
-(= true false)      ;; false
+(eq 1 1)             ;; true
+(eq "equal" "equal") ;; true
+(eq true false)      ;; false
 
 ;; and for variables
-(: a 1)
-(. 
+(let a 1)
+(put 
     "a == a -> "
-    (= a a))
+    (eq a a))
 
 ;; ------------- or ------------- 
 ;; works the same as equals, but only for booleans
-(| false true false) ;; true
+(or false true false) ;; true
 
-(: a false)
-(. 
+(let a false)
+(put 
     "a | a | true -> "
-    (| a a true))
+    (or a a true))
 
 ;; ------------- and ------------ 
-(& true false)      ;; false
+(and true false)      ;; false
 
-(: a true)
-(. 
+(let a true)
+(put 
     "a & a -> "
-    (& a a))
+    (and a a))
 
 ;; ----------- negation ----------- 
-(!                  ;; <- negates the first argument, evaluates to true
-    (= 1 2))        ;; <- evaluates to false
+(not                  ;; <- negates the first argument, evaluates to true
+    (eq 1 2))         ;; <- evaluates to false
 
-(. 
-    "!(&a) -> " 
-    (!              ;; <- evaluates to true
-        (= a)))     ;; <- evaluates to false
+(put 
+    "not (and a) -> " 
+    (not              ;; <- evaluates to true
+        (eq a)))      ;; <- evaluates to false
 
 ;; vim: syntax=lisp
