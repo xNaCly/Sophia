@@ -16,6 +16,11 @@ func (c *Call) GetToken() token.Token {
 }
 
 func (c *Call) Eval() any {
+	oldSymbols := map[string]any{}
+	for k, v := range consts.SYMBOL_TABLE {
+		oldSymbols[k] = v
+	}
+
 	storedFunc, ok := consts.FUNC_TABLE[c.Token.Raw]
 	if !ok {
 		panic(fmt.Sprintf("function %q not defined", c.Token.Raw))
@@ -34,17 +39,15 @@ func (c *Call) Eval() any {
 		}
 	}
 
-	// TODO: this is not smart, this overrides variables in the global symbol
-	// table, maybe prefix with hashes or the function name?
 	for i, arg := range c.Params {
 		consts.SYMBOL_TABLE[defParams.Children[i].GetToken().Raw] = arg.Eval()
 	}
 
-	// going out of scope, therefore we remove the parameter from the symbol table
+	// INFO: going out of scope, therefore we restore the previous state of the
+	// symbol table, due to the fact that we disallow functions with side
+	// effects
 	defer func() {
-		for _, param := range defParams.Children {
-			delete(consts.SYMBOL_TABLE, param.GetToken().Raw)
-		}
+		consts.SYMBOL_TABLE = oldSymbols
 	}()
 
 	for i, stmt := range def.Body {
