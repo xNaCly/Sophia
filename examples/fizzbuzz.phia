@@ -1,15 +1,15 @@
 (fun fizzBuzz (_ n)
-    (let modThree (eq 0 (% n 3)))
-    (let modFive (eq 0 (% n 5)))
+    (let mod3 (eq 0 (% n 3)))
+    (let mod5 (eq 0 (% n 5)))
 
-    (if modThree (put "Fizz"))
+    (if mod3 (put "Fizz"))
 
-    (if modFive (put "Buzz"))
+    (if mod5 (put "Buzz"))
 
-    (if (and modThree modFive) 
+    (if (and mod3 mod5) 
         (put "FizzBuzz"))
 
-    (if (and (not modThree) (not modFive))
+    (if (and (not mod3) (not mod5))
         (put n))
 
     (if (not (eq n 15)) 
