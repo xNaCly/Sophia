@@ -63,7 +63,7 @@ func TestEvalVariables(t *testing.T) {
 	}{
 		{
 			str: "(: a 6)",
-			exp: "[6]",
+			exp: "6",
 		},
 		{
 			str: "(: b 1 2 3)",
@@ -71,19 +71,19 @@ func TestEvalVariables(t *testing.T) {
 		},
 		{
 			str: "(: c (* 5 5))",
-			exp: "[25]",
+			exp: "25",
 		},
 		{
 			str: "(: d (: e (+ 5 5)))",
-			exp: "[[10]]",
+			exp: "10",
 		},
 		{
 			str: "(: f true)",
-			exp: "[true]",
+			exp: "true",
 		},
 		{
 			str: "(: g false)",
-			exp: "[false]",
+			exp: "false",
 		},
 	}
 	for _, i := range input {
@@ -188,8 +188,8 @@ func TestEvalFunction(t *testing.T) {
 			exp: "<nil>",
 		},
 		{
-			str: `($ concat (_ a) (, a))(: y "a" "b" "c" "d")(concat y)`,
-			exp: "abcd",
+			str: `($ concat (_ a b c) (, a b c))(: y "a")(concat y y y)`,
+			exp: "aaa",
 		},
 	}
 	for _, i := range input {

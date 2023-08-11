@@ -15,9 +15,13 @@ func (d *Div) Eval() any {
 	if len(d.Children) == 0 {
 		return 0.0
 	}
-	res := extractChild(d.Children[0], token.DIV)
-	for _, c := range d.Children[1:] {
-		res /= extractChild(c, token.DIV)
+	res := 0.0
+	for i, c := range d.Children {
+		if i == 0 {
+			res = castPanicIfNotType[float64](c.Eval(), token.DIV)
+		} else {
+			res /= castPanicIfNotType[float64](c.Eval(), token.DIV)
+		}
 	}
 	return res
 }

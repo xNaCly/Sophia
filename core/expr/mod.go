@@ -16,9 +16,13 @@ func (m *Mod) Eval() any {
 		return 0.0
 	}
 
-	res := extractChild(m.Children[0], token.MOD)
-	for _, c := range m.Children[1:] {
-		res = float64(int(res) % int(extractChild(c, token.MOD)))
+	res := 0
+	for i, c := range m.Children {
+		if i == 0 {
+			res = int(castPanicIfNotType[float64](c.Eval(), token.MOD))
+		} else {
+			res = res % int(castPanicIfNotType[float64](c.Eval(), token.MOD))
+		}
 	}
 	return res
 }
