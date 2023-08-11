@@ -24,5 +24,5 @@ func (m *Mod) Eval() any {
 			res = res % int(castPanicIfNotType[float64](c.Eval(), token.MOD))
 		}
 	}
-	return res
+	return float64(res)
 }
