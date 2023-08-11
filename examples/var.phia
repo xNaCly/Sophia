@@ -4,8 +4,7 @@
     "pi:"
     (:                  ;; <- definition keyword
         pi              ;; <- variable name
-        3.1514          ;; <- variable value 1
-        3.1514          ;; <- variable value 2
+        3.1514          ;; <- variable value
     )
 )
 
@@ -30,7 +29,7 @@
 (: world "world")
 (: ex "!")
 (. 
-    (, "hello" world ex))
+    (, "hello" " " world " "ex))
 ;; ------------- functions ------------- 
 
 ;; defining a function 

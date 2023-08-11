@@ -14,33 +14,29 @@
 
 ;; ------------- equal ------------- 
 ;; equals works for normal values, such as strings, floats, booleans
-(= 1 1)
-(= "equal" "equal")
-(= true true)
+(= 1 1)             ;; true
+(= "equal" "equal") ;; true
+(= true false)      ;; false
 
 ;; and for variables
-(: a 1 2)
+(: a 1)
 (. 
     "a == a -> "
     (= a a))
 
-;; but not how you think... Sophia merges the lists in the variables to compare
-;; into a singular list and checks if all elements in it are the same thats why
-;; a is not equal to a itself
-
 ;; ------------- or ------------- 
 ;; works the same as equals, but only for booleans
-(| false true false)
+(| false true false) ;; true
 
-(: a false false)
+(: a false)
 (. 
     "a | a | true -> "
     (| a a true))
 
 ;; ------------- and ------------ 
-(& true true)
+(& true false)      ;; false
 
-(: a true false)
+(: a true)
 (. 
     "a & a -> "
     (& a a))

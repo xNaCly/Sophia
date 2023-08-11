@@ -16,7 +16,8 @@ a short overview.
 (: a 12)
 (.
     "a*a is"
-    (square 12))
+    (square a))
+;; prints a*a is 144
 ```
 
 ## Try
