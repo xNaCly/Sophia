@@ -212,3 +212,35 @@ func TestEvalFunction(t *testing.T) {
 		})
 	}
 }
+
+// TODO: more tests
+func TestEvalLoop(t *testing.T) {
+	input := []struct {
+		str string
+		exp string
+	}{
+		{
+			str: "(let sum 0)(let arr 1 2 3 4 5 6 7 8 9)(for (_ e) arr (let sum (+ e sum)))(+ sum)",
+			exp: "45",
+		},
+	}
+	for _, i := range input {
+		t.Run(i.str, func(t *testing.T) {
+			l := lexer.New([]byte(i.str))
+			p := parser.New(l.Lex())
+			r := Eval(p.Parse())
+			if l.HasError || p.HasError {
+				t.Errorf("lexer or parser error for %q", i.str)
+				return
+			}
+			if len(r) == 0 {
+				t.Errorf("eval result empty for %q", i.str)
+				return
+			}
+			got := r[len(r)-1]
+			if i.exp != got {
+				t.Errorf("got %q, wanted %q", got, i.exp)
+			}
+		})
+	}
+}

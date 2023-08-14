@@ -22,9 +22,9 @@ func Repl(run func(input []byte) ([]string, error)) {
 		line := scanner.Bytes()
 		if line[0] == '~' {
 			switch string(line[1:]) {
-			case "symbols":
+			case "syms":
 				fmt.Printf("%#v\n", consts.SYMBOL_TABLE)
-			case "funcs":
+			case "funs":
 				fmt.Printf("%#v\n", consts.FUNC_TABLE)
 			case "debug":
 				CONF.Debug = !CONF.Debug

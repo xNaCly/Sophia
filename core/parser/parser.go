@@ -86,6 +86,30 @@ func (p *Parser) parseStatment() expr.Node {
 	}
 
 	switch op.Type {
+	case token.FOR:
+		if len(childs) < 2 {
+			log.Printf("err: expected two argument for loop definition, got %d", len(childs))
+			p.HasError = true
+			return nil
+		}
+		params := childs[0]
+		if params.GetToken().Type != token.PARAM {
+			log.Printf("err: expected the first argument for loop definition to be of type PARAM, got %q", token.TOKEN_NAME_MAP[childs[0].GetToken().Type])
+			p.HasError = true
+			return nil
+		}
+		if len(params.(*expr.Params).Children) != 1 {
+			log.Printf("err: expected one parameter for loop definition, got %d", len(params.(*expr.Params).Children))
+			p.HasError = true
+			return nil
+		}
+		// TODO: check if first is of type params
+		stmt = &expr.For{
+			Token:    op,
+			Params:   params,
+			LoopOver: childs[1],
+			Body:     childs[2:],
+		}
 	case token.IDENT:
 		stmt = &expr.Call{
 			Token:  op,

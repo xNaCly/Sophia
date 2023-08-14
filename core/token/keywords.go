@@ -18,6 +18,7 @@ var EXPECTED_KEYWORDS = []int{
 	FUNC,
 	PARAM,
 	IDENT,
+	FOR,
 }
 
 var KEYWORD_MAP = map[string]int{
@@ -30,6 +31,7 @@ var KEYWORD_MAP = map[string]int{
 	"not":    NEG,
 	"concat": CONCAT,
 	"fun":    FUNC,
+	"for":    FOR,
 	"param":  PARAM,
 	"ident":  IDENT,
 }

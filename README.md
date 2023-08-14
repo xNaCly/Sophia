@@ -97,6 +97,7 @@ sophia -exp '(put "Hello World!")'
 | `or`     | returns true if one of the arguments is true                                                                        |
 | `not`    | negates the first argument, returns the first argument                                                              |
 | `fun`    | defines a function, first param name, second param parameters, rest function body                                   |
+| `for`    | defines a loop, first param element, second arguemnt value to iterate over, rest loop body                          |
 | `_`      | defines the parameters of a function                                                                                |
 
 ### Execution direction

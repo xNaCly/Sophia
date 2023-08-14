@@ -20,6 +20,7 @@ const (
 	NEG
 	CONCAT
 	FUNC
+	FOR
 	PARAM // _
 	IDENT // ([a-z]|_)+
 	BOOL  // true | false
@@ -44,6 +45,7 @@ var TOKEN_NAME_MAP = map[int]string{
 	AND:         "and",
 	CONCAT:      "concat",
 	FUNC:        "fun",
+	FOR:         "for",
 	PARAM:       "_",
 	IDENT:       "IDENT",
 	LEFT_BRACE:  "(",

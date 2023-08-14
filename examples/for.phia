@@ -1,0 +1,6 @@
+(let sum 0)
+(let arr 1 2 3 4 5 6 7 8 9)
+(for (_ e d) arr
+    (let sum (+ e sum)))    
+(put sum)
+;; vim: syntax=lisp
