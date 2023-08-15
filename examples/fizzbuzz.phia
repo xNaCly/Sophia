@@ -1,3 +1,26 @@
+;; ------- iterative -------
+(for (_ n) 0..15
+    ;; declare mod3 which contains n%3==0
+    (let mod3 (eq 0 (% n 3)))
+
+    ;; declare mod3 which contains n%5==0
+    (let mod5 (eq 0 (% n 5)))
+
+    (let r n)
+
+    (if mod3
+        (let r "Fizz"))
+
+    (if mod5
+        (let r "Buzz")) 
+
+    (if (and mod3 mod5)
+        (let r "FizzBuzz"))
+
+    (put r))
+
+(put "--------------")
+;; ------- recursive -------
 ;; function fizzBuzz accepts one argument
 (fun fizzBuzz (_ n)
     ;; declare mod3 which contains n%3==0

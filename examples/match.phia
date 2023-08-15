@@ -1,0 +1,18 @@
+;; this is currently not implemented, and therefore only a proposal
+(for (_ i) 1..100
+    (let mod3 (eq 0 (% n 3)))
+    (let mod5 (eq 0 (% n 5)))
+
+    ;; creates a match environment which contains guards, similar to a switch
+    ;; or a match in languages like c or rust
+    (match 
+        ;; | creates a guard, the guard returns the second argument if
+        ;; the first evaluates to true
+        (| (and mod3 mod5) (put "FizzBuzz"))
+        (| mod3 (put "Fizz"))
+        (| mod5 (put "Buzz"))
+        ;; the statement in a match environment which isn't a guard is
+        ;; evaluated and returned if no other guard is matched
+        (put i)
+))
+;; vim: syntax=lisp

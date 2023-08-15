@@ -23,6 +23,8 @@ func (v *Var) Eval() any {
 		for i, c := range v.Value {
 			val.([]any)[i] = c.Eval()
 		}
+	} else if len(v.Value) == 0 {
+		val = nil
 	} else {
 		val = v.Value[0].Eval()
 	}
