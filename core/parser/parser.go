@@ -115,6 +115,26 @@ func (p *Parser) parseStatment() expr.Node {
 			Token:  op,
 			Params: childs,
 		}
+	case token.LT:
+		if len(childs) != 2 {
+			log.Printf("err: expected exactly two statements for less than comparison, got %d", len(childs))
+			p.HasError = true
+			return nil
+		}
+		stmt = &expr.Lt{
+			Token:    op,
+			Children: childs,
+		}
+	case token.GT:
+		if len(childs) != 2 {
+			log.Printf("err: expected exactly two statements for greater than comparison, got %d", len(childs))
+			p.HasError = true
+			return nil
+		}
+		stmt = &expr.Gt{
+			Token:    op,
+			Children: childs,
+		}
 	case token.PARAM:
 		for _, c := range childs {
 			t := c.GetToken().Type

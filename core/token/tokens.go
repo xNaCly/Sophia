@@ -2,12 +2,12 @@ package token
 
 const (
 	UNKNOWN = iota + 1
-	FLOAT   // 0.0
-	STRING  // "text"
-	ADD     // +
-	SUB     // -
-	DIV     // /
-	MUL     // *
+	FLOAT
+	STRING
+	ADD
+	SUB
+	DIV
+	MUL
 	PUT
 	MOD
 	LET
@@ -21,6 +21,8 @@ const (
 	CONCAT
 	FUNC
 	FOR
+	LT
+	GT
 	PARAM // _
 	IDENT // ([a-z]|_)+
 	BOOL  // true | false
@@ -29,8 +31,8 @@ const (
 
 var TOKEN_NAME_MAP = map[int]string{
 	UNKNOWN:     "UNKNOWN",
-	FLOAT:       "FLOAT",
-	STRING:      "STRING",
+	FLOAT:       "float",
+	STRING:      "string",
 	ADD:         "+",
 	SUB:         "-",
 	DIV:         "/",
@@ -46,10 +48,12 @@ var TOKEN_NAME_MAP = map[int]string{
 	CONCAT:      "concat",
 	FUNC:        "fun",
 	FOR:         "for",
+	LT:          "lt",
+	GT:          "gt",
 	PARAM:       "_",
-	IDENT:       "IDENT",
+	IDENT:       "identifier",
 	LEFT_BRACE:  "(",
 	RIGHT_BRACE: ")",
-	BOOL:        "BOOL",
-	EOF:         "EOF",
+	BOOL:        "bool",
+	EOF:         "End of file",
 }

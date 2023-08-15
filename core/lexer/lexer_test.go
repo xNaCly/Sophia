@@ -86,7 +86,7 @@ func TestLexerIdent(t *testing.T) {
 }
 
 func TestLexerOperators(t *testing.T) {
-	in := []byte(`put +-/*% let () if eq or and not concat fun _ for`)
+	in := []byte(`put +-/*% let () if eq or and not concat fun _ for gt lt`)
 	l := New(in)
 	tok := l.Lex()
 	if len(tok) == 0 {
@@ -112,6 +112,8 @@ func TestLexerOperators(t *testing.T) {
 		token.FUNC,
 		token.PARAM,
 		token.FOR,
+		token.GT,
+		token.LT,
 		token.EOF,
 	}
 

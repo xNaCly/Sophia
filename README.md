@@ -89,16 +89,18 @@ sophia -exp '(put "Hello World!")'
 | `*`      | multiplies all arguments                                                                                            |
 | `/`      | divides all arguments                                                                                               |
 | `%`      | modulo all arguments                                                                                                |
-| `concat` | concatinate strings, returns combination of arguments as string                                                     |
 | `let`    | defines a variable, with the first argument as the name and the remaining argument as the value                     |
-| `if`     | defines a condition, evaluates the first argument, evaluates all following argument if the first argument is truthy |
 | `eq`     | returns true if all arguments are equal to each other                                                               |
+| `lt`     | returns true if the first argument is less than the second                                                          |
+| `gt`     | returns true if the first argument is greater than the second                                                       |
+| `if`     | defines a condition, evaluates the first argument, evaluates all following argument if the first argument is truthy |
 | `and`    | returns true if all arguments are true                                                                              |
 | `or`     | returns true if one of the arguments is true                                                                        |
 | `not`    | negates the first argument, returns the first argument                                                              |
+| `_`      | defines the parameters of a function                                                                                |
 | `fun`    | defines a function, first param name, second param parameters, rest function body                                   |
 | `for`    | defines a loop, first param element, second arguemnt value to iterate over, rest loop body                          |
-| `_`      | defines the parameters of a function                                                                                |
+| `concat` | concatinate strings, returns combination of arguments as string                                                     |
 
 ### Execution direction
 

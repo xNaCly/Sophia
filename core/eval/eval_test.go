@@ -123,6 +123,22 @@ func TestEvalConditional(t *testing.T) {
 			exp: "false",
 		},
 		{
+			str: "(lt 10 1)",
+			exp: "false",
+		},
+		{
+			str: "(gt 1 10)",
+			exp: "false",
+		},
+		{
+			str: "(lt 1 10)",
+			exp: "true",
+		},
+		{
+			str: "(gt 10 1)",
+			exp: "true",
+		},
+		{
 			str: "(and true true)",
 			exp: "true",
 		},

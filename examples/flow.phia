@@ -3,26 +3,30 @@
 ;; -------------  conditional ------------- 
 
 (if 
-    true                    ;; <- condition
-    (put "the condition is true")     ;; <- executed if condition is met
+    true             ;; <- condition
+    (put "the condition is true")
 )
 
 (if 
-    false                   ;; <- condition
-    (put "?") ;; <- executed if condition is met
+    false            ;; <- condition
+    (put "?")        ;; <- executed if condition is met
 )
 
-;; ------------- equal ------------- 
-;; equals works for normal values, such as strings, floats, booleans
+;; ------------- comparison ------------- 
 (eq 1 1)             ;; true
 (eq "equal" "equal") ;; true
 (eq true false)      ;; false
+(lt 10 1)            ;; false
+(gt 1 10)            ;; false
+(lt 1 10)            ;; true
+(gt 10 1)            ;; true
 
 ;; and for variables
 (let a 1)
 (put 
     "a == a -> "
     (eq a a))
+
 
 ;; ------------- or ------------- 
 ;; works the same as equals, but only for booleans
