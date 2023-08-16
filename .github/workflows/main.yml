@@ -21,4 +21,4 @@ jobs:
         run: go build ./...
 
       - name: Unit Test
-        run: go test ./... -cover
+        run: go test ./... -v -cover

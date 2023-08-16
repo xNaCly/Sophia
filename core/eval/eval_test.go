@@ -186,6 +186,88 @@ func TestEvalConditional(t *testing.T) {
 	}
 }
 
+func TestEvalArraySpread(t *testing.T) {
+	input := []struct {
+		str string
+		exp string
+	}{
+		{
+			str: `(let a ..9)`,
+			exp: "[0 1 2 3 4 5 6 7 8 9]",
+		},
+		{
+			str: `(let a 1..9)`,
+			exp: "[1 2 3 4 5 6 7 8 9]",
+		},
+		{
+			str: `(let a 127..129)`,
+			exp: "[127 128 129]",
+		},
+	}
+	for _, i := range input {
+		t.Run(i.str, func(t *testing.T) {
+			l := lexer.New([]byte(i.str))
+			p := parser.New(l.Lex())
+			r := Eval(p.Parse())
+			if l.HasError || p.HasError {
+				t.Errorf("lexer or parser error for %q", i.str)
+				return
+			}
+			if len(r) == 0 {
+				t.Errorf("eval result empty for %q", i.str)
+				return
+			}
+			got := r[len(r)-1]
+			if i.exp != got {
+				t.Errorf("got %q, wanted %q", got, i.exp)
+			}
+		})
+	}
+}
+
+func TestEvalMerge(t *testing.T) {
+	input := []struct {
+		str string
+		exp string
+	}{
+		{
+			str: `(++ "hello" "world")`,
+			exp: "helloworld",
+		},
+		{
+			str: `(let a 1 2)(++ a 1 2)`,
+			exp: "[1 2 1 2]",
+		},
+		{
+			str: `(++ "hello" 1 2)`,
+			exp: "[hello 1 2]",
+		},
+		{
+			str: `(++ 1 2 "hello")`,
+			exp: "[1 2 hello]",
+		},
+	}
+	for _, i := range input {
+		t.Run(i.str, func(t *testing.T) {
+			l := lexer.New([]byte(i.str))
+			p := parser.New(l.Lex())
+			r := Eval(p.Parse())
+			if l.HasError || p.HasError {
+				t.Errorf("lexer or parser error for %q", i.str)
+				return
+			}
+			if len(r) == 0 {
+				t.Errorf("eval result empty for %q", i.str)
+				return
+			}
+			got := r[len(r)-1]
+			if i.exp != got {
+				t.Errorf("got %q, wanted %q", got, i.exp)
+			}
+		})
+	}
+}
+
 func TestEvalFunction(t *testing.T) {
 	input := []struct {
 		str string

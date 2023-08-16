@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"log"
+	"os"
 	"sophia/core/lexer"
 	"testing"
 )
@@ -17,6 +19,9 @@ func TestParserHelloWorld(t *testing.T) {
 }
 
 func TestParserErrors(t *testing.T) {
+    null, _ := os.Open(os.DevNull)
+	os.Stdout = null
+	log.SetOutput(null)
 	in := []string{
 		". darvin)",
 		"(. 1",
