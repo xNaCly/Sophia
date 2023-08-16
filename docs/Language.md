@@ -201,6 +201,33 @@ variable, here `i`. As shown above, the first argument is the loop variable,
 the second variable the container to iterate over and the following arguments
 are, similar to the `if` keyword, evaluated.
 
+Sophia supports array range syntax:
+
+```lisp
+(for
+    (_ i)
+    1..100
+    (put i))
+```
+
+The above loop iterates from 1 up to and including 100. This syntax can be used
+everywhere an array can be used due to the fact, that it gets evaluated to an
+array containing all values from lower bound up to upper bound.
+
+Creating an array from 1298 to 1392:
+
+```lisp
+(let range 1298..1392)
+```
+
+Omitting the lower bound is supported, 0 is assumed to be the lower bound:
+
+```lisp
+(let range1 ..9)
+```
+
+The above contains all numbers from 0 up to and including 9.
+
 ### Match
 
 > This is currently not implemented
