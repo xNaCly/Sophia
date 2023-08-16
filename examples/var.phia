@@ -29,7 +29,7 @@
 (let world "world")
 (let ex "!")
 (put 
-    (++ "hello" " " world " "ex))
+    (++ "hello" " " world " " ex))
 
 ;; merging lists
 (let a 1 2 3 4)
