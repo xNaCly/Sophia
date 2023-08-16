@@ -29,7 +29,12 @@
 (let world "world")
 (let ex "!")
 (put 
-    (concat "hello" " " world " "ex))
+    (++ "hello" " " world " "ex))
+
+;; merging lists
+(let a 1 2 3 4)
+(put 
+    (++ a 5 6))
 ;; ------------- functions ------------- 
 
 ;; defining a function 

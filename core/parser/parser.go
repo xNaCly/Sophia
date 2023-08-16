@@ -199,8 +199,8 @@ func (p *Parser) parseStatment() expr.Node {
 			Name:  ident.GetToken().Raw,
 			Value: childs[1:],
 		}
-	case token.CONCAT:
-		stmt = &expr.Concat{
+	case token.MERGE:
+		stmt = &expr.Merge{
 			Token:    op,
 			Children: childs,
 		}

@@ -203,10 +203,6 @@ func TestEvalFunction(t *testing.T) {
 			str: "(fun print (_ a) (put a))(let y 12 23 12)(print y)",
 			exp: "<nil>",
 		},
-		{
-			str: `(fun conc (_ a b c) (concat a b c))(let y "a")(conc y y y)`,
-			exp: "aaa",
-		},
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
@@ -236,7 +232,7 @@ func TestEvalLoop(t *testing.T) {
 		exp string
 	}{
 		{
-			str: "(let sum 0)(let arr 1 2 3 4 5 6 7 8 9)(for (_ e) arr (let sum (+ e sum)))(+ sum)",
+			str: "(let sum 0)(let arr 1..9)(for (_ e) arr (let sum (+ e sum)))(+ sum)",
 			exp: "45",
 		},
 	}

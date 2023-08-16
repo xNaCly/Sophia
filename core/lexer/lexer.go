@@ -41,7 +41,12 @@ func (l *Lexer) Lex() []token.Token {
 
 		switch l.chr {
 		case '+':
-			ttype = token.ADD
+			if l.peek() == '+' {
+				ttype = token.MERGE
+				l.advance()
+			} else {
+				ttype = token.ADD
+			}
 		case '-':
 			ttype = token.SUB
 		case '/':

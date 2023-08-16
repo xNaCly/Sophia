@@ -18,11 +18,11 @@ const (
 	OR
 	AND
 	NEG
-	CONCAT
 	FUNC
 	FOR
 	LT
 	GT
+	MERGE
 	PARAM // _
 	IDENT // ([a-z]|_)+
 	BOOL  // true | false
@@ -33,27 +33,27 @@ var TOKEN_NAME_MAP = map[int]string{
 	UNKNOWN:     "UNKNOWN",
 	FLOAT:       "float",
 	STRING:      "string",
+	BOOL:        "bool",
+	LEFT_BRACE:  "(",
+	RIGHT_BRACE: ")",
 	ADD:         "+",
 	SUB:         "-",
 	DIV:         "/",
 	MUL:         "*",
-	PUT:         "put",
+	PARAM:       "_",
 	MOD:         "%",
+	MERGE:       "++",
+	PUT:         "put",
 	LET:         "let",
 	IF:          "if",
 	EQUAL:       "eq",
 	OR:          "or",
 	NEG:         "not",
 	AND:         "and",
-	CONCAT:      "concat",
 	FUNC:        "fun",
 	FOR:         "for",
 	LT:          "lt",
 	GT:          "gt",
-	PARAM:       "_",
 	IDENT:       "identifier",
-	LEFT_BRACE:  "(",
-	RIGHT_BRACE: ")",
-	BOOL:        "bool",
 	EOF:         "End of file",
 }
