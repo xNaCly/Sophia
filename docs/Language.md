@@ -131,6 +131,28 @@ Sophia enables variable definition with the `let`-keyword:
 > Using the `let` keyword without specifying any arguments after the variable
 > name causes the variable to have the `nil` value.
 
+## Merging lists and strings
+
+The `++` operator can be applied to lists, strings, booleans, floats:
+
+```lisp
+(++ "hello" "world")
+;; => "hello world"
+
+(++ .1 12e1)
+;; => [0.1 120]
+
+(++ true false "t")
+;; => [true false "t"]
+
+(let arr 1 2 3)
+;; add 1 to 'arr' and return it as a new list
+(++ arr 1)
+;; [1 2 3 1]
+(++ 1 arr)
+;; [1 1 2 3]
+```
+
 ## Comparison
 
 Comparing values is elementary for a programming language, so Sophia too allows it:

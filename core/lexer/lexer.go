@@ -152,6 +152,9 @@ func (l *Lexer) error(errType uint, ident string) {
 		iLen += 1
 	}
 	if l.line-1 > -1 {
+		if errType == 2 {
+			spaces -= 1
+		}
 		spaces -= 1
 		if spaces < 0 {
 			spaces = 0
