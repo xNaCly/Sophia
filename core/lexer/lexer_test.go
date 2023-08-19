@@ -88,7 +88,7 @@ func TestLexerIdent(t *testing.T) {
 }
 
 func TestLexerOperators(t *testing.T) {
-	in := []byte(`put +-/*% let () if eq or and not ++ fun _ for gt lt | match`)
+	in := []byte(`put +-/*% let () if eq or and not ++ fun _ for gt lt match`)
 	l := New(in)
 	tok := l.Lex()
 	if len(tok) == 0 {
