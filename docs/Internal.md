@@ -31,12 +31,12 @@ expression i can think of:
 
 The above statement can be roughly translated into the following list of token:
 
-| Token type    | Line | Line index | Raw value     |
-| ------------- | ---- | ---------- | ------------- |
-| `LEFT_BRACE`  | 0    | 0          | `(`           |
-| `PUT`         | 1    | 0          | `put`         |
-| `STRING`      | 7    | 0          | `hello world` |
-| `RIGHT_BRACE` | 18   | 0          | `)`           |
+| Token type    | Line index | Line | Raw value     |
+| ------------- | ---------- | ---- | ------------- |
+| `LEFT_BRACE`  | 0          | 0    | `(`           |
+| `PUT`         | 1          | 0    | `put`         |
+| `STRING`      | 7          | 0    | `hello world` |
+| `RIGHT_BRACE` | 18         | 0    | `)`           |
 
 The lexer specifically distinguishes between strings, operators, keywords,
 booleans, identifiers and floating point integers.
