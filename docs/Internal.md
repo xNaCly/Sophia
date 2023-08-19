@@ -245,7 +245,7 @@ exit status 1
 
 Providing the lexer with input containing more than one line, the lexer shows context for the currently found error:
 
-```lisp
+```
 $ cat err.phia
 ;; this input contains two errors
 (put " ?)
