@@ -147,11 +147,6 @@ func (l *Lexer) error(errType uint, ident string) {
 
 	spaces := pos
 
-	// if string error highlight string start " and predicted end " with ^
-	if errType == 2 {
-		iLen++
-	}
-
 	// if no identifier given, print one ^
 	if iLen == 0 {
 		iLen += 1
@@ -163,10 +158,6 @@ func (l *Lexer) error(errType uint, ident string) {
 		}
 		fmt.Printf("\n%.3d |\t%s\n%.3d |\t%s\n\t%s%s\n\n", l.line, lines[l.line-1], l.line+1, lines[l.line], strings.Repeat(" ", spaces), strings.Repeat("^", iLen))
 	} else {
-		if iLen == 1 {
-			spaces++
-		}
-
 		fmt.Printf("\n%.3d |\t%s\n\t%s%s\n\n", l.line+1, lines[l.line], strings.Repeat(" ", spaces), strings.Repeat("^", iLen))
 	}
 	l.HasError = true
@@ -187,7 +178,7 @@ func (l *Lexer) string() token.Token {
 	}
 
 	return token.Token{
-		Pos:  l.pos - len(str),
+		Pos:  l.pos - (len(str) + 2),
 		Type: token.STRING,
 		Raw:  str,
 		Line: l.line,
