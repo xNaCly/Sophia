@@ -252,7 +252,20 @@ The above contains all numbers from 0 up to and including 9.
 
 ### Match
 
-> This is currently not implemented
+```lisp
+(let a true)
+(let b false)
+(match
+    (if a (put "a true"))
+    (if b (put "b true"))
+    (put i)
+```
+
+Match creates an environment which contains guards (`if`), similar to a switch
+or a match in languages like c or rust. The guards are evaluated top to bottom,
+the first matched guard exits the match statement.
+
+The statement which is not a guard, is executed if all other guards do not match.
 
 ## Functions
 

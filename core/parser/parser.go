@@ -86,6 +86,11 @@ func (p *Parser) parseStatment() expr.Node {
 	}
 
 	switch op.Type {
+	case token.MATCH:
+		stmt = &expr.Match{
+			Token:    op,
+			Branches: childs,
+		}
 	case token.FOR:
 		if len(childs) < 2 {
 			log.Printf("err: expected two argument for loop definition, got %d", len(childs))

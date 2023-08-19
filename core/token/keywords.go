@@ -21,6 +21,7 @@ var EXPECTED_KEYWORDS = []int{
 	FOR,
 	LT,
 	GT,
+	MATCH,
 }
 
 var KEYWORD_MAP = map[string]int{
@@ -37,4 +38,5 @@ var KEYWORD_MAP = map[string]int{
 	"ident": IDENT,
 	"gt":    GT,
 	"lt":    LT,
+	"match": MATCH,
 }

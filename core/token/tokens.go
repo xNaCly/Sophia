@@ -22,7 +22,8 @@ const (
 	FOR
 	LT
 	GT
-	MERGE
+	MATCH
+	MERGE // ++
 	PARAM // _
 	IDENT // ([a-z]|_)+
 	BOOL  // true | false
@@ -54,6 +55,7 @@ var TOKEN_NAME_MAP = map[int]string{
 	FOR:         "for",
 	LT:          "lt",
 	GT:          "gt",
+	MATCH:       "match",
 	IDENT:       "identifier",
 	EOF:         "End of file",
 }
