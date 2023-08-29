@@ -1,6 +1,9 @@
 package expr
 
-import "sophia/core/token"
+import (
+	"sophia/core/token"
+	"strings"
+)
 
 type Match struct {
 	Token    token.Token
@@ -23,3 +26,4 @@ func (m *Match) Eval() any {
 	}
 	return nil
 }
+func (n *Match) CompileJs(b *strings.Builder) {}

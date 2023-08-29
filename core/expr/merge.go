@@ -51,3 +51,4 @@ func (m *Merge) Eval() any {
 	}
 	return merged
 }
+func (n *Merge) CompileJs(b *strings.Builder) {}

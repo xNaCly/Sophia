@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sophia/core/consts"
 	"sophia/core/token"
+	"strings"
 )
 
 type Call struct {
@@ -59,3 +60,5 @@ func (c *Call) Eval() any {
 
 	return nil
 }
+
+func (n *Call) CompileJs(b *strings.Builder) {}

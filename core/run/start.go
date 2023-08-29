@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"sophia/core"
+	"sophia/core/debug"
 )
 
 func Start() {
@@ -20,13 +21,13 @@ func Start() {
 	}
 
 	if len(*execute) != 0 {
-		core.DbgLog("got -exp flag, running...")
+		debug.Log("got -exp flag, running...")
 		_, err := run([]byte(*execute))
 		if err != nil {
 			log.Fatalln(err)
 		}
 	} else if len(flag.Args()) == 1 {
-		core.DbgLog("got file, running...")
+		debug.Log("got file, running...")
 		file := flag.Args()[0]
 		f, err := os.ReadFile(file)
 		if err != nil {
@@ -38,8 +39,11 @@ func Start() {
 			log.Fatalf("error in source file '%s' detected, stopping...", file)
 		}
 	} else {
+		if len(core.CONF.Target) > 0 {
+			log.Fatalf("got compile target %q, but no file or expression to compile, exiting...", core.CONF.Target)
+		}
 		fmt.Print(core.ASCII_ART, "\n")
-		core.DbgLog("go nothing, starting repl...")
+		debug.Log("go nothing, starting repl...")
 		repl(run)
 	}
 }

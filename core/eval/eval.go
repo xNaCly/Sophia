@@ -3,6 +3,7 @@ package eval
 import (
 	"fmt"
 	"sophia/core/expr"
+	"strings"
 )
 
 func Eval(ast []expr.Node) []string {
@@ -11,4 +12,12 @@ func Eval(ast []expr.Node) []string {
 		out[i] = fmt.Sprint(c.Eval())
 	}
 	return out
+}
+
+func CompileJs(ast []expr.Node) string {
+	b := strings.Builder{}
+	for _, c := range ast {
+		c.CompileJs(&b)
+	}
+	return b.String()
 }

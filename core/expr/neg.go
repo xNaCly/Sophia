@@ -1,6 +1,9 @@
 package expr
 
-import "sophia/core/token"
+import (
+	"sophia/core/token"
+	"strings"
+)
 
 type Neg struct {
 	Token    token.Token
@@ -15,3 +18,4 @@ func (n *Neg) Eval() any {
 	ev := n.Children.Eval()
 	return !castPanicIfNotType[bool](ev, token.NEG)
 }
+func (n *Neg) CompileJs(b *strings.Builder) {}

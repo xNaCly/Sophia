@@ -1,7 +1,5 @@
 package core
 
-import "log"
-
 const ASCII_ART = `
   +####
  +\    #
@@ -13,8 +11,8 @@ const ASCII_ART = `
 `
 
 // available targets to compile sophia to
-var TARGETS = []string{
-	"c",
+var TARGETS = map[string]struct{}{
+	"js": {},
 	// "go",
 	// "javascript",
 	// "python",
@@ -27,10 +25,4 @@ type Config struct {
 
 var CONF = Config{
 	Debug: false,
-}
-
-func DbgLog(in ...any) {
-	if CONF.Debug {
-		log.Println(in...)
-	}
 }

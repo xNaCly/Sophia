@@ -1,6 +1,9 @@
 package expr
 
-import "sophia/core/token"
+import (
+	"sophia/core/token"
+	"strings"
+)
 
 type Div struct {
 	Token    token.Token
@@ -25,3 +28,4 @@ func (d *Div) Eval() any {
 	}
 	return res
 }
+func (n *Div) CompileJs(b *strings.Builder) {}

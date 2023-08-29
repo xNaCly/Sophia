@@ -50,3 +50,6 @@ func (f *Float) Eval() any {
 	}
 	return float
 }
+func (n *Float) CompileJs(b *strings.Builder) {
+	b.WriteString(n.Token.Raw)
+}

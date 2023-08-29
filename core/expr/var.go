@@ -3,6 +3,7 @@ package expr
 import (
 	"sophia/core/consts"
 	"sophia/core/token"
+	"strings"
 )
 
 // defining a variable
@@ -31,4 +32,26 @@ func (v *Var) Eval() any {
 
 	consts.SYMBOL_TABLE[v.Name] = val
 	return val
+}
+func (n *Var) CompileJs(b *strings.Builder) {
+	b.WriteString("let ")
+	b.WriteString(n.Name)
+	if len(n.Value) > 1 {
+		b.WriteString("=")
+		b.WriteRune('[')
+		for i, c := range n.Value {
+			c.CompileJs(b)
+			if i+1 < len(n.Value) {
+				b.WriteRune(',')
+			}
+		}
+		b.WriteRune(']')
+		b.WriteRune(';')
+	} else if len(n.Value) == 0 {
+		b.WriteRune(';')
+	} else {
+		b.WriteRune('=')
+		n.Value[0].CompileJs(b)
+		b.WriteRune(';')
+	}
 }

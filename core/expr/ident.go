@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sophia/core/consts"
 	"sophia/core/token"
+	"strings"
 )
 
 // using a variable
@@ -22,4 +23,7 @@ func (i *Ident) Eval() any {
 		panic(fmt.Sprintf("variable '%s' is not defined!", i.Name))
 	}
 	return val
+}
+func (n *Ident) CompileJs(b *strings.Builder) {
+	b.WriteString(n.Name)
 }

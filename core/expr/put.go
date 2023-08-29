@@ -26,3 +26,13 @@ func (p *Put) Eval() any {
 	fmt.Printf("%s\n", b.String())
 	return nil
 }
+func (n *Put) CompileJs(b *strings.Builder) {
+	b.WriteString("console.log(")
+	for i, c := range n.Children {
+		c.CompileJs(b)
+		if i+1 < len(n.Children) {
+			b.WriteRune(',')
+		}
+	}
+	b.WriteString(")")
+}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sophia/core/consts"
 	"sophia/core/token"
+	"strings"
 )
 
 // function definition
@@ -41,4 +42,17 @@ func (f *For) Eval() any {
 		}
 	}()
 	return nil
+}
+func (n *For) CompileJs(b *strings.Builder) {
+	b.WriteString("for(const ")
+	n.Params.CompileJs(b)
+	b.WriteString(" of ")
+	n.LoopOver.CompileJs(b)
+	b.WriteRune(')')
+	b.WriteString("{")
+	for _, c := range n.Body {
+		c.CompileJs(b)
+		b.WriteRune(';')
+	}
+	b.WriteString("}")
 }

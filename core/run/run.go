@@ -1,10 +1,11 @@
 package run
 
 import (
-	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"sophia/core"
+	"sophia/core/debug"
 	"sophia/core/eval"
 	"sophia/core/lexer"
 	"sophia/core/parser"
@@ -21,16 +22,16 @@ func run(input []byte) (s []string, e error) {
 			return
 		}
 	}()
-	core.DbgLog("starting lexer")
+	debug.Log("starting lexer")
 	l := lexer.New(input)
 	tokens := l.Lex()
-	core.DbgLog("lexed", len(tokens), "token")
+	debug.Log("lexed", len(tokens), "token")
+
 	if core.CONF.Debug {
-		v, _ := json.MarshalIndent(tokens, "", "  ")
-		core.DbgLog(string(v))
+		debug.Log(debug.Token(tokens))
 	}
 
-	core.DbgLog("starting parser")
+	debug.Log("starting parser")
 	p := parser.New(tokens)
 	ast := p.Parse()
 	if l.HasError {
@@ -42,11 +43,20 @@ func run(input []byte) (s []string, e error) {
 		return
 	}
 
-	if core.CONF.Debug {
-		v, _ := json.MarshalIndent(ast, "", "  ")
-		core.DbgLog(string(v))
+	// if core.CONF.Debug {
+	// 	debug.Log(debug.Ast(ast))
+	// }
+	if len(core.CONF.Target) > 0 {
+		trgt := core.CONF.Target
+		debug.Log("done parsing - no errors, starting compilation for", trgt)
+		if _, ok := core.TARGETS[trgt]; !ok {
+			e = errors.New(fmt.Sprintf("compilation error: %q not found in compilation targets. Available targets: %s", trgt, core.TARGETS))
+			return
+		}
+		fmt.Println(eval.CompileJs(ast))
+	} else {
+		debug.Log("done parsing - no errors, starting eval")
+		s = eval.Eval(ast)
 	}
-	core.DbgLog("done parsing - no errors, starting eval")
-	s = eval.Eval(ast)
 	return
 }

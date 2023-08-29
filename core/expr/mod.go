@@ -1,6 +1,9 @@
 package expr
 
-import "sophia/core/token"
+import (
+	"sophia/core/token"
+	"strings"
+)
 
 type Mod struct {
 	Token    token.Token
@@ -26,3 +29,4 @@ func (m *Mod) Eval() any {
 	}
 	return float64(res)
 }
+func (n *Mod) CompileJs(b *strings.Builder) {}
