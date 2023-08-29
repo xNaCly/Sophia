@@ -1,14 +1,15 @@
-package core
+package run
 
 import (
 	"bufio"
 	"fmt"
 	"log"
 	"os"
+	"sophia/core"
 	"sophia/core/consts"
 )
 
-func Repl(run func(input []byte) ([]string, error)) {
+func repl(run func(input []byte) ([]string, error)) {
 	fmt.Println(`Welcome to the Sophia repl - press <CTRL-D> or <CTRL-C> to quit...`)
 	prompt := "ß :: "
 	scanner := bufio.NewScanner(os.Stdin)
@@ -27,8 +28,8 @@ func Repl(run func(input []byte) ([]string, error)) {
 			case "funs":
 				fmt.Printf("%#v\n", consts.FUNC_TABLE)
 			case "debug":
-				CONF.Debug = !CONF.Debug
-				log.Printf("toggled debug logging to='%t'", CONF.Debug)
+				core.CONF.Debug = !core.CONF.Debug
+				log.Printf("toggled debug logging to='%t'", core.CONF.Debug)
 			}
 		} else {
 			val, error := run(line)
