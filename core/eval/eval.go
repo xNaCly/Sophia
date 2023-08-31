@@ -17,8 +17,15 @@ func Eval(ast []expr.Node) []string {
 func CompileJs(ast []expr.Node) string {
 	b := strings.Builder{}
 	for _, c := range ast {
+		l := b.Len()
+
 		c.CompileJs(&b)
-		b.WriteRune(';')
+
+		// INFO: if compiling the last expression did yield a result, append a
+		// semicolon, because we are at the top level expression
+		if b.Len() != l {
+			b.WriteRune(';')
+		}
 	}
 	return b.String()
 }

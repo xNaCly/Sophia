@@ -133,6 +133,12 @@
 ## Iteration
 
 ```lisp
+(let arr 9)
+(for (_ i) arr
+     (put i))
+```
+
+```lisp
 (let arr 1..9)
 (for (_ i) arr
      (put i))

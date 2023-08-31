@@ -47,6 +47,7 @@ func (c *Call) Eval() any {
 	// INFO: going out of scope, therefore we restore the previous state of the
 	// symbol table, due to the fact that we disallow functions with side
 	// effects
+	// TODO: maybe implement this similary to the for loop implementation?
 	defer func() {
 		consts.SYMBOL_TABLE = oldSymbols
 	}()

@@ -22,6 +22,7 @@ func (f *Func) Eval() any {
 	consts.FUNC_TABLE[f.Name.GetToken().Raw] = f
 	return nil
 }
+
 func (n *Func) CompileJs(b *strings.Builder) {
 	cLen := len(n.Body)
 	b.WriteString("function ")

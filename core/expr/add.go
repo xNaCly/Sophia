@@ -32,9 +32,8 @@ func (a *Add) Eval() any {
 
 func (n *Add) CompileJs(b *strings.Builder) {
 	cLen := len(n.Children)
-	if cLen == 0 || cLen == 1 {
-		debug.Log("opt: removed illogical '+' expression containing one or less children at line", n.Token.Line)
-		return
+	if cLen == 0 {
+		debug.Log("opt: removed illogical '+' expression containing no children at line", n.Token.Line)
 	} else {
 		for i, c := range n.Children {
 			c.CompileJs(b)

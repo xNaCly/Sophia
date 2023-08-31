@@ -2,6 +2,7 @@ package expr
 
 import (
 	"fmt"
+	"log"
 	"sophia/core/consts"
 	"sophia/core/token"
 	"strings"
@@ -27,13 +28,26 @@ func (f *For) Eval() any {
 	element := castPanicIfNotType[*Ident](params[0], token.FOR)
 	oldValue, foundOldValue := consts.SYMBOL_TABLE[element.Name]
 
-	loopOver := castPanicIfNotType[[]interface{}](f.LoopOver.Eval(), token.FOR)
+	v := f.LoopOver.Eval()
+	switch v.(type) {
+	case []interface{}:
+		loopOver := castPanicIfNotType[[]interface{}](v, token.FOR)
 
-	for _, el := range loopOver {
-		consts.SYMBOL_TABLE[element.Name] = el
-		for _, stmt := range f.Body {
-			stmt.Eval()
+		for _, el := range loopOver {
+			consts.SYMBOL_TABLE[element.Name] = el
+			for _, stmt := range f.Body {
+				stmt.Eval()
+			}
 		}
+	case float64:
+		for i := 0; i < int(v.(float64)); i++ {
+			consts.SYMBOL_TABLE[element.Name] = i
+			for _, stmt := range f.Body {
+				stmt.Eval()
+			}
+		}
+	default:
+		log.Panicf("expected container or upper bound for iteration, got: %T\n", v)
 	}
 
 	defer func() {
@@ -44,10 +58,17 @@ func (f *For) Eval() any {
 	return nil
 }
 func (n *For) CompileJs(b *strings.Builder) {
-	b.WriteString("for(const ")
-	n.Params.CompileJs(b)
-	b.WriteString(" of ")
-	n.LoopOver.CompileJs(b)
+	b.WriteString("for(")
+	b.WriteString("let ")
+	if n.LoopOver.GetToken().Type == token.FLOAT {
+		b.WriteString("i = 0; i < ")
+		b.WriteString(n.LoopOver.GetToken().Raw)
+		b.WriteString("; i++")
+	} else {
+		n.Params.CompileJs(b)
+		b.WriteString(" of ")
+		n.LoopOver.CompileJs(b)
+	}
 	b.WriteRune(')')
 	b.WriteString("{")
 	for _, c := range n.Body {

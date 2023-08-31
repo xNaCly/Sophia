@@ -31,8 +31,8 @@ func (m *Mul) Eval() any {
 }
 func (n *Mul) CompileJs(b *strings.Builder) {
 	cLen := len(n.Children)
-	if cLen == 0 || cLen == 1 {
-		debug.Log("opt: removed illogical '*' expression containing one or less children at line", n.Token.Line)
+	if cLen == 0 {
+		debug.Log("opt: removed illogical '*' expression containing zero children at line", n.Token.Line)
 		return
 	} else {
 		for i, c := range n.Children {

@@ -20,6 +20,8 @@ Examples [here](https://xnacly.github.io/Sophia/)
 
 ## Try
 
+### Running
+
 ```bash
 git clone https://github.com/xnacly/sophia
 go build
@@ -37,6 +39,12 @@ With an expression:
 
 ```
 $ sophia -exp '(put "Hello World")'
+
+Hello World!
+```
+
+```
+$ echo '(put "Hello World")' | sophia
 
 Hello World!
 ```
@@ -59,4 +67,22 @@ Welcome to the Sophia repl - press <CTRL-D> or <CTRL-C> to quit...
 Hi!
 = [<nil>]
 ß ::
+```
+
+### Compiling
+
+#### Targets
+
+- [x] Javascript
+- [ ] C
+- [ ] Go
+- [ ] Python
+
+#### Compiling sophia to a target
+
+Specify the desired compilation target from the list above using the `-target`-flag when invoking sophia with a source expression:
+
+```text
+$ sophia -exp='(put "hello world")' -target=js
+console.log("Hello World")
 ```

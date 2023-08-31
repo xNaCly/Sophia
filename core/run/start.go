@@ -3,6 +3,7 @@ package run
 import (
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"sophia/core"
@@ -20,7 +21,19 @@ func Start() {
 		Target: *target,
 	}
 
-	if len(*execute) != 0 {
+	stdinInf, err := os.Stdin.Stat()
+	// INFO: check if stdin is readable and the process is in a pipe
+	if err == nil && !(stdinInf.Mode()&os.ModeNamedPipe == 0) {
+		debug.Log("got stdin content, running...")
+		out, err := io.ReadAll(os.Stdin)
+		if err != nil {
+			log.Fatalln("failed to read from stdin", err)
+		}
+		_, err = run(out)
+		if err != nil {
+			log.Fatalln(err)
+		}
+	} else if len(*execute) != 0 {
 		debug.Log("got -exp flag, running...")
 		_, err := run([]byte(*execute))
 		if err != nil {

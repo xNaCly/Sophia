@@ -1,5 +1,22 @@
 # Documentation - Sophia
 
+The sophia langauge is a minimal lisp like programming language. It features
+common programming language characteristics such as data types (float, string,
+bool, containers), controlflow (if, match, for), comparisons (eq, lt, gt), bool
+comparisons (and, or, not) arithmetics (+,-,/,\*,%), declarations (let, fun),
+merging lists (++) as well as printing to stdout.
+
+It's implementation can be fed expressions from stdin, the repl, a file or a
+flag. The Sophia language can be interpreted or compiled to the following
+languages:
+
+- [x] Javascript
+- [ ] C
+- [ ] Go
+- [ ] Python
+
+The unchecked programming languages are a work in progess.
+
 ```sophia
 (put "$ man sophia")
 ```

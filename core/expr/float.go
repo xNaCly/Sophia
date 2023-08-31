@@ -16,7 +16,7 @@ func (f *Float) GetToken() token.Token {
 }
 
 func (f *Float) Eval() any {
-	// TODO: maybe move this to the parser
+	// TODO: absolutly move this to the parser
 	before, after, found := strings.Cut(f.Token.Raw, "..")
 	if found {
 		var first float64
