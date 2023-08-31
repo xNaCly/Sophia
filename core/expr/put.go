@@ -2,6 +2,7 @@ package expr
 
 import (
 	"fmt"
+	"sophia/core/debug"
 	"sophia/core/token"
 	"strings"
 )
@@ -27,10 +28,15 @@ func (p *Put) Eval() any {
 	return nil
 }
 func (n *Put) CompileJs(b *strings.Builder) {
+	cLen := len(n.Children)
+	if cLen == 0 {
+		debug.Log("opt: removed empty print")
+		return
+	}
 	b.WriteString("console.log(")
 	for i, c := range n.Children {
 		c.CompileJs(b)
-		if i+1 < len(n.Children) {
+		if i+1 < cLen {
 			b.WriteRune(',')
 		}
 	}

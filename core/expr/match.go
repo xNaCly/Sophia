@@ -26,4 +26,14 @@ func (m *Match) Eval() any {
 	}
 	return nil
 }
-func (n *Match) CompileJs(b *strings.Builder) {}
+func (n *Match) CompileJs(b *strings.Builder) {
+	if len(n.Branches) == 1 {
+		n.Branches[0].CompileJs(b)
+	}
+	for i, c := range n.Branches {
+		if i != 0 {
+			b.WriteString("else ")
+		}
+		c.CompileJs(b)
+	}
+}

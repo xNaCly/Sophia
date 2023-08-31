@@ -1,6 +1,7 @@
 package expr
 
 import (
+	"sophia/core/debug"
 	"sophia/core/token"
 	"strings"
 )
@@ -28,4 +29,17 @@ func (d *Div) Eval() any {
 	}
 	return res
 }
-func (n *Div) CompileJs(b *strings.Builder) {}
+func (n *Div) CompileJs(b *strings.Builder) {
+	cLen := len(n.Children)
+	if cLen == 0 || cLen == 1 {
+		debug.Log("opt: removed illogical '/' expression containing one or less children at line", n.Token.Line)
+		return
+	} else {
+		for i, c := range n.Children {
+			c.CompileJs(b)
+			if i+1 < cLen {
+				b.WriteRune('/')
+			}
+		}
+	}
+}

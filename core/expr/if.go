@@ -1,6 +1,7 @@
 package expr
 
 import (
+	"sophia/core/debug"
 	"sophia/core/token"
 	"strings"
 )
@@ -24,4 +25,18 @@ func (i *If) Eval() any {
 	}
 	return cond
 }
-func (n *If) CompileJs(b *strings.Builder) {}
+func (n *If) CompileJs(b *strings.Builder) {
+	if len(n.Body) == 0 {
+		debug.Log("opt: removed empty if at line", n.Token.Line)
+		return
+	}
+	b.WriteString("if(")
+	n.Condition.CompileJs(b)
+	b.WriteRune(')')
+	b.WriteRune('{')
+	for _, c := range n.Body {
+		c.CompileJs(b)
+		b.WriteRune(';')
+	}
+	b.WriteRune('}')
+}

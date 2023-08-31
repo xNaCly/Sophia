@@ -1,6 +1,7 @@
 package expr
 
 import (
+	"sophia/core/debug"
 	"sophia/core/token"
 	"strings"
 )
@@ -24,4 +25,17 @@ func (a *And) Eval() any {
 	return true
 }
 
-func (n *And) CompileJs(b *strings.Builder) {}
+func (n *And) CompileJs(b *strings.Builder) {
+	cLen := len(n.Children)
+	if cLen == 1 || cLen == 0 {
+		debug.Log("opt: replaced illogical 'and' expression containing one or less children with true at line", n.Token.Line)
+		b.WriteString("true")
+		return
+	}
+	for i, c := range n.Children {
+		c.CompileJs(b)
+		if i+1 < cLen {
+			b.WriteString("&&")
+		}
+	}
+}

@@ -18,6 +18,7 @@ func CompileJs(ast []expr.Node) string {
 	b := strings.Builder{}
 	for _, c := range ast {
 		c.CompileJs(&b)
+		b.WriteRune(';')
 	}
 	return b.String()
 }

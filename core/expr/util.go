@@ -14,3 +14,4 @@ func castPanicIfNotType[T any](in any, op int) T {
 	}
 	return val
 }
+

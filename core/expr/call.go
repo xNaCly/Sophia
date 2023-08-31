@@ -61,4 +61,15 @@ func (c *Call) Eval() any {
 	return nil
 }
 
-func (n *Call) CompileJs(b *strings.Builder) {}
+func (n *Call) CompileJs(b *strings.Builder) {
+	cLen := len(n.Params)
+	b.WriteString(n.Token.Raw)
+	b.WriteRune('(')
+	for i, c := range n.Params {
+		c.CompileJs(b)
+		if i+1 < cLen {
+			b.WriteRune(',')
+		}
+	}
+	b.WriteRune(')')
+}
