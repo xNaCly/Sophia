@@ -1,6 +1,7 @@
 package run
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -43,9 +44,10 @@ func run(input []byte) (s []string, e error) {
 		return
 	}
 
-	// if core.CONF.Debug {
-	// 	debug.Log(debug.Ast(ast))
-	// }
+	if core.CONF.Debug {
+		out, _ := json.MarshalIndent(ast, "", "  ")
+		debug.Log(string(out))
+	}
 	if len(core.CONF.Target) > 0 {
 		trgt := core.CONF.Target
 		debug.Log("done parsing - no errors, starting compilation for", trgt)

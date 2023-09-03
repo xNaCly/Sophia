@@ -40,6 +40,32 @@ func (p *Parser) Parse() []expr.Node {
 	return res
 }
 
+func (p *Parser) parseArguments() expr.Node {
+	var child expr.Node
+	p.peekErrorMany("Missing or unknown argument", token.FLOAT, token.STRING, token.IDENT, token.BOOL, token.TEMPLATE_STRING)
+	if p.peekIs(token.TEMPLATE_STRING) {
+		child = p.parseTemplateString()
+	} else if p.peekIs(token.FLOAT) {
+		child = &expr.Float{
+			Token: p.peek(),
+		}
+	} else if p.peekIs(token.STRING) {
+		child = &expr.String{
+			Token: p.peek(),
+		}
+	} else if p.peekIs(token.IDENT) {
+		child = &expr.Ident{
+			Token: p.peek(),
+			Name:  p.peek().Raw,
+		}
+	} else if p.peekIs(token.BOOL) {
+		child = &expr.Boolean{
+			Token: p.peek(),
+		}
+	}
+	return child
+}
+
 // INFO: @SamuelScheit fixed this, i dont even know how and he doesnt either
 func (p *Parser) parseStatment() expr.Node {
 	childs := make([]expr.Node, 0)
@@ -58,30 +84,13 @@ func (p *Parser) parseStatment() expr.Node {
 			childs = append(childs, p.parseStatment())
 			continue
 		} else {
-			p.peekErrorMany("Missing or unknown argument", token.FLOAT, token.STRING, token.IDENT, token.BOOL)
-			if p.peekIs(token.FLOAT) {
-				child = &expr.Float{
-					Token: p.peek(),
-				}
-			} else if p.peekIs(token.STRING) {
-				child = &expr.String{
-					Token: p.peek(),
-				}
-			} else if p.peekIs(token.IDENT) {
-				child = &expr.Ident{
-					Token: p.peek(),
-					Name:  p.peek().Raw,
-				}
-			} else if p.peekIs(token.BOOL) {
-				child = &expr.Boolean{
-					Token: p.peek(),
-				}
-			}
+			child = p.parseArguments()
 		}
 
 		if child != nil {
 			childs = append(childs, child)
 		}
+
 		p.advance()
 	}
 
@@ -269,6 +278,19 @@ func (p *Parser) parseStatment() expr.Node {
 	p.peekError(token.RIGHT_BRACE, "Missing statement end")
 	p.advance()
 	return stmt
+}
+
+func (p *Parser) parseTemplateString() *expr.TemplateString {
+	t := &expr.TemplateString{
+		Token:    p.peek(),
+		Children: make([]expr.Node, 0),
+	}
+	p.advance()
+	for !p.peekIs(token.TEMPLATE_STRING) {
+		t.Children = append(t.Children, p.parseArguments())
+		p.advance()
+	}
+	return t
 }
 
 func (p *Parser) advance() {

@@ -61,6 +61,9 @@ func (l *Lexer) Lex() []token.Token {
 			ttype = token.RIGHT_BRACE
 		case '_':
 			ttype = token.PARAM
+		case '\'':
+			t = append(t, l.templateString()...)
+			continue
 		case ' ', '\t', '\r', '\n':
 			if l.chr == '\n' {
 				l.linepos = 0
@@ -164,6 +167,68 @@ func (l *Lexer) error(errType uint, ident string) {
 		fmt.Printf("\n%.3d |\t%s\n\t%s%s\n\n", l.line+1, lines[l.line], strings.Repeat(" ", spaces), strings.Repeat("^", iLen))
 	}
 	l.HasError = true
+}
+
+func (l *Lexer) templateString() []token.Token {
+	el := make([]token.Token, 0)
+	el = append(el, token.Token{
+		Type: token.TEMPLATE_STRING,
+		Pos:  l.pos,
+		Line: l.line,
+		Raw:  "",
+	})
+	b := strings.Builder{}
+
+	l.advance() // skip '
+
+	for {
+		if l.chr == '}' {
+			l.advance()
+			continue
+		} else if l.chr == '{' {
+			l.advance()
+			if b.Len() != 0 {
+				el = append(el, token.Token{
+					Pos:  l.pos - (len(b.String()) + 2),
+					Type: token.STRING,
+					Raw:  b.String(),
+					Line: l.line,
+				})
+				b.Reset()
+			}
+			el = append(el, l.ident())
+			continue
+		} else if l.chr == '\n' || l.chr == 0 {
+			log.Printf("err: Unexpected Newline or EOF at [l %d:%d]", l.line+1, l.pos)
+			l.HasError = true
+			return []token.Token{}
+		} else if l.chr == '\'' {
+			if b.Len() != 0 {
+				el = append(el, token.Token{
+					Pos:  l.pos - (len(b.String()) + 2),
+					Type: token.STRING,
+					Raw:  b.String(),
+					Line: l.line,
+				})
+				b.Reset()
+			}
+			break
+		}
+		b.WriteByte(l.chr)
+		l.advance()
+	}
+
+	if l.chr == '\'' {
+		l.advance()
+	}
+
+	el = append(el, token.Token{
+		Type: token.TEMPLATE_STRING,
+		Pos:  l.pos,
+		Line: l.line,
+		Raw:  "",
+	})
+	return el
 }
 
 func (l *Lexer) string() token.Token {
