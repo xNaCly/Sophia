@@ -21,7 +21,9 @@ func repl(run func(input []byte) ([]string, error)) {
 		}
 
 		line := scanner.Bytes()
-		if line[0] == '~' {
+		if len(line) == 0 {
+			continue
+		} else if line[0] == '~' {
 			switch string(line[1:]) {
 			case "syms":
 				fmt.Printf("%#v\n", consts.SYMBOL_TABLE)
