@@ -36,8 +36,8 @@ func (v *Var) Eval() any {
 func (n *Var) CompileJs(b *strings.Builder) {
 	b.WriteString("let ")
 	b.WriteString(n.Name)
-	b.WriteString("=")
 	if len(n.Value) > 1 {
+		b.WriteString("=")
 		b.WriteRune('[')
 		for i, c := range n.Value {
 			c.CompileJs(b)
@@ -47,8 +47,7 @@ func (n *Var) CompileJs(b *strings.Builder) {
 		}
 		b.WriteRune(']')
 	} else if len(n.Value) == 1 {
-		b.WriteRune('(')
+		b.WriteString("=")
 		n.Value[0].CompileJs(b)
-		b.WriteRune(')')
 	}
 }

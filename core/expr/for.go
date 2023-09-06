@@ -40,7 +40,8 @@ func (f *For) Eval() any {
 			}
 		}
 	case float64:
-		for i := 0; i < int(v.(float64)); i++ {
+		con := int(v.(float64))
+		for i := 0; i < con; i++ {
 			consts.SYMBOL_TABLE[element.Name] = i
 			for _, stmt := range f.Body {
 				stmt.Eval()
@@ -50,11 +51,9 @@ func (f *For) Eval() any {
 		log.Panicf("expected container or upper bound for iteration, got: %T\n", v)
 	}
 
-	defer func() {
-		if foundOldValue {
-			consts.SYMBOL_TABLE[element.Name] = oldValue
-		}
-	}()
+	if foundOldValue {
+		consts.SYMBOL_TABLE[element.Name] = oldValue
+	}
 	return nil
 }
 func (n *For) CompileJs(b *strings.Builder) {
