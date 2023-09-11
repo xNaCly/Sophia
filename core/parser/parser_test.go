@@ -12,14 +12,14 @@ func TestParserHelloWorld(t *testing.T) {
 	l := lexer.New(in)
 	token := l.Lex()
 
-	p := New(token)
+	p := New(token, "test")
 	if l.HasError || p.HasError {
 		t.Error("error while parsing hello world")
 	}
 }
 
 func TestParserErrors(t *testing.T) {
-    null, _ := os.Open(os.DevNull)
+	null, _ := os.Open(os.DevNull)
 	os.Stdout = null
 	log.SetOutput(null)
 	in := []string{
@@ -36,7 +36,7 @@ func TestParserErrors(t *testing.T) {
 	for _, s := range in {
 		t.Run(s, func(t *testing.T) {
 			l := lexer.New([]byte(s))
-			p := New(l.Lex())
+			p := New(l.Lex(), "test")
 			a := p.Parse()
 			if !p.HasError || len(a) != 0 {
 				t.Errorf("parsing should fail for %q, it did not", s)

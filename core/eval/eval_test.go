@@ -39,7 +39,7 @@ func TestEvalAritmetic(t *testing.T) {
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
 			l := lexer.New([]byte(i.str))
-			p := parser.New(l.Lex())
+			p := parser.New(l.Lex(), "test")
 			r := Eval(p.Parse())
 			if l.HasError || p.HasError {
 				t.Errorf("lexer or parser error for %q", i.str)
@@ -89,7 +89,7 @@ func TestEvalVariables(t *testing.T) {
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
 			l := lexer.New([]byte(i.str))
-			p := parser.New(l.Lex())
+			p := parser.New(l.Lex(), "test")
 			r := Eval(p.Parse())
 			if len(r) == 0 {
 				t.Errorf("eval result empty")
@@ -174,7 +174,7 @@ func TestEvalConditional(t *testing.T) {
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
 			l := lexer.New([]byte(i.str))
-			p := parser.New(l.Lex())
+			p := parser.New(l.Lex(), "test")
 			r := Eval(p.Parse())
 			if len(r) == 0 {
 				t.Errorf("eval result empty")
@@ -207,7 +207,7 @@ func TestEvalArraySpread(t *testing.T) {
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
 			l := lexer.New([]byte(i.str))
-			p := parser.New(l.Lex())
+			p := parser.New(l.Lex(), "test")
 			r := Eval(p.Parse())
 			if l.HasError || p.HasError {
 				t.Errorf("lexer or parser error for %q", i.str)
@@ -250,7 +250,7 @@ func TestEvalMerge(t *testing.T) {
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
 			l := lexer.New([]byte(i.str))
-			p := parser.New(l.Lex())
+			p := parser.New(l.Lex(), "test")
 			r := Eval(p.Parse())
 			if l.HasError || p.HasError {
 				t.Errorf("lexer or parser error for %q", i.str)
@@ -289,7 +289,7 @@ func TestEvalFunction(t *testing.T) {
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
 			l := lexer.New([]byte(i.str))
-			p := parser.New(l.Lex())
+			p := parser.New(l.Lex(), "test")
 			r := Eval(p.Parse())
 			if l.HasError || p.HasError {
 				t.Errorf("lexer or parser error for %q", i.str)
@@ -321,7 +321,7 @@ func TestEvalLoop(t *testing.T) {
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
 			l := lexer.New([]byte(i.str))
-			p := parser.New(l.Lex())
+			p := parser.New(l.Lex(), "test")
 			r := Eval(p.Parse())
 			if l.HasError || p.HasError {
 				t.Errorf("lexer or parser error for %q", i.str)

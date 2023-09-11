@@ -38,7 +38,7 @@ func (p *Parser) Parse() []expr.Node {
 	res := make([]expr.Node, 0)
 	for !p.peekIs(token.EOF) {
 		stmt := p.parseStatment()
-		if stmt.GetToken().Type == token.LOAD {
+		if stmt != nil && stmt.GetToken().Type == token.LOAD {
 			if loadStmt, ok := stmt.(*expr.Load); ok {
 				res = append(res, p.loadNewSource(loadStmt)...)
 			}
@@ -58,20 +58,20 @@ func (p *Parser) loadNewSource(node *expr.Load) []expr.Node {
 		name := node.Imports[i]
 		file, err := os.Open(name)
 		if err != nil {
-			log.Panicf("failed to open %q: %s", name, err)
+			log.Printf("failed to open %q: %s", name, err)
 			p.HasError = true
 			return nil
 		}
 		content, err := io.ReadAll(file)
 		if err != nil {
-			log.Panicf("failed to read from %q: %s", name, err)
+			log.Printf("failed to read from %q: %s", name, err)
 			p.HasError = true
 			return nil
 		}
 		lexer := lexer.New(content)
 		token := lexer.Lex()
 		if name == p.filename {
-			log.Panicf("detected recursion in file imports, got %q while already parsing %q", name, p.filename)
+			log.Printf("detected recursion in file imports, got %q while already parsing %q", name, p.filename)
 			p.HasError = true
 			return nil
 		}
