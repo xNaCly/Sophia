@@ -12,7 +12,7 @@ import (
 	"sophia/core/parser"
 )
 
-func run(input []byte) (s []string, e error) {
+func run(input []byte, filename string) (s []string, e error) {
 	defer func() {
 		if core.CONF.Debug {
 			return
@@ -33,7 +33,7 @@ func run(input []byte) (s []string, e error) {
 	}
 
 	debug.Log("starting parser")
-	p := parser.New(tokens)
+	p := parser.New(tokens, filename)
 	ast := p.Parse()
 	if l.HasError {
 		e = errors.New("lexer error")

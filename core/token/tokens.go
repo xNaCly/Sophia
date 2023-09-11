@@ -29,6 +29,7 @@ const (
 	IDENT
 	BOOL
 	EOF
+	LOAD
 )
 
 var TOKEN_NAME_MAP = map[int]string{
@@ -59,5 +60,6 @@ var TOKEN_NAME_MAP = map[int]string{
 	MATCH:           "MATCH",
 	IDENT:           "IDENT",
 	TEMPLATE_STRING: "TEMPLATE_STRING",
+	LOAD:            "LOAD",
 	EOF:             "EOF",
 }

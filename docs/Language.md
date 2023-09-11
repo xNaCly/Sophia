@@ -131,6 +131,17 @@ Sophia enables variable definition with the `let`-keyword:
 > Using the `let` keyword without specifying any arguments after the variable
 > name causes the variable to have the `nil` value.
 
+## Template strings
+
+Sophia supports interpolation similar to rust or javascript via the following syntax:
+
+```lisp
+(let name "anon")
+(let money 500_912.99)
+(put 'Hi "{money}", you have {money}€ in the bank!')
+;; Hi "anon", you have 500912.99€ in the bank!
+```
+
 ## Merging lists and strings
 
 The `++` operator can be applied to lists, strings, booleans, floats:
@@ -266,6 +277,43 @@ or a match in languages like c or rust. The guards are evaluated top to bottom,
 the first matched guard exits the match statement.
 
 The statement which is not a guard, is executed if all other guards do not match.
+
+## Including sources
+
+Sophia supports the modularisation of source code into multiple files. To do
+this simply create the following files and compile the entry point
+(`main.phia`) using `sophia main.phia`:
+
+```lisp
+;; square.phia
+(fun square (_ n)
+    (* n n))
+;; main.phia
+(load "square.phia")
+(put
+    (square 12))
+```
+
+The same expression can be used in the repl to archive the same effect of importing expressions from an other file:
+
+```
+$ sophia
+
+  +####
+ +\    #
++  \ ß  #
++   \   # <-> ß-calculus
++ ß  \  #
+ +    \#
+  ++++#
+
+Welcome to the Sophia repl - press <CTRL-D> or <CTRL-C> to quit...
+ß :: (load "square.phia")
+= [<nil>]
+ß :: (square 12)
+= [144]
+ß :: ⏎
+```
 
 ## Functions
 

@@ -8,14 +8,15 @@ Examples [here](https://xnacly.github.io/Sophia/)
 ```lisp
 (fun
     square
-    (_ t)
-    (* t t)
+    (_ n)
+    (* n n)
 )
-(let a 12)
-(put
-    "a*a is"
-    (square a))
-;; puts a*a is 144
+
+(let n 12)
+(let res (square a))
+
+(put '{n}*{n} is {res}')
+;; 12*12 is 144
 ```
 
 ## Try
@@ -78,11 +79,38 @@ Hi!
 - [ ] Go
 - [ ] Python
 
-#### Compiling sophia to a target
-
-Specify the desired compilation target from the list above using the `-target`-flag when invoking sophia with a source expression:
+Specify the desired compilation target from the list above using the
+`-target`-flag when invoking sophia with a source expression:
 
 ```text
 $ sophia -exp='(put "hello world")' -target=js
 console.log("Hello World")
+```
+
+#### Compiling sophia to javascript
+
+Sophia produces valid minified javascript, for example compiling the example
+from the beginning:
+
+```lisp
+(fun
+    square
+    (_ n)
+    (* n n)
+)
+
+(let n 12)
+(let res (square a))
+
+(put '{n}*{n} is {res}')
+;; 12*12 is 144
+```
+
+```js
+function square(t) {
+  return t * t;
+}
+let a = 12;
+let r = square(a);
+console.log(`${a}*${a} is ${r}`);
 ```

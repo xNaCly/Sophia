@@ -9,7 +9,7 @@ import (
 	"sophia/core/consts"
 )
 
-func repl(run func(input []byte) ([]string, error)) {
+func repl(run func(input []byte, filename string) ([]string, error)) {
 	fmt.Println(`Welcome to the Sophia repl - press <CTRL-D> or <CTRL-C> to quit...`)
 	prompt := "ß :: "
 	scanner := bufio.NewScanner(os.Stdin)
@@ -34,7 +34,7 @@ func repl(run func(input []byte) ([]string, error)) {
 				log.Printf("toggled debug logging to='%t'", core.CONF.Debug)
 			}
 		} else {
-			val, error := run(line)
+			val, error := run(line, "repl")
 			if error != nil {
 				log.Println(error)
 			} else {

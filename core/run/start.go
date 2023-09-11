@@ -29,13 +29,13 @@ func Start() {
 		if err != nil {
 			log.Fatalln("failed to read from stdin", err)
 		}
-		_, err = run(out)
+		_, err = run(out, "stdin")
 		if err != nil {
 			log.Fatalln(err)
 		}
 	} else if len(*execute) != 0 {
 		debug.Log("got -exp flag, running...")
-		_, err := run([]byte(*execute))
+		_, err := run([]byte(*execute), "cli")
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -46,7 +46,7 @@ func Start() {
 		if err != nil {
 			log.Fatalf("Failed to open file: %s\n", err)
 		}
-		_, err = run(f)
+		_, err = run(f, file)
 		if err != nil {
 			log.Println(err)
 			log.Fatalf("error in source file '%s' detected, stopping...", file)

@@ -1,8 +1,11 @@
 package parser
 
 import (
+	"io"
 	"log"
+	"os"
 	"sophia/core/expr"
+	"sophia/core/lexer"
 	"sophia/core/token"
 	"strings"
 )
@@ -11,11 +14,12 @@ import (
 
 type Parser struct {
 	token    []token.Token
+	filename string
 	pos      int
 	HasError bool
 }
 
-func New(token []token.Token) Parser {
+func New(token []token.Token, filename string) Parser {
 	if len(token) == 0 {
 		log.Println("Parser got no tokens, stopping...")
 		return Parser{
@@ -25,6 +29,7 @@ func New(token []token.Token) Parser {
 	return Parser{
 		token:    token,
 		pos:      0,
+		filename: filename,
 		HasError: false,
 	}
 }
@@ -32,10 +37,46 @@ func New(token []token.Token) Parser {
 func (p *Parser) Parse() []expr.Node {
 	res := make([]expr.Node, 0)
 	for !p.peekIs(token.EOF) {
-		res = append(res, p.parseStatment())
+		stmt := p.parseStatment()
+		if stmt.GetToken().Type == token.LOAD {
+			if loadStmt, ok := stmt.(*expr.Load); ok {
+				res = append(res, p.loadNewSource(loadStmt)...)
+			}
+			continue
+		}
+		res = append(res, stmt)
 	}
 	if p.HasError {
 		return []expr.Node{}
+	}
+	return res
+}
+
+func (p *Parser) loadNewSource(node *expr.Load) []expr.Node {
+	res := make([]expr.Node, 0)
+	for i := 0; i < len(node.Imports); i++ {
+		name := node.Imports[i]
+		file, err := os.Open(name)
+		if err != nil {
+			log.Panicf("failed to open %q: %s", name, err)
+			p.HasError = true
+			return nil
+		}
+		content, err := io.ReadAll(file)
+		if err != nil {
+			log.Panicf("failed to read from %q: %s", name, err)
+			p.HasError = true
+			return nil
+		}
+		lexer := lexer.New(content)
+		token := lexer.Lex()
+		if name == p.filename {
+			log.Panicf("detected recursion in file imports, got %q while already parsing %q", name, p.filename)
+			p.HasError = true
+			return nil
+		}
+		parser := New(token, name)
+		res = append(res, parser.Parse()...)
 	}
 	return res
 }
@@ -99,6 +140,25 @@ func (p *Parser) parseStatment() expr.Node {
 		stmt = &expr.Match{
 			Token:    op,
 			Branches: childs,
+		}
+	case token.LOAD:
+		if len(childs) == 0 {
+			log.Printf("err: expected at least one argument for loading sources, got %d", len(childs))
+			p.HasError = true
+			return nil
+		}
+		imports := make([]string, len(childs))
+		for i, c := range childs {
+			if c.GetToken().Type != token.STRING {
+				log.Printf("err: expected strings as load arguments, got %q", token.TOKEN_NAME_MAP[c.GetToken().Type])
+				p.HasError = true
+				return nil
+			}
+			imports[i] = c.GetToken().Raw
+		}
+		stmt = &expr.Load{
+			Token:   op,
+			Imports: imports,
 		}
 	case token.FOR:
 		if len(childs) < 2 {
