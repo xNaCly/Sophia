@@ -1,0 +1,7 @@
+(let beforeLast 0)
+(let lst 1)
+(for (_ i) 0..15
+    (let t (+ beforeLast lst))
+    (put t)
+    (let beforeLast lst)
+    (let lst t))

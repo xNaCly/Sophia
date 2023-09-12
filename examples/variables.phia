@@ -1,0 +1,7 @@
+(let pi 3.1514)
+(let v "v1.1.1") 
+(let isSemantic false) 
+(let list 0 1 2 3 4)
+(let listEq1 0..4)
+(let listEq2 ..4)
+(let list ..4)

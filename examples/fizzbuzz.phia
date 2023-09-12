@@ -1,0 +1,9 @@
+(for (_ i) 1..15
+    (let mod3 (eq 0 (% i 3)))
+    (let mod5 (eq 0 (% i 5)))
+    (match
+        (if (and mod3 mod5) (put "FizzBuzz"))
+        (if mod3 (put "Fizz"))
+        (if mod5 (put "Buzz"))
+        (put i)
+))

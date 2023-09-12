@@ -1,0 +1,7 @@
+(fun
+    square
+    (_ a)
+    (* a a)
+)
+
+(put "function call:" (square 12))

@@ -1,0 +1,6 @@
+(let arr 1..9)
+(for (_ i) arr
+     (put i))
+
+(for (_ i) 10
+    (put i))
