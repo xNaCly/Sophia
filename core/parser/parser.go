@@ -58,13 +58,13 @@ func (p *Parser) loadNewSource(node *expr.Load) []expr.Node {
 		name := node.Imports[i]
 		file, err := os.Open(name)
 		if err != nil {
-			log.Printf("failed to open %q: %s", name, err)
+			log.Printf("err: %s", err)
 			p.HasError = true
 			return nil
 		}
 		content, err := io.ReadAll(file)
 		if err != nil {
-			log.Printf("failed to read from %q: %s", name, err)
+			log.Printf("err: failed to read %s", err)
 			p.HasError = true
 			return nil
 		}
