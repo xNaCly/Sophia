@@ -135,7 +135,7 @@ Sophia enables variable definition with the `let`-keyword:
 
 Sophia supports interpolation similar to rust or javascript via the following syntax:
 
-```lisp
+```
 (let name "anon")
 (let money 500_912.99)
 (put 'Hi "{money}", you have {money}€ in the bank!')
@@ -150,7 +150,7 @@ The `++` operator can be applied to lists, strings, booleans, floats:
 (++ "hello" "world")
 ;; => "hello world"
 
-(++ .1 12e1)
+(++ 0.1 12e1)
 ;; => [0.1 120]
 
 (++ true false "t")
@@ -253,14 +253,6 @@ Creating an array from 1298 to 1392:
 (let range 1298..1392)
 ```
 
-Omitting the lower bound is supported, 0 is assumed to be the lower bound:
-
-```lisp
-(let range1 ..9)
-```
-
-The above contains all numbers from 0 up to and including 9.
-
 ### Match
 
 ```lisp
@@ -313,6 +305,50 @@ Welcome to the Sophia repl - press <CTRL-D> or <CTRL-C> to quit...
 ß :: (square 12)
 = [144]
 ß :: ⏎
+```
+
+## Objects
+
+Objects are created using the `{}` notation. In an object a key value pair is
+denoted as `key: value`, see below for an example:
+
+```lisp
+(let person { name: "anon" age: 25})
+```
+
+## Accessing object and list elements
+
+Objects are only as useful as the data they contain, therefore the syntax for accessing said data is as intuitive as possible:
+
+```lisp
+(let person { name: "anon" age: 25})
+;; accessing the '.name' value from the 'person' object
+(put [person.name])
+```
+
+The same can be applied to lists:
+
+```lisp
+(let list 1 2 3 4)
+;; accessing the first element in the 'l'-list
+(put [list.0])
+```
+
+Updating the values at either the key or the index is possible via the same syntax:
+
+```lisp
+(let [list.0] 5)
+(let [person.name] "unknown")
+(put list person)
+[5 2 3 4] map[age:25 name:unknown]
+```
+
+Objects support one more feature, which is the addition of new keys also via the same syntax:
+
+```lisp
+(let [person.newKey] "thisIsNew")
+(put person)
+ map[age:25 name:unknown newKey:thisisNew]
 ```
 
 ## Functions
