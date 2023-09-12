@@ -59,6 +59,18 @@ func (l *Lexer) Lex() []token.Token {
 			ttype = token.LEFT_BRACE
 		case ')':
 			ttype = token.RIGHT_BRACE
+		case '{':
+			ttype = token.LEFT_CURLY
+		case '}':
+			ttype = token.RIGHT_CURLY
+		case '[':
+			ttype = token.LEFT_BRACKET
+		case ']':
+			ttype = token.RIGHT_BRACKET
+		case ':':
+			ttype = token.COLON
+		case '.':
+			ttype = token.DOT
 		case '_':
 			ttype = token.PARAM
 		case '\'':
@@ -85,7 +97,7 @@ func (l *Lexer) Lex() []token.Token {
 			if unicode.IsLetter(rune(l.chr)) {
 				t = append(t, l.ident())
 				continue
-			} else if unicode.IsDigit(rune(l.chr)) || l.chr == '.' {
+			} else if unicode.IsDigit(rune(l.chr)) {
 				if tok, err := l.float(); err == nil {
 					t = append(t, tok)
 				} else {

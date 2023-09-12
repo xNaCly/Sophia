@@ -81,32 +81,6 @@ func (p *Parser) loadNewSource(node *expr.Load) []expr.Node {
 	return res
 }
 
-func (p *Parser) parseArguments() expr.Node {
-	var child expr.Node
-	p.peekErrorMany("Missing or unknown argument", token.FLOAT, token.STRING, token.IDENT, token.BOOL, token.TEMPLATE_STRING)
-	if p.peekIs(token.TEMPLATE_STRING) {
-		child = p.parseTemplateString()
-	} else if p.peekIs(token.FLOAT) {
-		child = &expr.Float{
-			Token: p.peek(),
-		}
-	} else if p.peekIs(token.STRING) {
-		child = &expr.String{
-			Token: p.peek(),
-		}
-	} else if p.peekIs(token.IDENT) {
-		child = &expr.Ident{
-			Token: p.peek(),
-			Name:  p.peek().Raw,
-		}
-	} else if p.peekIs(token.BOOL) {
-		child = &expr.Boolean{
-			Token: p.peek(),
-		}
-	}
-	return child
-}
-
 // INFO: @SamuelScheit fixed this, i dont even know how and he doesnt either
 func (p *Parser) parseStatment() expr.Node {
 	childs := make([]expr.Node, 0)
@@ -263,14 +237,9 @@ func (p *Parser) parseStatment() expr.Node {
 			return nil
 		}
 		ident := childs[0]
-		if ident.GetToken().Type != token.IDENT {
-			log.Printf("err: expected 'IDENT' as first argument in variable declaration, got %s", token.TOKEN_NAME_MAP[ident.GetToken().Type])
-			p.HasError = true
-			return nil
-		}
 		stmt = &expr.Var{
 			Token: op,
-			Name:  ident.GetToken().Raw,
+			Ident: ident,
 			Value: childs[1:],
 		}
 	case token.MERGE:
@@ -338,6 +307,82 @@ func (p *Parser) parseStatment() expr.Node {
 	p.peekError(token.RIGHT_BRACE, "Missing statement end")
 	p.advance()
 	return stmt
+}
+
+func (p *Parser) parseArguments() expr.Node {
+	var child expr.Node
+	p.peekErrorMany("Missing or unknown argument",
+		token.FLOAT,
+		token.STRING,
+		token.IDENT,
+		token.BOOL,
+		token.LEFT_CURLY,
+		token.LEFT_BRACKET,
+		token.TEMPLATE_STRING)
+	if p.peekIs(token.LEFT_BRACKET) {
+		child = p.parseIndex()
+	} else if p.peekIs(token.LEFT_CURLY) {
+		child = p.parseObject()
+	} else if p.peekIs(token.TEMPLATE_STRING) {
+		child = p.parseTemplateString()
+	} else if p.peekIs(token.FLOAT) {
+		child = &expr.Float{
+			Token: p.peek(),
+		}
+	} else if p.peekIs(token.STRING) {
+		child = &expr.String{
+			Token: p.peek(),
+		}
+	} else if p.peekIs(token.IDENT) {
+		child = &expr.Ident{
+			Token: p.peek(),
+			Name:  p.peek().Raw,
+		}
+	} else if p.peekIs(token.BOOL) {
+		child = &expr.Boolean{
+			Token: p.peek(),
+		}
+	}
+	return child
+}
+
+func (p *Parser) parseIndex() expr.Node {
+	p.peekError(token.LEFT_BRACKET, "missing index start")
+	o := expr.Index{
+		Token: p.peek(),
+	}
+	p.advance()
+	p.peekError(token.IDENT, "missing element to index into")
+	o.Element = p.parseArguments()
+	p.advance()
+	p.peekError(token.DOT, "missing index element and property divider")
+	p.advance()
+	o.Index = p.parseArguments()
+	p.advance()
+	p.peekError(token.RIGHT_BRACKET, "missing object end")
+	return &o
+}
+
+func (p *Parser) parseObject() expr.Node {
+	p.peekError(token.LEFT_CURLY, "missing object start")
+	o := expr.Object{
+		Token:    p.peek(),
+		Children: make([]expr.ObjectPair, 0),
+	}
+	p.advance()
+	for !p.peekIs(token.RIGHT_CURLY) && !p.peekIs(token.EOF) {
+		op := expr.ObjectPair{
+			Key: p.parseArguments(),
+		}
+		p.advance()
+		p.peekError(token.COLON, "missing object key value divider")
+		p.advance()
+		op.Value = p.parseArguments()
+		p.advance()
+		o.Children = append(o.Children, op)
+	}
+	p.peekError(token.RIGHT_CURLY, "missing object end")
+	return &o
 }
 
 func (p *Parser) parseTemplateString() *expr.TemplateString {

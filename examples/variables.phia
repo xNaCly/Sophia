@@ -1,7 +1,17 @@
 (let pi 3.1514)
 (let v "v1.1.1") 
 (let isSemantic false) 
+
 (let list 0 1 2 3 4)
 (let listEq1 0..4)
 (let listEq2 ..4)
 (let list ..4)
+
+(let firstEl [list.0])
+
+(let person { name: "anon" age: 25 })
+(let [person.name] "anon2")
+(let [person.test] "test")
+(let newAge 
+    (/ [person.age] 2))
+(let [person.age] newAge)
