@@ -1,29 +1,36 @@
 package run
 
 import (
-	"bufio"
 	"fmt"
 	"log"
-	"os"
 	"sophia/core"
 	"sophia/core/consts"
+	"strings"
+	"github.com/chzyer/readline"
 )
 
 func repl(run func(input []byte, filename string) ([]string, error)) {
 	fmt.Println(`Welcome to the Sophia repl - press <CTRL-D> or <CTRL-C> to quit...`)
-	prompt := "ß :: "
-	scanner := bufio.NewScanner(os.Stdin)
-	for {
-		fmt.Print(prompt)
-		scanned := scanner.Scan()
-		if !scanned {
-			return
-		}
+	
+	rl, err := readline.NewEx(&readline.Config{
+		Prompt:                 "ß :: ",
+	})
+	if err != nil {
+		panic(err)
+	}
+	defer rl.Close()
 
-		line := scanner.Bytes()
+	for {
+		line, err := rl.Readline()
+		if err != nil {
+			break
+		}
+		line = strings.TrimSpace(line)
 		if len(line) == 0 {
 			continue
-		} else if line[0] == '~' {
+		}
+
+		if line[0] == '~' {
 			switch string(line[1:]) {
 			case "syms":
 				fmt.Printf("%#v\n", consts.SYMBOL_TABLE)
@@ -34,7 +41,7 @@ func repl(run func(input []byte, filename string) ([]string, error)) {
 				log.Printf("toggled debug logging to='%t'", core.CONF.Debug)
 			}
 		} else {
-			val, error := run(line, "repl")
+			val, error := run([]byte(line), "repl")
 			if error != nil {
 				log.Println(error)
 			} else {
