@@ -2,18 +2,18 @@ package run
 
 import (
 	"fmt"
+	"github.com/chzyer/readline"
 	"log"
 	"sophia/core"
 	"sophia/core/consts"
 	"strings"
-	"github.com/chzyer/readline"
 )
 
 func repl(run func(input []byte, filename string) ([]string, error)) {
 	fmt.Println(`Welcome to the Sophia repl - press <CTRL-D> or <CTRL-C> to quit...`)
-	
+
 	rl, err := readline.NewEx(&readline.Config{
-		Prompt:                 "ß :: ",
+		Prompt: "ß :: ",
 	})
 	if err != nil {
 		panic(err)

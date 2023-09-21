@@ -9,9 +9,22 @@
 
 (let firstEl [list.0])
 
-(let person { name: "anon" age: 25 })
+(let person { 
+    name: "anon" 
+    age: 25 
+    })
 (let [person.name] "anon2")
 (let [person.test] "test")
 (let newAge 
     (/ [person.age] 2))
 (let [person.age] newAge)
+
+(let person1 {
+    name: "name"
+    data: {
+        test: "test"
+    }
+    })
+
+(let pData [person.data])
+(put [pData.data])

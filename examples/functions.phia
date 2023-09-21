@@ -4,4 +4,5 @@
     (* a a)
 )
 
-(put "function call:" (square 12))
+(let r (square 12))
+(put '12^2 -> {r}')
