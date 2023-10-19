@@ -1,0 +1,4 @@
+(let person {})
+(fun [person.String] (_) (put "test"))
+;; not yet implemented
+;;([person.String])

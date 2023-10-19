@@ -1,6 +1,7 @@
 package expr
 
 import (
+	"fmt"
 	"sophia/core/consts"
 	"sophia/core/token"
 	"strings"
@@ -19,7 +20,18 @@ func (f *Func) GetToken() token.Token {
 }
 
 func (f *Func) Eval() any {
-	consts.FUNC_TABLE[f.Name.GetToken().Raw] = f
+	if f.Name.GetToken().Type == token.IDENT {
+		consts.FUNC_TABLE[f.Name.GetToken().Raw] = f
+		return nil
+	} else if f.Name.GetToken().Type == token.LEFT_BRACKET {
+		i, _ := f.Name.(*Index)
+		ident := castPanicIfNotType[*Ident](i.Element, token.LEFT_BRACKET)
+		index := castPanicIfNotType[*Ident](i.Index, token.LEFT_BRACKET)
+		_, found := consts.SYMBOL_TABLE[ident.Name]
+		if !found {
+			panic(fmt.Sprintf("can't define function %q on not existing object %q", index.Name, ident.Name))
+		}
+	}
 	return nil
 }
 

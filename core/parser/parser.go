@@ -202,8 +202,8 @@ func (p *Parser) parseStatment() expr.Node {
 			p.HasError = true
 			return nil
 		}
-		if childs[0].GetToken().Type != token.IDENT {
-			log.Printf("err: expected the first argument for function definition to be of type IDENT, got %q", token.TOKEN_NAME_MAP[childs[0].GetToken().Type])
+		if childs[0].GetToken().Type != token.IDENT && childs[0].GetToken().Type != token.LEFT_BRACKET {
+			log.Printf("err: expected the first argument for function definition to be of type IDENT or of type LEFT_BRACKET, got %q", token.TOKEN_NAME_MAP[childs[0].GetToken().Type])
 			p.HasError = true
 			return nil
 		}
