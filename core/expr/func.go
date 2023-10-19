@@ -25,12 +25,14 @@ func (f *Func) Eval() any {
 		return nil
 	} else if f.Name.GetToken().Type == token.LEFT_BRACKET {
 		i, _ := f.Name.(*Index)
-		ident := castPanicIfNotType[*Ident](i.Element, token.LEFT_BRACKET)
-		index := castPanicIfNotType[*Ident](i.Index, token.LEFT_BRACKET)
-		_, found := consts.SYMBOL_TABLE[ident.Name]
+		ident := castPanicIfNotType[*Ident](i.Element, token.FUNC)
+		index := castPanicIfNotType[*Ident](i.Index, token.FUNC)
+		requested, found := consts.SYMBOL_TABLE[ident.Name]
 		if !found {
 			panic(fmt.Sprintf("can't define function %q on not existing object %q", index.Name, ident.Name))
 		}
+		requestedObject := castPanicIfNotType[map[string]interface{}](requested, token.FUNC)
+		requestedObject[index.Name] = f
 	}
 	return nil
 }
