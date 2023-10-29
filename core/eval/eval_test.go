@@ -1,8 +1,11 @@
 package eval
 
 import (
+	"sophia/core"
 	"sophia/core/lexer"
 	"sophia/core/parser"
+	"sophia/core/serror"
+	"strings"
 	"testing"
 )
 
@@ -38,12 +41,18 @@ func TestEvalAritmetic(t *testing.T) {
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
-			l := lexer.New([]byte(i.str))
-			p := parser.New(l.Lex(), "test")
+			errorFmt := serror.ErrorFormatter{
+				Conf:    &core.CONF,
+				Lines:   strings.Split(string(i.str), "\n"),
+				Errors:  make([]serror.Error, 0),
+				Builder: &strings.Builder{},
+			}
+			l := lexer.New([]byte(i.str), &errorFmt)
+			p := parser.New(l.Lex(), "test", &errorFmt)
 			r := Eval(p.Parse())
-			if l.HasError || p.HasError {
+
+			if p.ErrorFormatter.HasErrors() {
 				t.Errorf("lexer or parser error for %q", i.str)
-				return
 			}
 			if len(r) == 0 {
 				t.Errorf("eval result empty for %q", i.str)
@@ -88,9 +97,18 @@ func TestEvalVariables(t *testing.T) {
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
-			l := lexer.New([]byte(i.str))
-			p := parser.New(l.Lex(), "test")
+			errorFmt := serror.ErrorFormatter{
+				Conf:    &core.CONF,
+				Lines:   strings.Split(string(i.str), "\n"),
+				Errors:  make([]serror.Error, 0),
+				Builder: &strings.Builder{},
+			}
+			l := lexer.New([]byte(i.str), &errorFmt)
+			p := parser.New(l.Lex(), "test", &errorFmt)
 			r := Eval(p.Parse())
+			if p.ErrorFormatter.HasErrors() {
+				t.Errorf("lexer or parser error for %q", i.str)
+			}
 			if len(r) == 0 {
 				t.Errorf("eval result empty")
 			}
@@ -173,9 +191,18 @@ func TestEvalConditional(t *testing.T) {
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
-			l := lexer.New([]byte(i.str))
-			p := parser.New(l.Lex(), "test")
+			errorFmt := serror.ErrorFormatter{
+				Conf:    &core.CONF,
+				Lines:   strings.Split(string(i.str), "\n"),
+				Errors:  make([]serror.Error, 0),
+				Builder: &strings.Builder{},
+			}
+			l := lexer.New([]byte(i.str), &errorFmt)
+			p := parser.New(l.Lex(), "test", &errorFmt)
 			r := Eval(p.Parse())
+			if p.ErrorFormatter.HasErrors() {
+				t.Errorf("lexer or parser error for %q", i.str)
+			}
 			if len(r) == 0 {
 				t.Errorf("eval result empty")
 			}
@@ -206,12 +233,17 @@ func TestEvalArraySpread(t *testing.T) {
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
-			l := lexer.New([]byte(i.str))
-			p := parser.New(l.Lex(), "test")
+			errorFmt := serror.ErrorFormatter{
+				Conf:    &core.CONF,
+				Lines:   strings.Split(string(i.str), "\n"),
+				Errors:  make([]serror.Error, 0),
+				Builder: &strings.Builder{},
+			}
+			l := lexer.New([]byte(i.str), &errorFmt)
+			p := parser.New(l.Lex(), "test", &errorFmt)
 			r := Eval(p.Parse())
-			if l.HasError || p.HasError {
+			if p.ErrorFormatter.HasErrors() {
 				t.Errorf("lexer or parser error for %q", i.str)
-				return
 			}
 			if len(r) == 0 {
 				t.Errorf("eval result empty for %q", i.str)
@@ -249,12 +281,17 @@ func TestEvalMerge(t *testing.T) {
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
-			l := lexer.New([]byte(i.str))
-			p := parser.New(l.Lex(), "test")
+			errorFmt := serror.ErrorFormatter{
+				Conf:    &core.CONF,
+				Lines:   strings.Split(string(i.str), "\n"),
+				Errors:  make([]serror.Error, 0),
+				Builder: &strings.Builder{},
+			}
+			l := lexer.New([]byte(i.str), &errorFmt)
+			p := parser.New(l.Lex(), "test", &errorFmt)
 			r := Eval(p.Parse())
-			if l.HasError || p.HasError {
+			if p.ErrorFormatter.HasErrors() {
 				t.Errorf("lexer or parser error for %q", i.str)
-				return
 			}
 			if len(r) == 0 {
 				t.Errorf("eval result empty for %q", i.str)
@@ -288,12 +325,17 @@ func TestEvalFunction(t *testing.T) {
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
-			l := lexer.New([]byte(i.str))
-			p := parser.New(l.Lex(), "test")
+			errorFmt := serror.ErrorFormatter{
+				Conf:    &core.CONF,
+				Lines:   strings.Split(string(i.str), "\n"),
+				Errors:  make([]serror.Error, 0),
+				Builder: &strings.Builder{},
+			}
+			l := lexer.New([]byte(i.str), &errorFmt)
+			p := parser.New(l.Lex(), "test", &errorFmt)
 			r := Eval(p.Parse())
-			if l.HasError || p.HasError {
+			if p.ErrorFormatter.HasErrors() {
 				t.Errorf("lexer or parser error for %q", i.str)
-				return
 			}
 			if len(r) == 0 {
 				t.Errorf("eval result empty for %q", i.str)
@@ -320,12 +362,17 @@ func TestEvalLoop(t *testing.T) {
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
-			l := lexer.New([]byte(i.str))
-			p := parser.New(l.Lex(), "test")
+			errorFmt := serror.ErrorFormatter{
+				Conf:    &core.CONF,
+				Lines:   strings.Split(string(i.str), "\n"),
+				Errors:  make([]serror.Error, 0),
+				Builder: &strings.Builder{},
+			}
+			l := lexer.New([]byte(i.str), &errorFmt)
+			p := parser.New(l.Lex(), "test", &errorFmt)
 			r := Eval(p.Parse())
-			if l.HasError || p.HasError {
+			if p.ErrorFormatter.HasErrors() {
 				t.Errorf("lexer or parser error for %q", i.str)
-				return
 			}
 			if len(r) == 0 {
 				t.Errorf("eval result empty for %q", i.str)

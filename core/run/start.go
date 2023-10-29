@@ -11,7 +11,7 @@ import (
 )
 
 func Start() {
-	log.SetFlags(log.Ltime | log.Lmicroseconds)
+	log.SetFlags(0)
 	execute := flag.String("exp", "", "specifiy expression to execute")
 	target := flag.String("target", "", "specifiy target to compile sophia to")
 	dbg := flag.Bool("dbg", false, "enable debug logs")

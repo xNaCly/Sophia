@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"sophia/core"
 	"sophia/core/debug"
 	"sophia/core/eval"
 	"sophia/core/lexer"
 	"sophia/core/parser"
+	"sophia/core/serror"
+	"strings"
 )
 
 func run(input []byte, filename string) (s []string, e error) {
@@ -18,13 +19,17 @@ func run(input []byte, filename string) (s []string, e error) {
 			return
 		}
 		if err := recover(); err != nil {
-			log.Printf("err: %s", err)
-			e = errors.New("runtime error")
 			return
 		}
 	}()
+	errorFmt := serror.ErrorFormatter{
+		Conf:    &core.CONF,
+		Lines:   strings.Split(string(input), "\n"),
+		Errors:  make([]serror.Error, 0),
+		Builder: &strings.Builder{},
+	}
 	debug.Log("starting lexer")
-	l := lexer.New(input)
+	l := lexer.New(input, &errorFmt)
 	tokens := l.Lex()
 	debug.Log("lexed", len(tokens), "token")
 
@@ -33,21 +38,14 @@ func run(input []byte, filename string) (s []string, e error) {
 	}
 
 	debug.Log("starting parser")
-	p := parser.New(tokens, filename)
+	p := parser.New(tokens, filename, &errorFmt)
 	ast := p.Parse()
-	if l.HasError {
-		e = errors.New("lexer error")
-		return
-	}
-	if p.HasError {
-		e = errors.New("parser error")
-		return
-	}
 
 	if core.CONF.Debug {
 		out, _ := json.MarshalIndent(ast, "", "  ")
 		debug.Log(string(out))
 	}
+
 	if len(core.CONF.Target) > 0 {
 		trgt := core.CONF.Target
 		debug.Log("done parsing - no errors, starting compilation for", trgt)
@@ -57,7 +55,7 @@ func run(input []byte, filename string) (s []string, e error) {
 		}
 		fmt.Println(eval.CompileJs(ast))
 	} else {
-		debug.Log("done parsing - no errors, starting eval")
+		debug.Log("done parsing - starting eval")
 		s = eval.Eval(ast)
 	}
 	return

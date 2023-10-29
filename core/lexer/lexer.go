@@ -1,36 +1,33 @@
 package lexer
 
 import (
-	"fmt"
-	"log"
+	"sophia/core/serror"
 	"sophia/core/token"
 	"strings"
 	"unicode"
 )
 
 type Lexer struct {
-	input    []byte
-	pos      int
-	chr      byte
-	line     int
-	linepos  int
-	HasError bool
+	input          []byte
+	pos            int
+	chr            byte
+	line           int
+	linepos        int
+	errorFormatter *serror.ErrorFormatter
 }
 
-func New(input []byte) Lexer {
+func New(input []byte, errorFormatter *serror.ErrorFormatter) *Lexer {
 	if len(input) == 0 || len(strings.TrimSpace(string(input))) == 0 {
-		log.Println("err: input is empty, stopping")
-		return Lexer{
-			HasError: true,
-		}
+		errorFormatter.Add(nil, "Unexpected end of file", "Source possibly empty")
+		return &Lexer{}
 	}
-	return Lexer{
-		input:    input,
-		pos:      0,
-		chr:      input[0],
-		line:     0,
-		linepos:  0,
-		HasError: false,
+	return &Lexer{
+		input:          input,
+		pos:            0,
+		chr:            input[0],
+		line:           0,
+		linepos:        0,
+		errorFormatter: errorFormatter,
 	}
 }
 
@@ -101,14 +98,19 @@ func (l *Lexer) Lex() []token.Token {
 				if tok, err := l.float(); err == nil {
 					t = append(t, tok)
 				} else {
-					l.error(3, tok.Raw)
+					l.errorFormatter.Add(&tok, "Invalid floating point number", "")
 				}
 				continue
 			}
 		}
 
 		if ttype == token.UNKNOWN {
-			l.error(0, "")
+			l.errorFormatter.Add(&token.Token{
+				Pos:  l.pos,
+				Type: ttype,
+				Line: l.line,
+				Raw:  string(l.chr),
+			}, "Unknown character %q", "")
 		}
 
 		t = append(t, token.Token{
@@ -120,65 +122,10 @@ func (l *Lexer) Lex() []token.Token {
 
 		l.advance()
 	}
-	if l.HasError {
-		return []token.Token{
-			{Type: token.EOF, Line: l.line},
-		}
-	}
 	t = append(t, token.Token{
 		Type: token.EOF, Line: l.line,
 	})
 	return t
-}
-
-func (l *Lexer) error(errType uint, ident string) {
-	pos := l.linepos
-	iLen := len(ident)
-
-	switch errType {
-	case 3:
-		pos = pos - iLen
-		if pos < 0 {
-			pos = 0
-		}
-		log.Printf("err: Invalid floating point integer '%s' at [l %d:%d]", ident, l.line+1, pos)
-	case 2:
-		pos = pos - iLen
-		if pos < 0 {
-			pos = 0
-		}
-		log.Printf("err: Unterminated String at [l %d:%d]", l.line+1, pos)
-	case 1:
-		pos = pos - iLen
-		if pos < 0 {
-			pos = 0
-		}
-		log.Printf("err: Unknown identifier '%s' at [l %d:%d]", ident, l.line+1, pos)
-	default:
-		log.Printf("err: Unknown token '%c' at [l %d:%d]", l.chr, l.line+1, pos)
-	}
-
-	lines := strings.Split(string(l.input), "\n")
-
-	spaces := pos
-
-	// if no identifier given, print one ^
-	if iLen == 0 {
-		iLen += 1
-	}
-	if l.line-1 > -1 {
-		if errType == 2 {
-			spaces -= 1
-		}
-		spaces -= 1
-		if spaces < 0 {
-			spaces = 0
-		}
-		fmt.Printf("\n%.3d |\t%s\n%.3d |\t%s\n\t%s%s\n\n", l.line, lines[l.line-1], l.line+1, lines[l.line], strings.Repeat(" ", spaces), strings.Repeat("^", iLen))
-	} else {
-		fmt.Printf("\n%.3d |\t%s\n\t%s%s\n\n", l.line+1, lines[l.line], strings.Repeat(" ", spaces), strings.Repeat("^", iLen))
-	}
-	l.HasError = true
 }
 
 func (l *Lexer) templateString() []token.Token {
@@ -211,8 +158,11 @@ func (l *Lexer) templateString() []token.Token {
 			el = append(el, l.ident())
 			continue
 		} else if l.chr == '\n' || l.chr == 0 {
-			log.Printf("err: Unexpected Newline or EOF at [l %d:%d]", l.line+1, l.pos)
-			l.HasError = true
+			var errEl token.Token
+			if len(el) > 1 {
+				errEl = el[len(el)-1]
+			}
+			l.errorFormatter.Add(&errEl, "Unexpected new line or end of file in template string", "Consider closing the template string via ' or omitting the inserted new line")
 			return []token.Token{}
 		} else if l.chr == '\'' {
 			if b.Len() != 0 {
@@ -252,7 +202,12 @@ func (l *Lexer) string() token.Token {
 	}
 	str := b.String()
 	if l.chr != '"' {
-		l.error(2, str)
+		l.errorFormatter.Add(&token.Token{
+			Pos:  l.pos - (len(str) + 2),
+			Type: token.STRING,
+			Raw:  str,
+			Line: l.line,
+		}, "Unterminated string", "Consider closing the string via \"")
 	} else {
 		l.advance()
 	}

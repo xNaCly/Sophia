@@ -6,31 +6,28 @@ import (
 	"os"
 	"sophia/core/expr"
 	"sophia/core/lexer"
+	"sophia/core/serror"
 	"sophia/core/token"
 	"strings"
 )
 
-// TODO: error display like in the lexer
-
 type Parser struct {
-	token    []token.Token
-	filename string
-	pos      int
-	HasError bool
+	token          []token.Token
+	filename       string
+	pos            int
+	ErrorFormatter *serror.ErrorFormatter
 }
 
-func New(token []token.Token, filename string) Parser {
+func New(token []token.Token, filename string, errorFormatter *serror.ErrorFormatter) *Parser {
 	if len(token) == 0 {
-		log.Println("Parser got no tokens, stopping...")
-		return Parser{
-			HasError: true,
-		}
+		errorFormatter.Add(nil, "Unexpected end of input", "Source possibly empty")
+		return &Parser{}
 	}
-	return Parser{
-		token:    token,
-		pos:      0,
-		filename: filename,
-		HasError: false,
+	return &Parser{
+		token:          token,
+		pos:            0,
+		filename:       filename,
+		ErrorFormatter: errorFormatter,
 	}
 }
 
@@ -46,9 +43,6 @@ func (p *Parser) Parse() []expr.Node {
 		}
 		res = append(res, stmt)
 	}
-	if p.HasError {
-		return []expr.Node{}
-	}
 	return res
 }
 
@@ -59,23 +53,20 @@ func (p *Parser) loadNewSource(node *expr.Load) []expr.Node {
 		file, err := os.Open(name)
 		if err != nil {
 			log.Printf("err: %s", err)
-			p.HasError = true
 			return nil
 		}
 		content, err := io.ReadAll(file)
 		if err != nil {
 			log.Printf("err: failed to read %s", err)
-			p.HasError = true
 			return nil
 		}
-		lexer := lexer.New(content)
+		lexer := lexer.New(content, p.ErrorFormatter)
 		token := lexer.Lex()
 		if name == p.filename {
 			log.Printf("detected recursion in file imports, got %q while already parsing %q", name, p.filename)
-			p.HasError = true
 			return nil
 		}
-		parser := New(token, name)
+		parser := New(token, name, p.ErrorFormatter)
 		res = append(res, parser.Parse()...)
 	}
 	return res
@@ -118,14 +109,12 @@ func (p *Parser) parseStatment() expr.Node {
 	case token.LOAD:
 		if len(childs) == 0 {
 			log.Printf("err: expected at least one argument for loading sources, got %d", len(childs))
-			p.HasError = true
 			return nil
 		}
 		imports := make([]string, len(childs))
 		for i, c := range childs {
 			if c.GetToken().Type != token.STRING {
 				log.Printf("err: expected strings as load arguments, got %q", token.TOKEN_NAME_MAP[c.GetToken().Type])
-				p.HasError = true
 				return nil
 			}
 			imports[i] = c.GetToken().Raw
@@ -137,18 +126,15 @@ func (p *Parser) parseStatment() expr.Node {
 	case token.FOR:
 		if len(childs) < 2 {
 			log.Printf("err: expected two argument for loop definition, got %d", len(childs))
-			p.HasError = true
 			return nil
 		}
 		params := childs[0]
 		if params.GetToken().Type != token.PARAM {
 			log.Printf("err: expected the first argument for loop definition to be of type PARAM, got %q", token.TOKEN_NAME_MAP[childs[0].GetToken().Type])
-			p.HasError = true
 			return nil
 		}
 		if len(params.(*expr.Params).Children) != 1 {
 			log.Printf("err: expected one parameter for loop definition, got %d", len(params.(*expr.Params).Children))
-			p.HasError = true
 			return nil
 		}
 		// TODO: check if first is of type params
@@ -166,7 +152,6 @@ func (p *Parser) parseStatment() expr.Node {
 	case token.LT:
 		if len(childs) != 2 {
 			log.Printf("err: expected exactly two statements for less than comparison, got %d", len(childs))
-			p.HasError = true
 			return nil
 		}
 		stmt = &expr.Lt{
@@ -176,7 +161,6 @@ func (p *Parser) parseStatment() expr.Node {
 	case token.GT:
 		if len(childs) != 2 {
 			log.Printf("err: expected exactly two statements for greater than comparison, got %d", len(childs))
-			p.HasError = true
 			return nil
 		}
 		stmt = &expr.Gt{
@@ -188,7 +172,6 @@ func (p *Parser) parseStatment() expr.Node {
 			t := c.GetToken().Type
 			if t != token.IDENT {
 				log.Printf("err: expected identifier for parameter definition, got %q", token.TOKEN_NAME_MAP[t])
-				p.HasError = true
 				return nil
 			}
 		}
@@ -199,17 +182,14 @@ func (p *Parser) parseStatment() expr.Node {
 	case token.FUNC:
 		if len(childs) < 2 {
 			log.Printf("err: expected at least two argument for function definition, got %d", len(childs))
-			p.HasError = true
 			return nil
 		}
 		if childs[0].GetToken().Type != token.IDENT {
 			log.Printf("err: expected the first argument for function definition to be of type IDENT, got %q", token.TOKEN_NAME_MAP[childs[0].GetToken().Type])
-			p.HasError = true
 			return nil
 		}
 		if childs[1].GetToken().Type != token.PARAM {
 			log.Printf("err: expected the second argument for function definition to be of type PARAM, got %q", token.TOKEN_NAME_MAP[childs[0].GetToken().Type])
-			p.HasError = true
 			return nil
 		}
 		stmt = &expr.Func{
@@ -221,7 +201,6 @@ func (p *Parser) parseStatment() expr.Node {
 	case token.IF:
 		if len(childs) == 0 {
 			log.Printf("err: expected at least two argument for condition, got %d", len(childs))
-			p.HasError = true
 			return nil
 		}
 		cond := childs[0]
@@ -233,7 +212,6 @@ func (p *Parser) parseStatment() expr.Node {
 	case token.LET:
 		if len(childs) == 0 {
 			log.Printf("err: expected at least one argument for variable declaration, got %d", len(childs))
-			p.HasError = true
 			return nil
 		}
 		ident := childs[0]
@@ -255,7 +233,6 @@ func (p *Parser) parseStatment() expr.Node {
 	case token.NEG:
 		if len(childs) != 1 {
 			log.Printf("err: expected exactly one argument for negation, got %d", len(childs))
-			p.HasError = true
 			return nil
 		}
 		stmt = &expr.Neg{
@@ -434,13 +411,11 @@ func (p *Parser) peekErrorMany(error string, tokenType ...int) {
 		}
 		wanted := strings.Join(o, ",")
 		log.Printf("err: %s - Expected any of: '%s', got '%s' [l: %d:%d]", error, wanted, token.TOKEN_NAME_MAP[p.peek().Type], p.peek().Line, p.peek().Pos)
-		p.HasError = true
 	}
 }
 
 func (p *Parser) peekError(tokenType int, error string) {
 	if !p.peekIs(tokenType) {
 		log.Printf("err: %s - Expected Token '%s' got '%s' [l: %d:%d]", error, token.TOKEN_NAME_MAP[tokenType], token.TOKEN_NAME_MAP[p.peek().Type], p.peek().Line, p.peek().Pos)
-		p.HasError = true
 	}
 }

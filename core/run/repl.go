@@ -10,7 +10,8 @@ import (
 )
 
 func repl(run func(input []byte, filename string) ([]string, error)) {
-	fmt.Println(`Welcome to the Sophia repl - press <CTRL-D> or <CTRL-C> to quit...`)
+	log.SetFlags(0)
+	fmt.Println(`Welcome to the Sophia programming language repl - press <CTRL-D> or <CTRL-C> to quit...`)
 
 	rl, err := readline.NewEx(&readline.Config{
 		Prompt: "ß :: ",
