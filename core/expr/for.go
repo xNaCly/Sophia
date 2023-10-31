@@ -1,9 +1,8 @@
 package expr
 
 import (
-	"fmt"
-	"log"
 	"sophia/core/consts"
+	"sophia/core/serror"
 	"sophia/core/token"
 	"strings"
 )
@@ -23,7 +22,8 @@ func (f *For) GetToken() token.Token {
 func (f *For) Eval() any {
 	params := f.Params.(*Params).Children
 	if len(params) < 1 {
-		panic(fmt.Sprintf("expected at least %d parameters in loop, got %d", 1, len(params)))
+		serror.Add(&f.Token, "Not enough arguments", "Expected at least %d parameters for loop, got %d.", 1, len(params))
+		serror.Panic()
 	}
 	element := castPanicIfNotType[*Ident](params[0], params[0].GetToken())
 	oldValue, foundOldValue := consts.SYMBOL_TABLE[element.Name]
@@ -48,7 +48,9 @@ func (f *For) Eval() any {
 			}
 		}
 	default:
-		log.Panicf("expected container or upper bound for iteration, got: %T\n", v)
+		t := f.LoopOver.GetToken()
+		serror.Add(&t, "Invalid iterator", "expected container or upper bound for iteration, got: %T\n", v)
+		serror.Panic()
 	}
 
 	if foundOldValue {
