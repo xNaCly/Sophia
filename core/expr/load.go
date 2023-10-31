@@ -7,7 +7,7 @@ import (
 
 type Load struct {
 	Token   token.Token
-	Imports []string
+	Imports []Node
 }
 
 func (l *Load) GetToken() token.Token {

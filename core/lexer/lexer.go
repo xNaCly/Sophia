@@ -8,26 +8,25 @@ import (
 )
 
 type Lexer struct {
-	input          []byte
-	pos            int
-	chr            byte
-	line           int
-	linepos        int
-	errorFormatter *serror.ErrorFormatter
+	input   []rune
+	pos     int
+	chr     rune
+	line    int
+	linepos int
 }
 
-func New(input []byte, errorFormatter *serror.ErrorFormatter) *Lexer {
-	if len(input) == 0 || len(strings.TrimSpace(string(input))) == 0 {
-		errorFormatter.Add(nil, "Unexpected end of file", "Source possibly empty")
+func New(input string) *Lexer {
+	if len(input) == 0 || len(strings.TrimSpace(input)) == 0 {
+		serror.Add(&token.Token{LinePos: 0, Raw: " "}, "Unexpected end of file", "Source possibly empty")
 		return &Lexer{}
 	}
+	in := []rune(input)
 	return &Lexer{
-		input:          input,
-		pos:            0,
-		chr:            input[0],
-		line:           0,
-		linepos:        0,
-		errorFormatter: errorFormatter,
+		input:   in,
+		pos:     0,
+		chr:     in[0],
+		line:    0,
+		linepos: 0,
 	}
 }
 
@@ -75,7 +74,7 @@ func (l *Lexer) Lex() []token.Token {
 			continue
 		case ' ', '\t', '\r', '\n':
 			if l.chr == '\n' {
-				l.linepos = 0
+				l.linepos = -1
 				l.line++
 			}
 			l.advance()
@@ -91,39 +90,44 @@ func (l *Lexer) Lex() []token.Token {
 				continue
 			}
 		default:
-			if unicode.IsLetter(rune(l.chr)) {
+			if unicode.IsLetter(l.chr) {
 				t = append(t, l.ident())
 				continue
 			} else if unicode.IsDigit(rune(l.chr)) {
 				if tok, err := l.float(); err == nil {
 					t = append(t, tok)
 				} else {
-					l.errorFormatter.Add(&tok, "Invalid floating point number", "")
+					serror.Add(&tok, "Invalid floating point number", "")
 				}
 				continue
 			}
 		}
 
 		if ttype == token.UNKNOWN {
-			l.errorFormatter.Add(&token.Token{
-				Pos:  l.pos,
-				Type: ttype,
-				Line: l.line,
-				Raw:  string(l.chr),
-			}, "Unknown character %q", "")
+			serror.Add(&token.Token{
+				Pos:     l.pos,
+				Type:    ttype,
+				Line:    l.line,
+				LinePos: l.linepos,
+				Raw:     string(l.chr),
+			}, "Unknown character", "Unexpected \"%c\"", l.chr)
 		}
 
 		t = append(t, token.Token{
-			Pos:  l.pos,
-			Type: ttype,
-			Line: l.line,
-			Raw:  string(l.chr),
+			Pos:     l.pos,
+			Type:    ttype,
+			Line:    l.line,
+			LinePos: l.linepos,
+			Raw:     string(l.chr),
 		})
 
 		l.advance()
 	}
 	t = append(t, token.Token{
-		Type: token.EOF, Line: l.line,
+		Type:    token.EOF,
+		Line:    l.line,
+		LinePos: l.linepos,
+		Raw:     " ",
 	})
 	return t
 }
@@ -131,10 +135,11 @@ func (l *Lexer) Lex() []token.Token {
 func (l *Lexer) templateString() []token.Token {
 	el := make([]token.Token, 0)
 	el = append(el, token.Token{
-		Type: token.TEMPLATE_STRING,
-		Pos:  l.pos,
-		Line: l.line,
-		Raw:  "",
+		Type:    token.TEMPLATE_STRING,
+		LinePos: l.linepos,
+		Pos:     l.pos,
+		Line:    l.line,
+		Raw:     "",
 	})
 	b := strings.Builder{}
 
@@ -148,10 +153,11 @@ func (l *Lexer) templateString() []token.Token {
 			l.advance()
 			if b.Len() != 0 {
 				el = append(el, token.Token{
-					Pos:  l.pos - (len(b.String()) + 2),
-					Type: token.STRING,
-					Raw:  b.String(),
-					Line: l.line,
+					Pos:     l.pos - (len(b.String()) + 2),
+					Type:    token.STRING,
+					Raw:     b.String(),
+					Line:    l.line,
+					LinePos: l.linepos,
 				})
 				b.Reset()
 			}
@@ -162,21 +168,22 @@ func (l *Lexer) templateString() []token.Token {
 			if len(el) > 1 {
 				errEl = el[len(el)-1]
 			}
-			l.errorFormatter.Add(&errEl, "Unexpected new line or end of file in template string", "Consider closing the template string via ' or omitting the inserted new line")
+			serror.Add(&errEl, "Unexpected new line or end of file in template string", "Consider closing the template string via ' or omitting the inserted new line")
 			return []token.Token{}
 		} else if l.chr == '\'' {
 			if b.Len() != 0 {
 				el = append(el, token.Token{
-					Pos:  l.pos - (len(b.String()) + 2),
-					Type: token.STRING,
-					Raw:  b.String(),
-					Line: l.line,
+					Pos:     l.pos - (len(b.String()) + 2),
+					LinePos: l.linepos,
+					Type:    token.STRING,
+					Raw:     b.String(),
+					Line:    l.line,
 				})
 				b.Reset()
 			}
 			break
 		}
-		b.WriteByte(l.chr)
+		b.WriteRune(l.chr)
 		l.advance()
 	}
 
@@ -185,10 +192,11 @@ func (l *Lexer) templateString() []token.Token {
 	}
 
 	el = append(el, token.Token{
-		Type: token.TEMPLATE_STRING,
-		Pos:  l.pos,
-		Line: l.line,
-		Raw:  "",
+		Type:    token.TEMPLATE_STRING,
+		LinePos: l.linepos,
+		Pos:     l.pos,
+		Line:    l.line,
+		Raw:     "",
 	})
 	return el
 }
@@ -197,33 +205,35 @@ func (l *Lexer) string() token.Token {
 	l.advance()
 	b := strings.Builder{}
 	for l.chr != '"' && l.chr != '\n' && l.chr != 0 {
-		b.WriteByte(l.chr)
+		b.WriteRune(l.chr)
 		l.advance()
 	}
 	str := b.String()
 	if l.chr != '"' {
-		l.errorFormatter.Add(&token.Token{
-			Pos:  l.pos - (len(str) + 2),
-			Type: token.STRING,
-			Raw:  str,
-			Line: l.line,
+		serror.Add(&token.Token{
+			Pos:     l.pos - (len(str) + 2),
+			Type:    token.STRING,
+			Raw:     "\"" + str,
+			Line:    l.line,
+			LinePos: l.linepos - len(str),
 		}, "Unterminated string", "Consider closing the string via \"")
 	} else {
 		l.advance()
 	}
 
 	return token.Token{
-		Pos:  l.pos - (len(str) + 2),
-		Type: token.STRING,
-		Raw:  str,
-		Line: l.line,
+		Pos:     l.pos - (len(str) + 2),
+		Type:    token.STRING,
+		LinePos: l.linepos - len(str) - 1,
+		Raw:     str,
+		Line:    l.line,
 	}
 }
 
 func (l *Lexer) ident() token.Token {
 	builder := strings.Builder{}
 	for unicode.IsLetter(rune(l.chr)) || l.chr == '_' || unicode.IsDigit(rune(l.chr)) {
-		builder.WriteByte(l.chr)
+		builder.WriteRune(l.chr)
 		l.advance()
 	}
 	str := builder.String()
@@ -238,29 +248,31 @@ func (l *Lexer) ident() token.Token {
 		ttype = tokenType
 	}
 	return token.Token{
-		Pos:  l.pos - len(str),
-		Type: ttype,
-		Raw:  str,
-		Line: l.line,
+		Pos:     l.pos - len(str),
+		Type:    ttype,
+		LinePos: l.linepos - len(str),
+		Raw:     str,
+		Line:    l.line,
 	}
 }
 
 func (l *Lexer) float() (token.Token, error) {
 	builder := strings.Builder{}
 	for unicode.IsDigit(rune(l.chr)) || l.chr == '.' || l.chr == '_' || l.chr == 'e' || l.chr == '-' {
-		builder.WriteByte(l.chr)
+		builder.WriteRune(l.chr)
 		l.advance()
 	}
 	str := builder.String()
 	return token.Token{
-		Pos:  l.pos - len(str),
-		Type: token.FLOAT,
-		Raw:  str,
-		Line: l.line,
+		Pos:     l.pos - len(str),
+		Type:    token.FLOAT,
+		LinePos: l.linepos - len(str),
+		Raw:     str,
+		Line:    l.line,
 	}, nil
 }
 
-func (l *Lexer) peek() byte {
+func (l *Lexer) peek() rune {
 	if l.pos+1 < len(l.input) {
 		return l.input[l.pos+1]
 	}

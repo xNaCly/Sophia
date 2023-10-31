@@ -10,27 +10,29 @@ import (
 	"sophia/core/lexer"
 	"sophia/core/parser"
 	"sophia/core/serror"
-	"strings"
 )
 
-func run(input []byte, filename string) (s []string, e error) {
+func run(input string, filename string) (s []string, e error) {
 	defer func() {
 		if core.CONF.Debug {
 			return
 		}
 		if err := recover(); err != nil {
+			serror.Display()
 			return
 		}
 	}()
-	errorFmt := serror.ErrorFormatter{
-		Conf:    &core.CONF,
-		Lines:   strings.Split(string(input), "\n"),
-		Errors:  make([]serror.Error, 0),
-		Builder: &strings.Builder{},
-	}
+
+	serror.SetDefault(serror.NewFormatter(&core.CONF, input, filename))
+
 	debug.Log("starting lexer")
-	l := lexer.New(input, &errorFmt)
+	l := lexer.New(input)
 	tokens := l.Lex()
+	if serror.HasErrors() {
+		serror.Display()
+		e = errors.New("Syntax errors found, skipping remaining interpreter stages. (parsing and evaluation)")
+		return
+	}
 	debug.Log("lexed", len(tokens), "token")
 
 	if core.CONF.Debug {
@@ -38,8 +40,13 @@ func run(input []byte, filename string) (s []string, e error) {
 	}
 
 	debug.Log("starting parser")
-	p := parser.New(tokens, filename, &errorFmt)
+	p := parser.New(tokens, filename)
 	ast := p.Parse()
+	if serror.HasErrors() {
+		serror.Display()
+		e = errors.New("Semantic errors found, skipping remaining interpreter stages. (evaluation)")
+		return
+	}
 
 	if core.CONF.Debug {
 		out, _ := json.MarshalIndent(ast, "", "  ")

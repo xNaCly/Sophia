@@ -5,34 +5,54 @@ package serror
 import (
 	"fmt"
 	"log"
+	"path/filepath"
 	"sophia/core"
 	"sophia/core/token"
+	"strconv"
 	"strings"
 )
 
-const MAX_ERRORS = 5
+const MAX_ERRORS = 3
+
+const (
+	ANSI_RESET   = "\033[0m"
+	ANSI_RED     = "\033[91m"
+	ANSI_YELLOW  = "\033[93m"
+	ANSI_BLUE    = "\033[94m"
+	ANSI_MAGENTA = "\033[95m"
+)
 
 type ErrorFormatter struct {
-	Conf    *core.Config
-	Lines   []string
-	Errors  []Error
-	Builder *strings.Builder
+	conf    *core.Config
+	lines   []string
+	errors  []Error
+	builder *strings.Builder
+	file    string
 }
 
 func (e *ErrorFormatter) HasErrors() bool {
-	return len(e.Errors) > 0
+	return len(e.errors) > 0
 }
 
 func (e *ErrorFormatter) Add(t *token.Token, title string, info string, additional ...any) {
-	e.Errors = append(e.Errors, Error{t, title, fmt.Sprintf(info, additional...)})
+	e.errors = append(e.errors, Error{t, title, fmt.Sprintf(info, additional...)})
 }
 
 func (e *ErrorFormatter) Display() {
-	for i, err := range e.Errors {
-		if i < MAX_ERRORS && !e.Conf.AllErrors {
-			log.Println(err.prettyPrint(e.Builder))
+	// if a file, lookup absolute path
+	if e.file != "cli" && e.file != "repl" {
+		// only errors on os.Getwd (we don't really care)
+		path, _ := filepath.Abs(e.file)
+		e.file = path
+	}
+	for i, err := range e.errors {
+		if i < MAX_ERRORS || e.conf.AllErrors {
+			log.Println(err.prettyPrint(e, e.builder))
+			if i+1 != len(e.errors) {
+				log.Println()
+			}
 		} else {
-			log.Printf("More than %d errors, skipping the remaining %d, rerun with '-all-errors' to view all", MAX_ERRORS, len(e.Errors)-MAX_ERRORS)
+			log.Printf("Too many errors, skipping the remaining %d, rerun with '-all-errors' to view all %d errors", len(e.errors)-MAX_ERRORS, len(e.errors))
 			break
 		}
 	}
@@ -44,7 +64,93 @@ type Error struct {
 	Info  string // in depth information: expected 'x' got 'y'
 }
 
-func (e *Error) prettyPrint(builder *strings.Builder) string {
+// responsible for formatting the error title and the  filename + line + pos
+func (e *Error) title(errorFormatter *ErrorFormatter, builder *strings.Builder) {
+	builder.WriteString(ANSI_RED)
+	builder.WriteString("error: ")
+	builder.WriteString(ANSI_RESET)
+	builder.WriteString(e.Title)
+	builder.WriteString("\n\n\tat: ")
+	builder.WriteString(ANSI_BLUE)
+	builder.WriteString(errorFormatter.file)
+	builder.WriteString(ANSI_RESET)
+	builder.WriteRune(':')
+	builder.WriteString(strconv.Itoa(e.Token.Line + 1))
+	builder.WriteRune(':')
+	builder.WriteString(strconv.Itoa(e.Token.LinePos + 1))
+	builder.WriteRune(':')
+}
+
+// responsible for formatting the code snippet
+func (e *Error) snippet(errorFormatter *ErrorFormatter, builder *strings.Builder) {
+	t := e.Token
+	prevLineAmount := 2
+	nextLineAmount := 2
+	if len(errorFormatter.lines) == 1 {
+		prevLineAmount = 0
+		nextLineAmount = 0
+	}
+
+	if t.Line == 0 {
+		prevLineAmount = 0
+	}
+	lineIndex := t.Line - prevLineAmount
+	if lineIndex < 0 {
+		lineIndex = 0
+	}
+
+	prevLines := errorFormatter.lines[lineIndex:t.Line]
+
+	for _, line := range prevLines {
+		e.line(line, lineIndex, builder)
+		lineIndex++
+	}
+
+	// print the offending line
+	e.error(errorFormatter.lines[t.Line], builder)
+	lineIndex++
+
+	nextLineAmount = t.Line + 1 + nextLineAmount
+	if nextLineAmount >= len(errorFormatter.lines)-1 {
+		nextLineAmount = len(errorFormatter.lines) - 1
+	}
+	baseLine := t.Line + 1
+	if baseLine >= len(errorFormatter.lines)-1 {
+		baseLine = len(errorFormatter.lines) - 1
+	}
+
+	nextLines := errorFormatter.lines[baseLine:nextLineAmount]
+
+	for _, line := range nextLines {
+		e.line(line, lineIndex, builder)
+		lineIndex++
+	}
+}
+
+// formats the error line
+func (e *Error) error(line string, builder *strings.Builder) {
+	e.line(line, e.Token.Line, builder)
+	builder.WriteString("\n\t")
+	builder.WriteString(fmt.Sprintf("%5s| ", ""))
+	runeRepeat(builder, ' ', e.Token.LinePos)
+	builder.WriteString(ANSI_RED)
+	runeRepeat(builder, '^', len(e.Token.Raw))
+	builder.WriteString(ANSI_RESET)
+}
+
+// formats a singular line
+func (e *Error) line(line string, lineNum int, builder *strings.Builder) {
+	builder.WriteString("\n\t")
+	builder.WriteString(fmt.Sprintf("%5d| ", lineNum+1))
+	builder.WriteString(line)
+}
+
+func (e *Error) prettyPrint(errorFormatter *ErrorFormatter, builder *strings.Builder) string {
+	e.title(errorFormatter, builder)
+	builder.WriteString("\n")
+	e.snippet(errorFormatter, builder)
+	builder.WriteString("\n\n")
+	builder.WriteString(e.Info)
 	str := builder.String()
 	builder.Reset()
 	return str

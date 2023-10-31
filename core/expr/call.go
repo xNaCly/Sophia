@@ -1,8 +1,8 @@
 package expr
 
 import (
-	"fmt"
 	"sophia/core/consts"
+	"sophia/core/serror"
 	"sophia/core/token"
 	"strings"
 )
@@ -24,19 +24,22 @@ func (c *Call) Eval() any {
 
 	storedFunc, ok := consts.FUNC_TABLE[c.Token.Raw]
 	if !ok {
-		panic(fmt.Sprintf("function %q not defined", c.Token.Raw))
+		serror.Add(&c.Token, "Undefined function", "Function %q not defined", c.Token.Raw)
+		serror.Panic()
 	}
 
-	def := castPanicIfNotType[*Func](storedFunc, token.IDENT)
-	defParams := castPanicIfNotType[*Params](def.Params, token.IDENT)
+	def := castPanicIfNotType[*Func](storedFunc, c.Token)
+	defParams := castPanicIfNotType[*Params](def.Params, c.Token)
 
 	if len(defParams.Children) != len(c.Params) {
 		paramLen := len(defParams.Children)
 		argLen := len(c.Params)
 		if paramLen < argLen {
-			panic(fmt.Sprintf("too many arguments for %q, wanted %d, got %d", c.Token.Raw, len(defParams.Children), len(c.Params)))
+			serror.Add(&c.Token, "Too many arguments", "Too many arguments for %q, wanted %d, got %d", c.Token.Raw, len(defParams.Children), len(c.Params))
+			serror.Panic()
 		} else if paramLen > argLen {
-			panic(fmt.Sprintf("not enough arguments for %q, wanted %d, got %d", c.Token.Raw, len(defParams.Children), len(c.Params)))
+			serror.Add(&c.Token, "Not enough arguments", "Not enough arguments for %q, wanted %d, got %d", c.Token.Raw, len(defParams.Children), len(c.Params))
+			serror.Panic()
 		}
 	}
 

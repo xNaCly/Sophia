@@ -6,23 +6,18 @@ import (
 	"sophia/core"
 	"sophia/core/lexer"
 	"sophia/core/serror"
-	"strings"
 	"testing"
 )
 
 func TestParserHelloWorld(t *testing.T) {
-	in := []byte(`(put "Hello World!")`)
-	errorFmt := serror.ErrorFormatter{
-		Conf:    &core.CONF,
-		Lines:   strings.Split(string(in), "\n"),
-		Errors:  make([]serror.Error, 0),
-		Builder: &strings.Builder{},
-	}
-	l := lexer.New([]byte(in), &errorFmt)
+	in := `(put "Hello World!")`
+
+	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test"))
+	l := lexer.New(in)
 	token := l.Lex()
 
-	New(token, "test", &errorFmt)
-	if errorFmt.HasErrors() {
+	New(token, "test")
+	if serror.HasErrors() {
 		t.Error("error while parsing hello world")
 	}
 }
@@ -44,16 +39,11 @@ func TestParserErrors(t *testing.T) {
 	}
 	for _, s := range in {
 		t.Run(s, func(t *testing.T) {
-			errorFmt := serror.ErrorFormatter{
-				Conf:    &core.CONF,
-				Lines:   strings.Split(string(s), "\n"),
-				Errors:  make([]serror.Error, 0),
-				Builder: &strings.Builder{},
-			}
-			l := lexer.New([]byte(s), &errorFmt)
-			p := New(l.Lex(), "test", &errorFmt)
+			serror.SetDefault(serror.NewFormatter(&core.CONF, s, "test"))
+			l := lexer.New(s)
+			p := New(l.Lex(), "test")
 			p.Parse()
-			if errorFmt.HasErrors() {
+			if !serror.HasErrors() {
 				t.Errorf("parsing should fail for %q, it did not", s)
 			}
 		})

@@ -1,8 +1,8 @@
 package expr
 
 import (
-	"fmt"
 	"sophia/core/consts"
+	"sophia/core/serror"
 	"sophia/core/token"
 	"strings"
 )
@@ -20,7 +20,8 @@ func (i *Ident) GetToken() token.Token {
 func (i *Ident) Eval() any {
 	val, ok := consts.SYMBOL_TABLE[i.Name]
 	if !ok {
-		panic(fmt.Sprintf("variable '%s' is not defined!", i.Name))
+		serror.Add(&i.Token, "Undefined variable", "Variable %q is not defined.", i.Name)
+		serror.Panic()
 	}
 	return val
 }

@@ -25,13 +25,13 @@ func (f *For) Eval() any {
 	if len(params) < 1 {
 		panic(fmt.Sprintf("expected at least %d parameters in loop, got %d", 1, len(params)))
 	}
-	element := castPanicIfNotType[*Ident](params[0], token.FOR)
+	element := castPanicIfNotType[*Ident](params[0], params[0].GetToken())
 	oldValue, foundOldValue := consts.SYMBOL_TABLE[element.Name]
 
 	v := f.LoopOver.Eval()
 	switch v.(type) {
 	case []interface{}:
-		loopOver := castPanicIfNotType[[]interface{}](v, token.FOR)
+		loopOver := castPanicIfNotType[[]interface{}](v, f.LoopOver.GetToken())
 
 		for _, el := range loopOver {
 			consts.SYMBOL_TABLE[element.Name] = el
