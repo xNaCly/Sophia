@@ -4,12 +4,13 @@
 
 Sophia features four data types:
 
-| Datatype | Description                                   | Examples                         |
-| -------- | --------------------------------------------- | -------------------------------- |
-| float    | 64Bit floating point number                   | `.1`, `1e-3`, `1.1`, `1_000_000` |
-| string   | text, multiple and single characters          | `"Hello world"`, `"t"`, `"!!!"`  |
-| bool     | boolean                                       | `true`, `false`                  |
-| array    | list that is able to contain all of the above | `[1 2 3]`, `[1 "test" true]`     |
+| Datatype | Description                                              | Examples                         |
+| -------- | -------------------------------------------------------- | -------------------------------- |
+| float    | 64Bit floating point number                              | `.1`, `1e-3`, `1.1`, `1_000_000` |
+| string   | text, multiple and single characters                     | `"Hello world"`, `"t"`, `"!!!"`  |
+| bool     | boolean                                                  | `true`, `false`                  |
+| array    | list that is able to contain all of the above            | `[1 2 3]`, `[1 "test" true]`     |
+| objects  | key value pairs that is able to contain all of the above | `{}`, `{ name: "anon" age: 25 }` |
 
 ## Printing
 
@@ -33,16 +34,19 @@ When invoking the interpreter without any arguments the repl is started:
 
 ```
 $ sophia
-  +####
- +\    #
-+  \ ß  #
-+   \   # <-> ß-calculus
-+ ß  \  #
- +    \#
-  ++++#
 
-Welcome to the Sophia repl - press <CTRL-D> or <CTRL-C> to quit...
-ß ::
+  ██████  ▒█████   ██▓███   ██░ ██  ██▓ ▄▄▄
+▒██    ▒ ▒██▒  ██▒▓██░  ██▒▓██░ ██▒▓██▒▒████▄
+░ ▓██▄   ▒██░  ██▒▓██░ ██▓▒▒██▀▀██░▒██▒▒██  ▀█▄
+  ▒   ██▒▒██   ██░▒██▄█▓▒ ▒░▓█ ░██ ░██░░██▄▄▄▄██
+▒██████▒▒░ ████▓▒░▒██▒ ░  ░░▓█▒░██▓░██░ ▓█   ▓██▒
+▒ ▒▓▒ ▒ ░░ ▒░▒░▒░ ▒▓▒░ ░  ░ ▒ ░░▒░▒░▓   ▒▒   ▓▒█░
+░ ░▒  ░ ░  ░ ▒ ▒░ ░▒ ░      ▒ ░▒░ ░ ▒ ░  ▒   ▒▒ ░
+░  ░  ░  ░ ░ ░ ▒  ░░        ░  ░░ ░ ▒ ░  ░   ▒
+      ░      ░ ░            ░  ░  ░ ░        ░  ░
+
+Welcome to the Sophia programming language repl - press <CTRL-D> or <CTRL-C> to quit...
+sophia>
 ```
 
 The REPL accepts all valid Sophia expressions as well as several commands (read more [here](#repl-commands))
@@ -51,18 +55,22 @@ Running the aforementioned `Hello World` can therefore be simply typed into the 
 
 ```
 $ sophia
-  +####
- +\    #
-+  \ ß  #
-+   \   # <-> ß-calculus
-+ ß  \  #
- +    \#
-  ++++#
 
-Welcome to the Sophia repl - press <CTRL-D> or <CTRL-C> to quit...
-ß :: (put "Hello World")
-Hello World
+  ██████  ▒█████   ██▓███   ██░ ██  ██▓ ▄▄▄
+▒██    ▒ ▒██▒  ██▒▓██░  ██▒▓██░ ██▒▓██▒▒████▄
+░ ▓██▄   ▒██░  ██▒▓██░ ██▓▒▒██▀▀██░▒██▒▒██  ▀█▄
+  ▒   ██▒▒██   ██░▒██▄█▓▒ ▒░▓█ ░██ ░██░░██▄▄▄▄██
+▒██████▒▒░ ████▓▒░▒██▒ ░  ░░▓█▒░██▓░██░ ▓█   ▓██▒
+▒ ▒▓▒ ▒ ░░ ▒░▒░▒░ ▒▓▒░ ░  ░ ▒ ░░▒░▒░▓   ▒▒   ▓▒█░
+░ ░▒  ░ ░  ░ ▒ ▒░ ░▒ ░      ▒ ░▒░ ░ ▒ ░  ▒   ▒▒ ░
+░  ░  ░  ░ ░ ░ ▒  ░░        ░  ░░ ░ ▒ ░  ░   ▒
+      ░      ░ ░            ░  ░  ░ ░        ░  ░
+
+Welcome to the Sophia programming language repl - press <CTRL-D> or <CTRL-C> to quit...
+sophia> (put "Hello World!")
+Hello World!
 = [<nil>]
+sophia>
 ```
 
 Noticeable the string we wanted to print got printed but we notice the line
@@ -290,21 +298,22 @@ The same expression can be used in the repl to archive the same effect of import
 
 ```
 $ sophia
+  ██████  ▒█████   ██▓███   ██░ ██  ██▓ ▄▄▄
+▒██    ▒ ▒██▒  ██▒▓██░  ██▒▓██░ ██▒▓██▒▒████▄
+░ ▓██▄   ▒██░  ██▒▓██░ ██▓▒▒██▀▀██░▒██▒▒██  ▀█▄
+  ▒   ██▒▒██   ██░▒██▄█▓▒ ▒░▓█ ░██ ░██░░██▄▄▄▄██
+▒██████▒▒░ ████▓▒░▒██▒ ░  ░░▓█▒░██▓░██░ ▓█   ▓██▒
+▒ ▒▓▒ ▒ ░░ ▒░▒░▒░ ▒▓▒░ ░  ░ ▒ ░░▒░▒░▓   ▒▒   ▓▒█░
+░ ░▒  ░ ░  ░ ▒ ▒░ ░▒ ░      ▒ ░▒░ ░ ▒ ░  ▒   ▒▒ ░
+░  ░  ░  ░ ░ ░ ▒  ░░        ░  ░░ ░ ▒ ░  ░   ▒
+      ░      ░ ░            ░  ░  ░ ░        ░  ░
 
-  +####
- +\    #
-+  \ ß  #
-+   \   # <-> ß-calculus
-+ ß  \  #
- +    \#
-  ++++#
-
-Welcome to the Sophia repl - press <CTRL-D> or <CTRL-C> to quit...
-ß :: (load "square.phia")
+Welcome to the Sophia programming language repl - press <CTRL-D> or <CTRL-C> to quit...
+sophia> (load "square.phia")
 = [<nil>]
-ß :: (square 12)
+sophia> (square 12)
 = [144]
-ß :: ⏎
+sophia>
 ```
 
 ## Objects

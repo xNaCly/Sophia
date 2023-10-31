@@ -187,9 +187,9 @@ func (a *Add) Eval() any {
 	res := 0.0
 	for i, c := range a.Children {
 		if i == 0 {
-			res = castPanicIfNotType[float64](c.Eval(), token.ADD)
+			res = castPanicIfNotType[float64](c.Eval(), a.Token)
 		} else {
-			res += castPanicIfNotType[float64](c.Eval(), token.ADD)
+			res += castPanicIfNotType[float64](c.Eval(), a.Token)
 		}
 	}
 	return res
@@ -213,34 +213,50 @@ its own following chapter.
 If the lexer is invoked with an empty input it exits and returns the following message:
 
 ```
-$ sophia empty.phia
-14:25:59.319979 err: input is empty, stopping
-14:25:59.320032 lexer error
-14:25:59.320038 error in source file 'empty.phia' detected, stopping...
-exit status 1
+$ echo " " | sophia
+error: Unexpected end of file
+
+	at: /home/teo/stdin:1:1:
+
+	   1|
+	    | ^
+
+Source possibly empty
+Syntax errors found, skipping remaining interpreter stages. (parsing and evaluation)
 ```
 
 If the lexer encounters an unknown character it tries to scan the resulting input to provide the user with all possible errors:
 
 ```
 $ sophia -exp '(= ? "unclosed string )'
-14:28:09.839304 err: Unknown token '=' at [l 1:1]
 
-001 |   (= ? "unclosed string )
-         ^
+error: Unknown character
 
-14:28:09.839355 err: Unknown token '?' at [l 1:3]
+	at: cli:1:2:
 
-001 |   (= ? "unclosed string )
-           ^
+	   1| (= ? "unclosed string )
+	    |  ^
 
-14:28:09.839363 err: Unterminated String at [l 1:5]
+Unexpected "="
 
-001 |   (= ? "unclosed string )
-             ^^^^^^^^^^^^^^^^^
+error: Unknown character
 
-14:28:09.839373 lexer error
-exit status 1
+	at: cli:1:4:
+
+	   1| (= ? "unclosed string )
+	    |    ^
+
+Unexpected "?"
+
+error: Unterminated string
+
+	at: cli:1:6:
+
+	   1| (= ? "unclosed string )
+	    |      ^^^^^^^^^^^^^^^^^^
+
+Consider closing the string via "
+Syntax errors found, skipping remaining interpreter stages. (parsing and evaluation)
 ```
 
 Providing the lexer with input containing more than one line, the lexer shows context for the currently found error:
@@ -251,21 +267,31 @@ $ cat err.phia
 (put " ?)
 (? "test")
 $ sophia err.phia
-14:30:25.523710 err: Unterminated String at [l 2:7]
+error: Unterminated string
 
-001 |   ;; this input contains two errors
-002 |   (put " ?)
-             ^^^
+	at: /home/teo/err.phia:2:7:
 
-14:30:25.523761 err: Unknown token '?' at [l 3:2]
+	   1| ;; this input contains two errors
+	   2| (put " ?)
+	    |       ^^^^
+	   3| (? "test")
+	   4|
 
-002 |   (put " ?)
-003 |   (? "test")
-         ^
+Consider closing the string via "
 
-14:30:25.523773 lexer error
-14:30:25.523777 error in source file 'err.phia' detected, stopping...
-exit status 1
+error: Unknown character
+
+	at: /home/teo/err.phia:3:2:
+
+	   1| ;; this input contains two errors
+	   2| (put " ?)
+	   3| (? "test")
+	    |  ^
+	   4|
+
+Unexpected "?"
+
+Syntax errors found, skipping remaining interpreter stages. (parsing and evaluation)
 ```
 
 ### While parsing
@@ -282,33 +308,45 @@ Interpreter error:
 
 ```
 $ sophia -exp "(put put)"
-16:10:28.093639 err: Missing or unknown argument - Expected any of: 'float,string,identifier,bool', got 'put' [l: 0:5]
-16:10:28.093692 parser error
-exit status 1
+error: Unexpected Token
+
+	at: repl:1:6:
+
+	   1| (put put)
+	    |      ^^^
+
+Missing or unknown argument: Expected any of 'FLOAT,STRING,IDENT,BOOL,LEFT_CURLY,LEFT_BRACKET,TEMPLATE_STRING' got 'PUT'.
+Semantic errors found, skipping remaining interpreter stages. (evaluation)
 ```
 
 Trying to define a function without an identifier as its name results in the following error:
 
 ```
 $ sophia -exp '(fun (_) (put))'
-14:35:48.123879 err: expected the first argument for function definition to be of type IDENT, got "_"
-14:35:48.123929 err: Missing statement start - Expected Token '(' got ')' [l: 0:14]
-14:35:48.123934 err: Missing or unknown operator - Expected any of: '+,-,/,*,%,put,let,if,eq,or,and,not,++,fun,_,identifier,for,lt,gt', got 'End of file' [l: 0:0]
-14:35:48.123939 err: Missing statement end - Expected Token ')' got 'End of file' [l: 0:0]
-14:35:48.123946 parser error
-exit status 1
+error: Type error
+
+	at: cli:1:7:
+
+	   1| (fun (_) (put))
+	    |       ^
+
+Expected the first argument for function definition to be of type IDENT, got "PARAM".
+Semantic errors found, skipping remaining interpreter stages. (evaluation)
 ```
 
 Omitting the parameters out, results in:
 
 ```
 $ sophia -exp '(fun square (* n n))'
-14:37:15.507972 err: expected the second argument for function definition to be of type PARAM, got "identifier"
-14:37:15.508022 err: Missing statement start - Expected Token '(' got ')' [l: 0:19]
-14:37:15.508026 err: Missing or unknown operator - Expected any of: '+,-,/,*,%,put,let,if,eq,or,and,not,++,fun,_,identifier,for,lt,gt', got 'End of file' [l: 0:0]
-14:37:15.508032 err: Missing statement end - Expected Token ')' got 'End of file' [l: 0:0]
-14:37:15.508038 parser error
-exit status 1
+error: Type error
+
+	at: cli:1:14:
+
+	   1| (fun square (* n n))
+	    |              ^
+
+Expected the second argument for function definition to be of type PARAM, got "MUL".
+Semantic errors found, skipping remaining interpreter stages. (evaluation)
 ```
 
 ### While evaluating
@@ -317,31 +355,51 @@ Using an undefined variable or function:
 
 ```
 $ sophia -exp '(put a)'
-14:38:25.630180 err: variable 'a' is not defined!
-14:38:25.630219 runtime error
-exit status 1
+rror: Undefined variable
+
+	at: cli:1:6:
+
+	   1| (put a)
+	    |      ^
+
+Variable "a" is not defined.
 $ sophia -exp '(square 12)'
-14:39:01.729986 err: function "square" not defined
-14:39:01.730025 runtime error
-exit status 1
+error: Undefined function
+
+	at: cli:1:2:
+
+	   1| (square 12)
+	    |  ^^^^^^
+
+Function "square" not defined
 ```
 
 Iterating of anything which is not a container:
 
 ```
-$ sophia -exp '(for (_ i) 1 (put "iteration" i))'
-14:40:07.581402 err: can not use variable of type float64 in current operation (for), expected []interface {} for value 1
-14:40:07.581440 runtime error
-exit status 1
+$ sophia -exp '(for (_ i) "test" (put "iteration" i))'
+error: Invalid iterator
+
+	at: cli:1:13:
+
+	   1| (for (_ i) "test" (put "iteration" i))
+	    |             ^^^^
+
+expected container or upper bound for iteration, got: string
 ```
 
 Trying to use a string in addition:
 
 ```
 $ sophia -exp '(+ "test" 1)'
-14:41:07.836950 err: can not use variable of type string in current operation (+), expected float64 for value test
-14:41:07.836999 runtime error
-exit status
+error: Type error
+
+	at: cli:1:2:
+
+	   1| (+ "test" 1)
+	    |  ^
+
+Incompatiable types string and float64
 ```
 
 Sophia contains a massive amount of error handling and edge cases, the above are the most prominent cases.

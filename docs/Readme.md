@@ -10,7 +10,7 @@ It's implementation can be fed expressions from stdin, the repl, a file or a
 flag. The Sophia language can be interpreted or compiled to the following
 languages:
 
-- [x] Javascript
+- [ ] Javascript
 - [ ] C
 - [ ] Go
 - [ ] Python

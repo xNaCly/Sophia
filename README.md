@@ -55,26 +55,30 @@ As a repl:
 ```
 $ sophia
 
-  +####
- +\    #
-+  \ ß  #
-+   \   # <-> ß-calculus
-+ ß  \  #
- +    \#
-  ++++#
+  ██████  ▒█████   ██▓███   ██░ ██  ██▓ ▄▄▄
+▒██    ▒ ▒██▒  ██▒▓██░  ██▒▓██░ ██▒▓██▒▒████▄
+░ ▓██▄   ▒██░  ██▒▓██░ ██▓▒▒██▀▀██░▒██▒▒██  ▀█▄
+  ▒   ██▒▒██   ██░▒██▄█▓▒ ▒░▓█ ░██ ░██░░██▄▄▄▄██
+▒██████▒▒░ ████▓▒░▒██▒ ░  ░░▓█▒░██▓░██░ ▓█   ▓██▒
+▒ ▒▓▒ ▒ ░░ ▒░▒░▒░ ▒▓▒░ ░  ░ ▒ ░░▒░▒░▓   ▒▒   ▓▒█░
+░ ░▒  ░ ░  ░ ▒ ▒░ ░▒ ░      ▒ ░▒░ ░ ▒ ░  ▒   ▒▒ ░
+░  ░  ░  ░ ░ ░ ▒  ░░        ░  ░░ ░ ▒ ░  ░   ▒
+      ░      ░ ░            ░  ░  ░ ░        ░  ░
 
-Welcome to the Sophia repl - press <CTRL-D> or <CTRL-C> to quit...
-ß :: (put "Hi!")
-Hi!
+Welcome to the Sophia programming language repl - press <CTRL-D> or <CTRL-C> to quit...
+sophia> (let name "user")
+= [user]
+sophia> (put 'Hello World, {name}!')
+Hello World, user!
 = [<nil>]
-ß ::
+sophia>
 ```
 
 ### Compiling
 
 #### Targets
 
-- [x] Javascript
+- [ ] Javascript
 - [ ] C
 - [ ] Go
 - [ ] Python
