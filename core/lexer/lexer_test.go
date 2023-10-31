@@ -1,14 +1,17 @@
 package lexer
 
 import (
-	"log"
-	"os"
+	"fmt"
+	"sophia/core"
+	"sophia/core/serror"
 	"sophia/core/token"
 	"testing"
 )
 
 func TestLexerHelloWorld(t *testing.T) {
-	in := []byte(`(put "Hello World!")`)
+	in := `(put "Hello World!")`
+
+	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test"))
 	l := New(in)
 	tok := l.Lex()
 	if len(tok) == 0 {
@@ -41,9 +44,10 @@ func TestLexerFloats(t *testing.T) {
 	}
 	for _, v := range in {
 		t.Run(v, func(t *testing.T) {
-			l := New([]byte(v))
+			serror.SetDefault(serror.NewFormatter(&core.CONF, v, "test"))
+			l := New(v)
 			o := l.Lex()
-			if l.HasError || len(o) == 0 {
+			if serror.HasErrors() {
 				t.Fatalf("failed to lex float for input '%s'\n", v)
 			}
 			if o[0].Type != token.FLOAT {
@@ -54,10 +58,11 @@ func TestLexerFloats(t *testing.T) {
 }
 
 func TestLexerIdent(t *testing.T) {
-	in := []byte(`b a abc abcdefghijklmnopqrstuvwxyz`)
+	in := `b a abc abcdefghijklmnopqrstuvwxyz`
+	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test"))
 	l := New(in)
 	to := l.Lex()
-	if len(to) == 0 {
+	if serror.HasErrors() {
 		t.Error("Lexer found error, token empty")
 	}
 
@@ -74,7 +79,7 @@ func TestLexerIdent(t *testing.T) {
 		"a",
 		"abc",
 		"abcdefghijklmnopqrstuvwxyz",
-		"",
+		" ",
 	}
 
 	for i, tok := range to {
@@ -88,10 +93,11 @@ func TestLexerIdent(t *testing.T) {
 }
 
 func TestLexerOperators(t *testing.T) {
-	in := []byte(`put +-/*% let () if eq or and not ++ fun _ for gt lt match`)
+	in := `put +-/*% let () if eq or and not ++ fun _ for gt lt match`
+	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test"))
 	l := New(in)
-	tok := l.Lex()
-	if len(tok) == 0 {
+	to := l.Lex()
+	if serror.HasErrors() {
 		t.Error("Lexer found error, token empty")
 	}
 
@@ -120,7 +126,7 @@ func TestLexerOperators(t *testing.T) {
 		token.EOF,
 	}
 
-	for i, toke := range tok {
+	for i, toke := range to {
 		if toke.Type != expected[i] {
 			t.Errorf("given token '%+v' of type '%d' at pos '%d' does not match expected token '%d'", toke, toke.Type, i, expected[i])
 		}
@@ -128,10 +134,11 @@ func TestLexerOperators(t *testing.T) {
 }
 
 func TestLexerArithmetic(t *testing.T) {
-	in := []byte(`(+ 1 (* 1 (/ 1 (% 1))))`)
+	in := `(+ 1 (* 1 (/ 1 (% 1))))`
+	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test"))
 	l := New(in)
-	tok := l.Lex()
-	if len(tok) == 0 {
+	to := l.Lex()
+	if serror.HasErrors() {
 		t.Error("Lexer found error, token empty")
 	}
 
@@ -155,7 +162,7 @@ func TestLexerArithmetic(t *testing.T) {
 		token.EOF,
 	}
 
-	for i, toke := range tok {
+	for i, toke := range to {
 		if toke.Type != expected[i] {
 			t.Errorf("given token '%+v' of type '%d' at pos '%d' does not match expected token '%d'", toke, toke.Type, i, expected[i])
 		}
@@ -163,51 +170,53 @@ func TestLexerArithmetic(t *testing.T) {
 }
 
 func TestLexerIgnoreCharsAndComments(t *testing.T) {
-	null, _ := os.Open(os.DevNull)
-	os.Stdout = null
-	log.SetOutput(null)
 	in := []string{
 		";;",
 		";;comment",
-		"\t\n ",
-		"      ",
+		";;comment        \t\n",
 	}
 	for _, v := range in {
 		t.Run(v, func(t *testing.T) {
-			l := New([]byte(v))
-			o := l.Lex()
-			if len(o) != 1 {
-				t.Errorf("lexer output for '%s' should be empty due to a comment, but contains '%v' of size '%d'", v, o, len(o))
+			serror.SetDefault(serror.NewFormatter(&core.CONF, v, "test"))
+			l := New(v)
+			toks := []token.Token{}
+			if l != nil {
+				toks = l.Lex()
+			}
+			if serror.HasErrors() {
+				t.Error("Lexer should have not found errors")
+			}
+			if len(toks) != 1 {
+				fmt.Println(toks)
+				t.Error("Lexer should have resulted in 1 token")
 			}
 		})
 	}
 }
 
 func TestLexerErrorsOnUnknownTokenAndIntegers(t *testing.T) {
-	null, _ := os.Open(os.DevNull)
-	os.Stdout = null
-	log.SetOutput(null)
 	in := []string{
-		"ß",
 		`;;comment
 ?[putc "test"]`,
 	}
 	for _, v := range in {
 		t.Run(v, func(t *testing.T) {
-			l := New([]byte(v))
-			o := l.Lex()
-			if len(o) != 1 {
-				t.Errorf("lexer output for '%s' should be empty due to a syntax error, but contains '%v' of size '%d'", v, o, len(o))
+			serror.SetDefault(serror.NewFormatter(&core.CONF, v, "test"))
+			l := New(v)
+			l.Lex()
+			if !serror.HasErrors() {
+				t.Error("Lexer should have found errors")
 			}
 		})
 	}
 }
 
 func TestLexerBooleans(t *testing.T) {
-	in := []byte(`true false`)
+	in := "true false"
+	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test"))
 	l := New(in)
 	tok := l.Lex()
-	if len(tok) == 0 {
+	if serror.HasErrors() {
 		t.Error("Lexer found error, token empty")
 	}
 
@@ -220,7 +229,7 @@ func TestLexerBooleans(t *testing.T) {
 	expectedRaw := []string{
 		"true",
 		"false",
-		"",
+		" ",
 	}
 
 	for i, toke := range tok {

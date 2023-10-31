@@ -4,28 +4,35 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"sophia/core"
 	"sophia/core/debug"
 	"sophia/core/eval"
 	"sophia/core/lexer"
 	"sophia/core/parser"
+	"sophia/core/serror"
 )
 
-func run(input []byte, filename string) (s []string, e error) {
+func run(input string, filename string) (s []string, e error) {
 	defer func() {
 		if core.CONF.Debug {
 			return
 		}
 		if err := recover(); err != nil {
-			log.Printf("err: %s", err)
-			e = errors.New("runtime error")
+			serror.Display()
 			return
 		}
 	}()
+
+	serror.SetDefault(serror.NewFormatter(&core.CONF, input, filename))
+
 	debug.Log("starting lexer")
 	l := lexer.New(input)
 	tokens := l.Lex()
+	if serror.HasErrors() {
+		serror.Display()
+		e = errors.New("Syntax errors found, skipping remaining interpreter stages. (parsing and evaluation)")
+		return
+	}
 	debug.Log("lexed", len(tokens), "token")
 
 	if core.CONF.Debug {
@@ -35,12 +42,9 @@ func run(input []byte, filename string) (s []string, e error) {
 	debug.Log("starting parser")
 	p := parser.New(tokens, filename)
 	ast := p.Parse()
-	if l.HasError {
-		e = errors.New("lexer error")
-		return
-	}
-	if p.HasError {
-		e = errors.New("parser error")
+	if serror.HasErrors() {
+		serror.Display()
+		e = errors.New("Semantic errors found, skipping remaining interpreter stages. (evaluation)")
 		return
 	}
 
@@ -48,6 +52,7 @@ func run(input []byte, filename string) (s []string, e error) {
 		out, _ := json.MarshalIndent(ast, "", "  ")
 		debug.Log(string(out))
 	}
+
 	if len(core.CONF.Target) > 0 {
 		trgt := core.CONF.Target
 		debug.Log("done parsing - no errors, starting compilation for", trgt)
@@ -57,7 +62,7 @@ func run(input []byte, filename string) (s []string, e error) {
 		}
 		fmt.Println(eval.CompileJs(ast))
 	} else {
-		debug.Log("done parsing - no errors, starting eval")
+		debug.Log("done parsing - starting eval")
 		s = eval.Eval(ast)
 	}
 	return

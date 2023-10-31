@@ -6,3 +6,4 @@
 
 (let r (square 12))
 (put '12^2 -> {r}')
+

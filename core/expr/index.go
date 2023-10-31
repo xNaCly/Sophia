@@ -1,8 +1,8 @@
 package expr
 
 import (
-	"fmt"
 	"sophia/core/consts"
+	"sophia/core/serror"
 	"sophia/core/token"
 	"strings"
 )
@@ -18,18 +18,22 @@ func (i *Index) GetToken() token.Token {
 }
 
 func (i *Index) Eval() any {
-	ident := castPanicIfNotType[*Ident](i.Element, token.LEFT_BRACKET)
+	ident := castPanicIfNotType[*Ident](i.Element, i.Element.GetToken())
 	requested, found := consts.SYMBOL_TABLE[ident.Name]
 	if !found {
-		panic(fmt.Sprintf("requested element %q not defined", ident.Name))
+		serror.Add(&ident.Token, "Index error", "Requested element %q not defined", ident.Name)
+		serror.Panic()
 	}
+
 	switch requested.(type) {
 	case []interface{}:
 		{
 			arr := requested.([]interface{})
 			index, ok := i.Index.Eval().(float64)
 			if !ok {
-				panic(fmt.Sprintf("can't index array with %T, use a number", i.Index))
+				t := i.Index.GetToken()
+				serror.Add(&t, "Index error", "Can't index array with %q, use a number", token.TOKEN_NAME_MAP[t.Type])
+				serror.Panic()
 			}
 			return arr[int(index)]
 		}
@@ -38,13 +42,17 @@ func (i *Index) Eval() any {
 			m := requested.(map[string]interface{})
 			index, ok := i.Index.(*Ident)
 			if !ok {
-				panic(fmt.Sprintf("can't index object with %T, use an identifier", i.Index))
+				t := i.Index.GetToken()
+				serror.Add(&t, "Index error", "Can't index object with %q, use a number", token.TOKEN_NAME_MAP[t.Type])
+				serror.Panic()
 			}
 			return m[index.Name]
 		}
 	default:
-		panic(fmt.Sprintf("Element to index into of unknown type %T, not yet implemented", requested))
+		serror.Add(&ident.Token, "Index error", "Element to index into of unknown type %T, not yet implemented", requested)
+		serror.Panic()
 	}
+	return nil
 }
 
 // TODO:

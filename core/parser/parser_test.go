@@ -3,17 +3,21 @@ package parser
 import (
 	"log"
 	"os"
+	"sophia/core"
 	"sophia/core/lexer"
+	"sophia/core/serror"
 	"testing"
 )
 
 func TestParserHelloWorld(t *testing.T) {
-	in := []byte(`(put "Hello World!")`)
+	in := `(put "Hello World!")`
+
+	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test"))
 	l := lexer.New(in)
 	token := l.Lex()
 
-	p := New(token, "test")
-	if l.HasError || p.HasError {
+	New(token, "test")
+	if serror.HasErrors() {
 		t.Error("error while parsing hello world")
 	}
 }
@@ -35,10 +39,11 @@ func TestParserErrors(t *testing.T) {
 	}
 	for _, s := range in {
 		t.Run(s, func(t *testing.T) {
-			l := lexer.New([]byte(s))
+			serror.SetDefault(serror.NewFormatter(&core.CONF, s, "test"))
+			l := lexer.New(s)
 			p := New(l.Lex(), "test")
-			a := p.Parse()
-			if !p.HasError || len(a) != 0 {
+			p.Parse()
+			if !serror.HasErrors() {
 				t.Errorf("parsing should fail for %q, it did not", s)
 			}
 		})

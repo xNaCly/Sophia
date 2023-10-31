@@ -6,31 +6,26 @@ import (
 	"os"
 	"sophia/core/expr"
 	"sophia/core/lexer"
+	"sophia/core/serror"
 	"sophia/core/token"
 	"strings"
 )
-
-// TODO: error display like in the lexer
 
 type Parser struct {
 	token    []token.Token
 	filename string
 	pos      int
-	HasError bool
 }
 
-func New(token []token.Token, filename string) Parser {
-	if len(token) == 0 {
-		log.Println("Parser got no tokens, stopping...")
-		return Parser{
-			HasError: true,
-		}
+func New(tokens []token.Token, filename string) *Parser {
+	if len(tokens) == 0 {
+		serror.Add(&token.Token{LinePos: 0, Raw: " "}, "Unexpected end of input", "Source possibly empty")
+		return &Parser{}
 	}
-	return Parser{
-		token:    token,
+	return &Parser{
+		token:    tokens,
 		pos:      0,
 		filename: filename,
-		HasError: false,
 	}
 }
 
@@ -44,10 +39,10 @@ func (p *Parser) Parse() []expr.Node {
 			}
 			continue
 		}
+		if stmt == nil {
+			return res
+		}
 		res = append(res, stmt)
-	}
-	if p.HasError {
-		return []expr.Node{}
 	}
 	return res
 }
@@ -55,27 +50,24 @@ func (p *Parser) Parse() []expr.Node {
 func (p *Parser) loadNewSource(node *expr.Load) []expr.Node {
 	res := make([]expr.Node, 0)
 	for i := 0; i < len(node.Imports); i++ {
-		name := node.Imports[i]
-		file, err := os.Open(name)
+		name := node.Imports[i].GetToken()
+		file, err := os.Open(name.Raw)
 		if err != nil {
-			log.Printf("err: %s", err)
-			p.HasError = true
-			return nil
+			serror.Add(&name, "Failed to source import", "Couldn't open %q: %q.", name.Raw, err)
+			continue
 		}
 		content, err := io.ReadAll(file)
 		if err != nil {
-			log.Printf("err: failed to read %s", err)
-			p.HasError = true
-			return nil
+			serror.Add(&name, "Failed to read import", "Couldn't read %q: %q.", name.Raw, err)
+			continue
 		}
-		lexer := lexer.New(content)
+		lexer := lexer.New(string(content))
 		token := lexer.Lex()
-		if name == p.filename {
-			log.Printf("detected recursion in file imports, got %q while already parsing %q", name, p.filename)
-			p.HasError = true
-			return nil
+		if name.Raw == p.filename {
+			serror.Add(&name, "Detected recursion in file imports", "Got %q while already parsing %q.", name.Raw, p.filename)
+			continue
 		}
-		parser := New(token, name)
+		parser := New(token, name.Raw)
 		res = append(res, parser.Parse()...)
 	}
 	return res
@@ -96,7 +88,11 @@ func (p *Parser) parseStatment() expr.Node {
 		if p.peekIs(token.EOF) || p.peekIs(token.RIGHT_BRACE) {
 			break
 		} else if p.peekIs(token.LEFT_BRACE) {
-			childs = append(childs, p.parseStatment())
+			nStmt := p.parseStatment()
+			if nStmt == nil {
+				return nil
+			}
+			childs = append(childs, nStmt)
 			continue
 		} else {
 			child = p.parseArguments()
@@ -117,41 +113,35 @@ func (p *Parser) parseStatment() expr.Node {
 		}
 	case token.LOAD:
 		if len(childs) == 0 {
-			log.Printf("err: expected at least one argument for loading sources, got %d", len(childs))
-			p.HasError = true
+			serror.Add(&op, "Not enough arguments", "Expected at least one argument for loading files, got %d.", len(childs))
 			return nil
 		}
-		imports := make([]string, len(childs))
-		for i, c := range childs {
+		for _, c := range childs {
 			if c.GetToken().Type != token.STRING {
-				log.Printf("err: expected strings as load arguments, got %q", token.TOKEN_NAME_MAP[c.GetToken().Type])
-				p.HasError = true
+				t := c.GetToken()
+				serror.Add(&t, "Type error", "Expected an argument of type string for loading files, got %q.", token.TOKEN_NAME_MAP[t.Type])
 				return nil
 			}
-			imports[i] = c.GetToken().Raw
 		}
 		stmt = &expr.Load{
 			Token:   op,
-			Imports: imports,
+			Imports: childs[0:],
 		}
 	case token.FOR:
 		if len(childs) < 2 {
-			log.Printf("err: expected two argument for loop definition, got %d", len(childs))
-			p.HasError = true
+			serror.Add(&op, "Not enough arguments", "Expected two argument for loop definition, got %d.", len(childs))
 			return nil
 		}
 		params := childs[0]
+		t := params.GetToken()
 		if params.GetToken().Type != token.PARAM {
-			log.Printf("err: expected the first argument for loop definition to be of type PARAM, got %q", token.TOKEN_NAME_MAP[childs[0].GetToken().Type])
-			p.HasError = true
+			serror.Add(&t, "Type error", "Expected the first argument for loop definition to be of type PARAM, got %q.", token.TOKEN_NAME_MAP[childs[0].GetToken().Type])
 			return nil
 		}
 		if len(params.(*expr.Params).Children) != 1 {
-			log.Printf("err: expected one parameter for loop definition, got %d", len(params.(*expr.Params).Children))
-			p.HasError = true
+			serror.Add(&t, "Not enough parameters", "Expected one parameter for loop parameter definition, got %d.", len(params.(*expr.Params).Children))
 			return nil
 		}
-		// TODO: check if first is of type params
 		stmt = &expr.For{
 			Token:    op,
 			Params:   params,
@@ -165,8 +155,7 @@ func (p *Parser) parseStatment() expr.Node {
 		}
 	case token.LT:
 		if len(childs) != 2 {
-			log.Printf("err: expected exactly two statements for less than comparison, got %d", len(childs))
-			p.HasError = true
+			serror.Add(&op, "Incorrect parameter amount", "Expected exactly two statements for less than comparison, got %d.", len(childs))
 			return nil
 		}
 		stmt = &expr.Lt{
@@ -175,8 +164,7 @@ func (p *Parser) parseStatment() expr.Node {
 		}
 	case token.GT:
 		if len(childs) != 2 {
-			log.Printf("err: expected exactly two statements for greater than comparison, got %d", len(childs))
-			p.HasError = true
+			serror.Add(&op, "Incorrect parameter amount", "Expected exactly two statements for greater than comparison, got %d.", len(childs))
 			return nil
 		}
 		stmt = &expr.Gt{
@@ -185,10 +173,9 @@ func (p *Parser) parseStatment() expr.Node {
 		}
 	case token.PARAM:
 		for _, c := range childs {
-			t := c.GetToken().Type
-			if t != token.IDENT {
-				log.Printf("err: expected identifier for parameter definition, got %q", token.TOKEN_NAME_MAP[t])
-				p.HasError = true
+			t := c.GetToken()
+			if t.Type != token.IDENT {
+				serror.Add(&t, "Type error", "Expected identifier for parameter definition, got %q.", token.TOKEN_NAME_MAP[t.Type])
 				return nil
 			}
 		}
@@ -198,18 +185,17 @@ func (p *Parser) parseStatment() expr.Node {
 		}
 	case token.FUNC:
 		if len(childs) < 2 {
-			log.Printf("err: expected at least two argument for function definition, got %d", len(childs))
-			p.HasError = true
+			serror.Add(&op, "Not enough parameters", "Expected 2 parameters, one for function name and one for parameters, got %d.", len(childs))
 			return nil
 		}
-		if childs[0].GetToken().Type != token.IDENT {
-			log.Printf("err: expected the first argument for function definition to be of type IDENT, got %q", token.TOKEN_NAME_MAP[childs[0].GetToken().Type])
-			p.HasError = true
+		t := childs[0].GetToken()
+		if t.Type != token.IDENT {
+			serror.Add(&t, "Type error", "Expected the first argument for function definition to be of type IDENT, got %q.", token.TOKEN_NAME_MAP[t.Type])
 			return nil
 		}
+		t = childs[1].GetToken()
 		if childs[1].GetToken().Type != token.PARAM {
-			log.Printf("err: expected the second argument for function definition to be of type PARAM, got %q", token.TOKEN_NAME_MAP[childs[0].GetToken().Type])
-			p.HasError = true
+			serror.Add(&t, "Type error", "Expected the second argument for function definition to be of type PARAM, got %q.", token.TOKEN_NAME_MAP[t.Type])
 			return nil
 		}
 		stmt = &expr.Func{
@@ -220,8 +206,7 @@ func (p *Parser) parseStatment() expr.Node {
 		}
 	case token.IF:
 		if len(childs) == 0 {
-			log.Printf("err: expected at least two argument for condition, got %d", len(childs))
-			p.HasError = true
+			log.Printf("err: expected at least two argument for condition, got %d.", len(childs))
 			return nil
 		}
 		cond := childs[0]
@@ -232,8 +217,7 @@ func (p *Parser) parseStatment() expr.Node {
 		}
 	case token.LET:
 		if len(childs) == 0 {
-			log.Printf("err: expected at least one argument for variable declaration, got %d", len(childs))
-			p.HasError = true
+			serror.Add(&op, "Not enough arguments", "Expected at least one argument for variable declaration, got %d.", len(childs))
 			return nil
 		}
 		ident := childs[0]
@@ -248,14 +232,17 @@ func (p *Parser) parseStatment() expr.Node {
 			Children: childs,
 		}
 	case token.EQUAL:
+		if len(childs) != 2 {
+			serror.Add(&op, "Incorrect parameter amount", "Expected exactly two statements for equality check, got %d.", len(childs))
+			return nil
+		}
 		stmt = &expr.Equal{
 			Token:    op,
 			Children: childs,
 		}
 	case token.NEG:
 		if len(childs) != 1 {
-			log.Printf("err: expected exactly one argument for negation, got %d", len(childs))
-			p.HasError = true
+			serror.Add(&op, "Incorrect parameter amount", "Expected exactly one argument for negation, got %d.", len(childs))
 			return nil
 		}
 		stmt = &expr.Neg{
@@ -359,7 +346,7 @@ func (p *Parser) parseIndex() expr.Node {
 	p.advance()
 	o.Index = p.parseArguments()
 	p.advance()
-	p.peekError(token.RIGHT_BRACKET, "missing object end")
+	p.peekError(token.RIGHT_BRACKET, "missing index end")
 	return &o
 }
 
@@ -375,7 +362,10 @@ func (p *Parser) parseObject() expr.Node {
 			Key: p.parseArguments(),
 		}
 		p.advance()
-		p.peekError(token.COLON, "missing object key value divider")
+		if p.peek().Type != token.COLON {
+			p.peekError(token.COLON, "missing object key value divider")
+			return nil
+		}
 		p.advance()
 		op.Value = p.parseArguments()
 		p.advance()
@@ -433,14 +423,16 @@ func (p *Parser) peekErrorMany(error string, tokenType ...int) {
 			o[i] = token.TOKEN_NAME_MAP[w]
 		}
 		wanted := strings.Join(o, ",")
-		log.Printf("err: %s - Expected any of: '%s', got '%s' [l: %d:%d]", error, wanted, token.TOKEN_NAME_MAP[p.peek().Type], p.peek().Line, p.peek().Pos)
-		p.HasError = true
+		t := p.peek()
+		serror.Add(&t, "Unexpected Token", "%s: Expected any of '%s' got '%s'.", error, wanted, token.TOKEN_NAME_MAP[t.Type])
 	}
 }
 
-func (p *Parser) peekError(tokenType int, error string) {
+func (p *Parser) peekError(tokenType int, error string) (r bool) {
 	if !p.peekIs(tokenType) {
-		log.Printf("err: %s - Expected Token '%s' got '%s' [l: %d:%d]", error, token.TOKEN_NAME_MAP[tokenType], token.TOKEN_NAME_MAP[p.peek().Type], p.peek().Line, p.peek().Pos)
-		p.HasError = true
+		t := p.peek()
+		serror.Add(&t, "Unexpected Token", "%s: Expected Token '%s' got '%s'.", error, token.TOKEN_NAME_MAP[tokenType], token.TOKEN_NAME_MAP[t.Type])
+		return true
 	}
+	return false
 }

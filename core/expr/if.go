@@ -17,7 +17,7 @@ func (i *If) GetToken() token.Token {
 }
 
 func (i *If) Eval() any {
-	cond := castPanicIfNotType[bool](i.Condition.Eval(), token.IF)
+	cond := castPanicIfNotType[bool](i.Condition.Eval(), i.Condition.GetToken())
 	if cond {
 		for _, c := range i.Body {
 			c.Eval()

@@ -22,7 +22,7 @@ func (o *Object) GetToken() token.Token {
 func (o *Object) Eval() any {
 	m := make(map[string]any, len(o.Children))
 	for _, c := range o.Children {
-		key := castPanicIfNotType[*Ident](c.Key, token.LEFT_CURLY)
+		key := castPanicIfNotType[*Ident](c.Key, c.Key.GetToken())
 		m[key.Name] = c.Value.Eval()
 	}
 	return m

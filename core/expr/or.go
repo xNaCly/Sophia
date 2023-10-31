@@ -17,7 +17,7 @@ func (o *Or) GetToken() token.Token {
 
 func (o *Or) Eval() any {
 	for _, c := range o.Children {
-		if castPanicIfNotType[bool](c.Eval(), token.OR) {
+		if castPanicIfNotType[bool](c.Eval(), c.GetToken()) {
 			return true
 		}
 	}

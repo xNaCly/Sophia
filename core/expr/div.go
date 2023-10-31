@@ -22,9 +22,9 @@ func (d *Div) Eval() any {
 	res := 0.0
 	for i, c := range d.Children {
 		if i == 0 {
-			res = castPanicIfNotType[float64](c.Eval(), token.DIV)
+			res = castPanicIfNotType[float64](c.Eval(), d.Token)
 		} else {
-			res /= castPanicIfNotType[float64](c.Eval(), token.DIV)
+			res /= castPanicIfNotType[float64](c.Eval(), d.Token)
 		}
 	}
 	return res

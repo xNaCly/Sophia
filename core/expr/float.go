@@ -1,7 +1,7 @@
 package expr
 
 import (
-	"fmt"
+	"sophia/core/serror"
 	"sophia/core/token"
 	"strconv"
 	"strings"
@@ -16,7 +16,6 @@ func (f *Float) GetToken() token.Token {
 }
 
 func (f *Float) Eval() any {
-	// TODO: absolutly move this to the parser
 	before, after, found := strings.Cut(f.Token.Raw, "..")
 	if found {
 		var first float64
@@ -26,17 +25,20 @@ func (f *Float) Eval() any {
 			var err error
 			first, err = strconv.ParseFloat(before, 64)
 			if err != nil {
-				panic(fmt.Sprint("failed to parse float: ", err))
+				serror.Add(&f.Token, "Float parse error", "Failed to parse float %q: %q", f.Token.Raw, err)
+				serror.Panic()
 			}
 		}
 
 		if len(after) == 0 {
-			panic("upper bound of array spread operator required")
+			serror.Add(&f.Token, "Array spread error", "Upper array spread limit required")
+			serror.Panic()
 		}
 
 		last, err := strconv.ParseFloat(after, 64)
 		if err != nil {
-			panic(fmt.Sprint("failed to parse float: ", err))
+			serror.Add(&f.Token, "Float parse error", "Failed to parse float %q: %q", f.Token.Raw, err)
+			serror.Panic()
 		}
 		r := make([]interface{}, 0)
 		for i := first; i < last+1; i++ {
@@ -46,7 +48,8 @@ func (f *Float) Eval() any {
 	}
 	float, err := strconv.ParseFloat(f.Token.Raw, 64)
 	if err != nil {
-		panic(fmt.Sprint("failed to parse float: ", err))
+		serror.Add(&f.Token, "Float parse error", "Failed to parse float %q: %q", f.Token.Raw, err)
+		serror.Panic()
 	}
 	return float
 }

@@ -11,14 +11,16 @@ import (
 )
 
 func Start() {
-	log.SetFlags(log.Ltime | log.Lmicroseconds)
+	log.SetFlags(0)
 	execute := flag.String("exp", "", "specifiy expression to execute")
 	target := flag.String("target", "", "specifiy target to compile sophia to")
 	dbg := flag.Bool("dbg", false, "enable debug logs")
+	allErrors := flag.Bool("all-errors", false, "display all found errors")
 	flag.Parse()
 	core.CONF = core.Config{
-		Debug:  *dbg,
-		Target: *target,
+		Debug:     *dbg,
+		Target:    *target,
+		AllErrors: *allErrors,
 	}
 
 	stdinInf, err := os.Stdin.Stat()
@@ -29,13 +31,13 @@ func Start() {
 		if err != nil {
 			log.Fatalln("failed to read from stdin", err)
 		}
-		_, err = run(out, "stdin")
+		_, err = run(string(out), "stdin")
 		if err != nil {
 			log.Fatalln(err)
 		}
 	} else if len(*execute) != 0 {
 		debug.Log("got -exp flag, running...")
-		_, err := run([]byte(*execute), "cli")
+		_, err := run(*execute, "cli")
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -46,17 +48,16 @@ func Start() {
 		if err != nil {
 			log.Fatalf("Failed to open file: %s\n", err)
 		}
-		_, err = run(f, file)
+		_, err = run(string(f), file)
 		if err != nil {
-			log.Println(err)
-			log.Fatalf("error in source file '%s' detected, stopping...", file)
+			log.Fatalln("\n" + err.Error())
 		}
 	} else {
 		if len(core.CONF.Target) > 0 {
 			log.Fatalf("got compile target %q, but no file or expression to compile, exiting...", core.CONF.Target)
 		}
 		fmt.Print(core.ASCII_ART, "\n")
-		debug.Log("go nothing, starting repl...")
+		debug.Log("got nothing, starting repl...")
 		repl(run)
 	}
 }

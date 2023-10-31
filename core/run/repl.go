@@ -6,14 +6,14 @@ import (
 	"log"
 	"sophia/core"
 	"sophia/core/consts"
-	"strings"
 )
 
-func repl(run func(input []byte, filename string) ([]string, error)) {
-	fmt.Println(`Welcome to the Sophia repl - press <CTRL-D> or <CTRL-C> to quit...`)
+func repl(run func(input string, filename string) ([]string, error)) {
+	log.SetFlags(0)
+	fmt.Println(`Welcome to the Sophia programming language repl - press <CTRL-D> or <CTRL-C> to quit...`)
 
 	rl, err := readline.NewEx(&readline.Config{
-		Prompt: "ß :: ",
+		Prompt: "sophia> ",
 	})
 	if err != nil {
 		panic(err)
@@ -25,7 +25,6 @@ func repl(run func(input []byte, filename string) ([]string, error)) {
 		if err != nil {
 			break
 		}
-		line = strings.TrimSpace(line)
 		if len(line) == 0 {
 			continue
 		}
@@ -41,7 +40,7 @@ func repl(run func(input []byte, filename string) ([]string, error)) {
 				log.Printf("toggled debug logging to='%t'", core.CONF.Debug)
 			}
 		} else {
-			val, error := run([]byte(line), "repl")
+			val, error := run(line, "repl")
 			if error != nil {
 				log.Println(error)
 			} else {

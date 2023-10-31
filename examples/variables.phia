@@ -12,7 +12,7 @@
 (let person { 
     name: "anon" 
     age: 25 
-    })
+})
 (let [person.name] "anon2")
 (let [person.test] "test")
 (let newAge 
@@ -24,7 +24,7 @@
     data: {
         test: "test"
     }
-    })
+})
 
 (let pData [person.data])
 (put [pData.data])

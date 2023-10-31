@@ -1,8 +1,8 @@
 package expr
 
 import (
-	"fmt"
 	"sophia/core/consts"
+	"sophia/core/serror"
 	"sophia/core/token"
 	"strings"
 )
@@ -21,7 +21,9 @@ func (v *Var) GetToken() token.Token {
 func (v *Var) Eval() any {
 	var val any
 	if !(v.Ident.GetToken().Type == token.IDENT || v.Ident.GetToken().Type == token.LEFT_BRACKET) {
-		panic("expected an identifier or an array / object index for variable definition, got something else")
+		t := v.Ident.GetToken()
+		serror.Add(&t, "Variable error", "Expected an identifier, an array or object index for variable definition, got something else")
+		serror.Panic()
 	} else if res, ok := v.Ident.(*Ident); ok {
 		if len(v.Value) > 1 {
 			val = make([]any, len(v.Value))
@@ -35,11 +37,13 @@ func (v *Var) Eval() any {
 		}
 		consts.SYMBOL_TABLE[res.Name] = val
 	} else {
-		index := castPanicIfNotType[*Index](v.Ident, token.LET)
-		ident := castPanicIfNotType[*Ident](index.Element, token.LEFT_BRACKET)
+		index := castPanicIfNotType[*Index](v.Ident, v.Ident.GetToken())
+		ident := castPanicIfNotType[*Ident](index.Element, index.Element.GetToken())
 		requested, found := consts.SYMBOL_TABLE[ident.Name]
 		if !found {
-			panic(fmt.Sprintf("requested element %q not defined", ident.Name))
+			t := v.Ident.GetToken()
+			serror.Add(&t, "Undefined variable", "Requested item %q not found", ident.Name)
+			serror.Panic()
 		}
 		switch requested.(type) {
 		case []interface{}:
@@ -47,9 +51,10 @@ func (v *Var) Eval() any {
 				arr := requested.([]interface{})
 				in, ok := index.Index.Eval().(float64)
 				if !ok {
-					panic(fmt.Sprintf("can't index into array with %T, use a number", index.Index))
+					t := index.Index.GetToken()
+					serror.Add(&t, "Index error", "Can't index array with %q, use a number", token.TOKEN_NAME_MAP[t.Type])
+					serror.Panic()
 				}
-				// TODO
 				arr[int(in)] = v.Value[0].Eval()
 				consts.SYMBOL_TABLE[ident.Name] = arr
 			}
@@ -58,14 +63,17 @@ func (v *Var) Eval() any {
 				m := requested.(map[string]interface{})
 				in, ok := index.Index.(*Ident)
 				if !ok {
-					panic(fmt.Sprintf("can't index object with %T, use an identifier", index.Index))
+					t := index.GetToken()
+					serror.Add(&t, "Index error", "Can't index object with %q, use an identifier", token.TOKEN_NAME_MAP[t.Type])
+					serror.Panic()
 				}
 
 				m[in.Name] = v.Value[0].Eval()
 				consts.SYMBOL_TABLE[ident.Name] = m
 			}
 		default:
-			panic(fmt.Sprintf("Element to index into of unknown type %T, not yet implemented", requested))
+			serror.Add(&ident.Token, "Index error", "Element to index into of unknown type %T, not yet implemented", requested)
+			serror.Panic()
 		}
 	}
 

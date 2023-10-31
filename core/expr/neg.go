@@ -15,8 +15,7 @@ func (n *Neg) GetToken() token.Token {
 }
 
 func (n *Neg) Eval() any {
-	ev := n.Children.Eval()
-	return !castPanicIfNotType[bool](ev, token.NEG)
+	return !castPanicIfNotType[bool](n.Children.Eval(), n.Children.GetToken())
 }
 func (n *Neg) CompileJs(b *strings.Builder) {
 	b.WriteRune('!')
