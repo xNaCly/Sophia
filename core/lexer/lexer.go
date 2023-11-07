@@ -204,7 +204,11 @@ func (l *Lexer) templateString() []token.Token {
 func (l *Lexer) string() token.Token {
 	l.advance()
 	b := strings.Builder{}
-	for l.chr != '"' && l.chr != '\n' && l.chr != 0 {
+	for l.chr != '"' && l.chr != 0 {
+		if l.chr == '\n' {
+			l.line++
+			l.linepos = -1
+		}
 		b.WriteRune(l.chr)
 		l.advance()
 	}
