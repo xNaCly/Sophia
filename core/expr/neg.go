@@ -1,6 +1,7 @@
 package expr
 
 import (
+	"sophia/core/serror"
 	"sophia/core/token"
 	"strings"
 )
@@ -15,8 +16,21 @@ func (n *Neg) GetToken() token.Token {
 }
 
 func (n *Neg) Eval() any {
-	return !castPanicIfNotType[bool](n.Children.Eval(), n.Children.GetToken())
+	child := n.Children.Eval()
+	var r any
+	switch child.(type) {
+	case float64:
+		r = child.(float64) * -1
+	case bool:
+		r = !child.(bool)
+	default:
+		t := n.Children.GetToken()
+		serror.Add(&t, "Type Error", "Expected float64 or bool, got %T", child)
+		serror.Panic()
+	}
+	return r
 }
+
 func (n *Neg) CompileJs(b *strings.Builder) {
 	b.WriteRune('!')
 	n.Children.CompileJs(b)
