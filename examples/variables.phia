@@ -1,3 +1,4 @@
+;; vim: syntax=lisp
 (let pi 3.1514)
 (let v "v1.1.1") 
 (let isSemantic false) 

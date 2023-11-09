@@ -1,3 +1,4 @@
+;; vim: syntax=lisp
 (if true
     (put "the condition is true"))
 

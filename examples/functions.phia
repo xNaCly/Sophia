@@ -1,3 +1,4 @@
+;; vim: syntax=lisp
 (fun
     square
     (_ a)

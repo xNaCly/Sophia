@@ -1,3 +1,4 @@
+;; vim: syntax=lisp
 (put
     "1+2=" (+ 1 2))
 (put

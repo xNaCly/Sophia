@@ -1,3 +1,4 @@
+;; vim: syntax=lisp
 (for (_ i) 1..15
     (let mod3 (eq 0 (% i 3)))
     (let mod5 (eq 0 (% i 5)))

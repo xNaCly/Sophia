@@ -1,3 +1,4 @@
+;; vim: syntax=lisp
 (let beforeLast 0)
 (let lst 1)
 (for (_ i) 0..15
