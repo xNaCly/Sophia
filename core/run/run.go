@@ -65,5 +65,6 @@ func run(input string, filename string) (s []string, e error) {
 		debug.Log("done parsing - starting eval")
 		s = eval.Eval(ast)
 	}
+
 	return
 }

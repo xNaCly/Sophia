@@ -197,43 +197,6 @@ func TestEvalConditional(t *testing.T) {
 	}
 }
 
-func TestEvalArraySpread(t *testing.T) {
-	input := []struct {
-		str string
-		exp string
-	}{
-		{
-			str: `(let a 0..9)`,
-			exp: "[0 1 2 3 4 5 6 7 8 9]",
-		},
-		{
-			str: `(let a 1..9)`,
-			exp: "[1 2 3 4 5 6 7 8 9]",
-		},
-		{
-			str: `(let a 127..129)`,
-			exp: "[127 128 129]",
-		},
-	}
-	for _, i := range input {
-		t.Run(i.str, func(t *testing.T) {
-			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
-			l := lexer.New(i.str)
-			p := parser.New(l.Lex(), "test")
-			r := Eval(p.Parse())
-			if serror.HasErrors() {
-				t.Errorf("lexer or parser error for %q", i.str)
-			}
-			if len(r) == 0 {
-				t.Errorf("eval result empty")
-			}
-			if i.exp != r[0] {
-				t.Errorf("%q not equal to %q", i.exp, r[0])
-			}
-		})
-	}
-}
-
 func TestEvalMerge(t *testing.T) {
 	input := []struct {
 		str string
@@ -316,15 +279,14 @@ func TestEvalFunction(t *testing.T) {
 	}
 }
 
-// TODO: more tests
 func TestEvalLoop(t *testing.T) {
 	input := []struct {
 		str string
 		exp string
 	}{
 		{
-			str: "(let sum 0)(let arr 1..9)(for (_ e) arr (let sum (+ e sum)))(+ sum)",
-			exp: "45",
+			str: "(let sum 0)(let arr 9)(for (_ e) arr (let sum (+ e sum)))(+ sum)",
+			exp: "36",
 		},
 	}
 	for _, i := range input {

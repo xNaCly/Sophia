@@ -70,15 +70,14 @@ instead of `==`, you get the gist.
 
 List of features and their inspiration
 
-| Feature                     | Inspiration   | Description                                                                                    |
-| --------------------------- | ------------- | ---------------------------------------------------------------------------------------------- |
-| match statement             | rust, haskell | switch statement on speed                                                                      |
-| keywords instead of symbols | python        | `&&`->`and`, `\|\|`->`or`, `==`->`eq`,`<`->`lt`                                                |
-| S-Expressions               | lisp          | `(keyword arguments)`, some people dislike them, i love them                                   |
-| list concatenation          | haskell       | merging lists and strings is incredibly useful                                                 |
-| loop                        | go,rust       | iterate over containers, such as lists                                                         |
-| range expressions           | rust          | `0..9` or `..9`, creates a list containing integers from lower up to and including upper bound |
-| fancy lexer error messages  | rust          | context display and extensive debugging information                                            |
+| Feature                     | Inspiration   | Description                                                  |
+| --------------------------- | ------------- | ------------------------------------------------------------ |
+| match statement             | rust, haskell | switch statement on speed                                    |
+| keywords instead of symbols | python        | `&&`->`and`, `\|\|`->`or`, `==`->`eq`,`<`->`lt`              |
+| S-Expressions               | lisp          | `(keyword arguments)`, some people dislike them, i love them |
+| list concatenation          | haskell       | merging lists and strings is incredibly useful               |
+| loop                        | go,rust       | iterate over containers, such as lists                       |
+| fancy lexer error messages  | rust          | context display and extensive debugging information          |
 
 Books and resources i consider inspiring:
 

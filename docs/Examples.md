@@ -50,12 +50,10 @@
 
 ```lisp
 (let list 0 1 2 3 4)
-(let listEq1 0..4)
-(let listEq2 ..4)
 ```
 
 ```lisp
-(let list ..4)
+(let list 5)
 (++ list list)
 ```
 
@@ -139,14 +137,14 @@
 ```
 
 ```lisp
-(let arr 1..9)
+(let arr 9)
 (for (_ i) arr
      (put i))
 ```
 
 ```lisp
 (let sum 0)
-(let arr 1..9)
+(let arr 9)
 (for (_ e) arr
     (let sum (+ e sum)))
 (put sum)
@@ -157,7 +155,7 @@
 ```lisp
 (let beforeLast 0)
 (let lst 1)
-(for (_ i) 0..15
+(for (_ i) 15
     (let t (+ beforeLast lst))
     (put t)
     (let beforeLast lst)
@@ -167,7 +165,7 @@
 ## Fizzbuzz
 
 ```lisp
-(for (_ i) 1..15
+(for (_ i) 15
     (let mod3 (eq 0 (% i 3)))
     (let mod5 (eq 0 (% i 5)))
     (match
