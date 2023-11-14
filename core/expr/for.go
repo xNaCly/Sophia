@@ -40,8 +40,8 @@ func (f *For) Eval() any {
 			}
 		}
 	case float64:
-		con := int(v.(float64))
-		for i := 0; i < con; i++ {
+		con := v.(float64)
+		for i := 0.0; i < con; i++ {
 			consts.SYMBOL_TABLE[element.Name] = i
 			for _, stmt := range f.Body {
 				stmt.Eval()
