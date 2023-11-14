@@ -22,9 +22,9 @@ func (s *Sub) Eval() any {
 	res := 0.0
 	for i, c := range s.Children {
 		if i == 0 {
-			res = castPanicIfNotType[float64](c.Eval(), c.GetToken())
+			res = castFloatPanic(c.Eval(), s.GetToken())
 		} else {
-			res -= castPanicIfNotType[float64](c.Eval(), c.GetToken())
+			res -= castFloatPanic(c.Eval(), s.GetToken())
 		}
 	}
 	return res

@@ -1,3 +1,3 @@
 package consts
 
-var FUNC_TABLE = map[string]any{}
+var FUNC_TABLE = make(map[string]any, 16)

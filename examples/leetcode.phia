@@ -27,6 +27,9 @@
             (let neg (+ neg 1))))
     (max neg pos))
 
-(put (solve example1)) ;; 3
-(put (solve example2)) ;; 3
-(put (solve example3)) ;; 4
+;; used for benchmarking and profiling
+;;(for (_ i) 100_000
+    (solve example1) ;; 3
+    (solve example3) ;; 4
+    (solve example2) ;; 3
+;;)

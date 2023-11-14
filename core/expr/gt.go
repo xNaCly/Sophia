@@ -15,6 +15,6 @@ func (g *Gt) GetToken() token.Token {
 }
 
 func (g *Gt) Eval() any {
-	return castPanicIfNotType[float64](g.Children[0].Eval(), g.Children[0].GetToken()) > castPanicIfNotType[float64](g.Children[1].Eval(), g.Children[1].GetToken())
+	return castFloatPanic(g.Children[0].Eval(), g.Children[0].GetToken()) > castFloatPanic(g.Children[1].Eval(), g.Children[1].GetToken())
 }
 func (n *Gt) CompileJs(b *strings.Builder) {}

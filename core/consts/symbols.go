@@ -1,3 +1,3 @@
 package consts
 
-var SYMBOL_TABLE = map[string]any{}
+var SYMBOL_TABLE = make(map[string]any, 16)

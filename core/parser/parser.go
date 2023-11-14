@@ -8,6 +8,7 @@ import (
 	"sophia/core/lexer"
 	"sophia/core/serror"
 	"sophia/core/token"
+	"strconv"
 	"strings"
 )
 
@@ -313,8 +314,15 @@ func (p *Parser) parseArguments() expr.Node {
 	} else if p.peekIs(token.TEMPLATE_STRING) {
 		child = p.parseTemplateString()
 	} else if p.peekIs(token.FLOAT) {
+		t := p.peek()
+		value, err := strconv.ParseFloat(t.Raw, 64)
+		if err != nil {
+			serror.Add(&t, "Failed to parse number", "%q not a valid floating point integer", t.Raw)
+			value = 0
+		}
 		child = &expr.Float{
-			Token: p.peek(),
+			Token: t,
+			Value: value,
 		}
 	} else if p.peekIs(token.STRING) {
 		child = &expr.String{

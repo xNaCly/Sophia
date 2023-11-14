@@ -22,9 +22,9 @@ func (m *Mul) Eval() any {
 	res := 0.0
 	for i, c := range m.Children {
 		if i == 0 {
-			res = castPanicIfNotType[float64](c.Eval(), c.GetToken())
+			res = castFloatPanic(c.Eval(), m.Token)
 		} else {
-			res *= castPanicIfNotType[float64](c.Eval(), c.GetToken())
+			res *= castFloatPanic(c.Eval(), m.Token)
 		}
 	}
 	return res

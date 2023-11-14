@@ -23,9 +23,9 @@ func (m *Mod) Eval() any {
 	res := 0
 	for i, c := range m.Children {
 		if i == 0 {
-			res = int(castPanicIfNotType[float64](c.Eval(), c.GetToken()))
+			res = int(castFloatPanic(c.Eval(), c.GetToken()))
 		} else {
-			res = res % int(castPanicIfNotType[float64](c.Eval(), c.GetToken()))
+			res = res % int(castFloatPanic(c.Eval(), c.GetToken()))
 		}
 	}
 	return float64(res)
