@@ -1,6 +1,7 @@
 package expr
 
 import (
+	"math"
 	"sophia/core/debug"
 	"sophia/core/token"
 	"strings"
@@ -20,12 +21,12 @@ func (m *Mod) Eval() any {
 		return 0.0
 	}
 
-	res := 0
+	res := 0.0
 	for i, c := range m.Children {
 		if i == 0 {
-			res = int(castFloatPanic(c.Eval(), c.GetToken()))
+			res = castFloatPanic(c.Eval(), c.GetToken())
 		} else {
-			res = res % int(castFloatPanic(c.Eval(), c.GetToken()))
+			res = math.Mod(res, castFloatPanic(c.Eval(), c.GetToken()))
 		}
 	}
 	return float64(res)
