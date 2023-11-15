@@ -80,22 +80,36 @@ func (v *Var) Eval() any {
 	return val
 }
 
-// TODO
 func (n *Var) CompileJs(b *strings.Builder) {
-	// b.WriteString("let ")
-	// b.WriteString(n.Name)
-	// if len(n.Value) > 1 {
-	// b.WriteString("=")
-	// b.WriteRune('[')
-	// for i, c := range n.Value {
-	// c.CompileJs(b)
-	// if i+1 < len(n.Value) {
-	// b.WriteRune(',')
-	// }
-	// }
-	// b.WriteRune(']')
-	// } else if len(n.Value) == 1 {
-	// b.WriteString("=")
-	// n.Value[0].CompileJs(b)
-	// }
+	ident, _ := n.Ident.(*Ident)
+	if ident == nil {
+		return
+	}
+	// js does not want let for already declared variables
+	if _, ok := consts.SYMBOL_TABLE[ident.Name]; !ok {
+		consts.SYMBOL_TABLE[ident.Name] = true
+		b.WriteString("let ")
+	}
+	ident.CompileJs(b)
+	if len(n.Value) > 1 {
+		b.WriteString("=")
+		b.WriteRune('[')
+		for i, c := range n.Value {
+			if c == nil {
+				continue
+			}
+			c.CompileJs(b)
+			if i+1 < len(n.Value) {
+				b.WriteRune(',')
+			}
+		}
+		b.WriteRune(']')
+	} else if len(n.Value) == 1 {
+		v := n.Value[0]
+		if v == nil {
+			return
+		}
+		b.WriteString("=")
+		v.CompileJs(b)
+	}
 }

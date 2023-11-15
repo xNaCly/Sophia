@@ -48,6 +48,9 @@ func (i *Index) Eval() any {
 			}
 			return m[index.Name]
 		}
+	case nil:
+		serror.Add(&ident.Token, "Index error", "Can not access nothing (nil)")
+		serror.Panic()
 	default:
 		serror.Add(&ident.Token, "Index error", "Element to index into of unknown type %T, not yet implemented", requested)
 		serror.Panic()
@@ -55,5 +58,20 @@ func (i *Index) Eval() any {
 	return nil
 }
 
-// TODO:
-func (i *Index) CompileJs(b *strings.Builder) {}
+func (i *Index) CompileJs(b *strings.Builder) {
+	i.Element.CompileJs(b)
+	b.WriteRune('[')
+	switch i.Index.(type) {
+	case *Ident:
+		b.WriteRune('"')
+		i.Index.CompileJs(b)
+		b.WriteRune('"')
+	case *Float:
+		i.Index.CompileJs(b)
+	default:
+		t := i.Index.GetToken()
+		serror.Add(&t, "Index error", "Element to index into of unknown type, not yet implemented")
+		serror.Panic()
+	}
+	b.WriteRune(']')
+}

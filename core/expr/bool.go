@@ -7,6 +7,7 @@ import (
 
 type Boolean struct {
 	Token token.Token
+	Value bool
 }
 
 func (b *Boolean) GetToken() token.Token {
@@ -14,7 +15,7 @@ func (b *Boolean) GetToken() token.Token {
 }
 
 func (b *Boolean) Eval() any {
-	return b.Token.Raw == "true"
+	return b.Value
 }
 
 func (n *Boolean) CompileJs(b *strings.Builder) {

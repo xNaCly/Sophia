@@ -1,7 +1,6 @@
 package expr
 
 import (
-	"sophia/core/debug"
 	"sophia/core/token"
 	"strings"
 )
@@ -31,9 +30,6 @@ func (n *Equal) CompileJs(b *strings.Builder) {
 		n.Children[0].CompileJs(b)
 		b.WriteString("===")
 		n.Children[1].CompileJs(b)
-	} else if cLen == 0 || cLen == 1 {
-		debug.Log("opt: replaced illogical 'equal' expression containing one or less children with true at line", n.Token.Line)
-		b.WriteString("true")
 	} else {
 		b.WriteRune('[')
 		for i := 0; i < cLen; i++ {

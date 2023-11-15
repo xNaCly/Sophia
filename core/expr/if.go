@@ -27,7 +27,7 @@ func (i *If) Eval() any {
 }
 func (n *If) CompileJs(b *strings.Builder) {
 	if len(n.Body) == 0 {
-		debug.Log("opt: removed empty if at line", n.Token.Line)
+		debug.Log("opt: removed 'if' with no body at line", n.Token.Line)
 		return
 	}
 	b.WriteString("if(")

@@ -233,8 +233,8 @@ func (p *Parser) parseStatment() expr.Node {
 			Children: childs,
 		}
 	case token.EQUAL:
-		if len(childs) != 2 {
-			serror.Add(&op, "Incorrect parameter amount", "Expected exactly two statements for equality check, got %d.", len(childs))
+		if len(childs) < 2 {
+			serror.Add(&op, "Incorrect parameter amount", "Expected at least two statements for equality check, got %d.", len(childs))
 			return nil
 		}
 		stmt = &expr.Equal{
@@ -336,6 +336,8 @@ func (p *Parser) parseArguments() expr.Node {
 	} else if p.peekIs(token.BOOL) {
 		child = &expr.Boolean{
 			Token: p.peek(),
+			// fastpath for easy boolean access, skipping a compare for each eval
+			Value: p.peek().Raw == "true",
 		}
 	}
 	return child

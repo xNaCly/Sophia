@@ -32,6 +32,11 @@ func (n *Neg) Eval() any {
 }
 
 func (n *Neg) CompileJs(b *strings.Builder) {
-	b.WriteRune('!')
+	switch n.Children.(type) {
+	case *Float:
+		b.WriteRune('-')
+	case *Boolean:
+		b.WriteRune('!')
+	}
 	n.Children.CompileJs(b)
 }

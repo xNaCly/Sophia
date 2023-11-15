@@ -1,5 +1,5 @@
 ;; vim: syntax=lisp
-(let arr 1..9)
+(let arr 9)
 (for (_ i) arr
      (put i))
 

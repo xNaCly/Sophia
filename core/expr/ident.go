@@ -25,6 +25,7 @@ func (i *Ident) Eval() any {
 	}
 	return val
 }
+
 func (n *Ident) CompileJs(b *strings.Builder) {
 	b.WriteString(n.Name)
 }

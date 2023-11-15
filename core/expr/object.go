@@ -30,11 +30,13 @@ func (o *Object) Eval() any {
 
 func (o *Object) CompileJs(b *strings.Builder) {
 	b.WriteRune('{')
-	for _, c := range o.Children {
+	for i, c := range o.Children {
 		c.Key.CompileJs(b)
 		b.WriteRune(':')
 		c.Value.CompileJs(b)
-		b.WriteRune(',')
+		if i+1 < len(o.Children) {
+			b.WriteRune(',')
+		}
 	}
 	b.WriteRune('}')
 }

@@ -316,7 +316,6 @@ func TestEvalFunction(t *testing.T) {
 	}
 }
 
-// TODO: more tests
 func TestEvalLoop(t *testing.T) {
 	input := []struct {
 		str string

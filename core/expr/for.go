@@ -2,6 +2,7 @@ package expr
 
 import (
 	"sophia/core/consts"
+	"sophia/core/debug"
 	"sophia/core/serror"
 	"sophia/core/token"
 	"strings"
@@ -59,6 +60,11 @@ func (f *For) Eval() any {
 	return nil
 }
 func (n *For) CompileJs(b *strings.Builder) {
+	// a for loop without any content can be savely removed from execution
+	if len(n.Body) == 0 {
+		debug.Log("opt: removed 'for loop' with no body at line", n.Token.Line)
+		return
+	}
 	b.WriteString("for(")
 	b.WriteString("let ")
 	if n.LoopOver.GetToken().Type == token.FLOAT {
@@ -66,6 +72,7 @@ func (n *For) CompileJs(b *strings.Builder) {
 		b.WriteString(n.LoopOver.GetToken().Raw)
 		b.WriteString("; i++")
 	} else {
+		// TODO: check if container here
 		n.Params.CompileJs(b)
 		b.WriteString(" of ")
 		n.LoopOver.CompileJs(b)

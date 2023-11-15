@@ -8,11 +8,9 @@ merging lists (++) as well as printing to stdout.
 
 It's implementation can be fed expressions from stdin, the repl, a file or a
 flag. The Sophia language can be interpreted or compiled to the following
-languages:
+languages or be interpreted:
 
-- [ ] Javascript
-- [ ] C
-- [ ] Go
+- [x] Javascript
 - [ ] Python
 
 The unchecked programming languages are a work in progess.
