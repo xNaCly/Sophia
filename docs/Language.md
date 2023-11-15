@@ -247,18 +247,8 @@ Sophia supports array range syntax:
 ```lisp
 (for
     (_ i)
-    1..100
+    100
     (put i))
-```
-
-The above loop iterates from 1 up to and including 100. This syntax can be used
-everywhere an array can be used due to the fact, that it gets evaluated to an
-array containing all values from lower bound up to upper bound.
-
-Creating an array from 1298 to 1392:
-
-```lisp
-(let range 1298..1392)
 ```
 
 ### Match
