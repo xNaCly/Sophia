@@ -6,10 +6,10 @@ import (
 )
 
 type String struct {
-	Token token.Token
+	Token *token.Token
 }
 
-func (s *String) GetToken() token.Token {
+func (s *String) GetToken() *token.Token {
 	return s.Token
 }
 

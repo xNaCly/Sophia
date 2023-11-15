@@ -179,7 +179,7 @@ func TestLexerIgnoreCharsAndComments(t *testing.T) {
 		t.Run(v, func(t *testing.T) {
 			serror.SetDefault(serror.NewFormatter(&core.CONF, v, "test"))
 			l := New(v)
-			toks := []token.Token{}
+			toks := []*token.Token{}
 			if l != nil {
 				toks = l.Lex()
 			}

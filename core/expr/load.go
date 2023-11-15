@@ -7,11 +7,11 @@ import (
 
 // parser only structure
 type Load struct {
-	Token   token.Token
+	Token   *token.Token
 	Imports []Node
 }
 
-func (l *Load) GetToken() token.Token {
+func (l *Load) GetToken() *token.Token {
 	return l.Token
 }
 

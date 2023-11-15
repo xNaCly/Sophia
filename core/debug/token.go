@@ -7,7 +7,7 @@ import (
 )
 
 // populates a string with the useful information contained in the tokenArray
-func Token(tokenArr []token.Token) string {
+func Token(tokenArr []*token.Token) string {
 	b := strings.Builder{}
 	b.WriteString(fmt.Sprintf("\n%20s | %25s | %5s | %5s\n", "type", "raw", "line", "pos"))
 	for _, t := range tokenArr {

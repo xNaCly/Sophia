@@ -9,18 +9,18 @@ import (
 
 // using a variable
 type Ident struct {
-	Token token.Token
+	Token *token.Token
 	Name  string
 }
 
-func (i *Ident) GetToken() token.Token {
+func (i *Ident) GetToken() *token.Token {
 	return i.Token
 }
 
 func (i *Ident) Eval() any {
 	val, ok := consts.SYMBOL_TABLE[i.Name]
 	if !ok {
-		serror.Add(&i.Token, "Undefined variable", "Variable %q is not defined.", i.Name)
+		serror.Add(i.Token, "Undefined variable", "Variable %q is not defined.", i.Name)
 		serror.Panic()
 	}
 	return val

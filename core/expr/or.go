@@ -7,15 +7,26 @@ import (
 )
 
 type Or struct {
-	Token    token.Token
+	Token    *token.Token
 	Children []Node
 }
 
-func (o *Or) GetToken() token.Token {
+func (o *Or) GetToken() *token.Token {
 	return o.Token
 }
 
 func (o *Or) Eval() any {
+	// fastpaths
+	if len(o.Children) == 0 {
+		return false
+	} else if len(o.Children) == 1 {
+		c := o.Children[0]
+		return castBoolPanic(c.Eval(), c.GetToken())
+	} else if len(o.Children) == 2 {
+		f := o.Children[0]
+		s := o.Children[1]
+		return castBoolPanic(f.Eval(), f.GetToken()) || castBoolPanic(s.Eval(), s.GetToken())
+	}
 	for _, c := range o.Children {
 		if castBoolPanic(c.Eval(), c.GetToken()) {
 			return true

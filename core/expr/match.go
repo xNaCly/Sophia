@@ -6,15 +6,19 @@ import (
 )
 
 type Match struct {
-	Token    token.Token
+	Token    *token.Token
 	Branches []Node
 }
 
-func (m *Match) GetToken() token.Token {
+func (m *Match) GetToken() *token.Token {
 	return m.Token
 }
 
 func (m *Match) Eval() any {
+	// fastpath: skip loop and lookup
+	if len(m.Branches) == 0 {
+		return nil
+	}
 	for _, c := range m.Branches {
 		if c.GetToken().Type == token.IF {
 			if c.Eval().(bool) {

@@ -11,19 +11,18 @@ type ObjectPair struct {
 }
 
 type Object struct {
-	Token    token.Token
+	Token    *token.Token
 	Children []ObjectPair
 }
 
-func (o *Object) GetToken() token.Token {
+func (o *Object) GetToken() *token.Token {
 	return o.Token
 }
 
 func (o *Object) Eval() any {
 	m := make(map[string]any, len(o.Children))
 	for _, c := range o.Children {
-		key := castPanicIfNotType[*Ident](c.Key, c.Key.GetToken())
-		m[key.Name] = c.Value.Eval()
+		m[castPanicIfNotType[*Ident](c.Key, c.Key.GetToken()).Name] = c.Value.Eval()
 	}
 	return m
 }

@@ -6,7 +6,7 @@ import (
 )
 
 type Node interface {
-	GetToken() token.Token
+	GetToken() *token.Token
 	Eval() any
 	CompileJs(b *strings.Builder)
 }

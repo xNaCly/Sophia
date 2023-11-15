@@ -1,27 +1,32 @@
 package expr
 
 import (
-	"fmt"
+	"bytes"
 	"sophia/core/token"
 	"strings"
 )
 
+var templateBuffer = &bytes.Buffer{}
+
 type TemplateString struct {
-	Token    token.Token
+	Token    *token.Token
 	Children []Node
 }
 
-func (s *TemplateString) GetToken() token.Token {
+func (s *TemplateString) GetToken() *token.Token {
 	return s.Token
 }
 
 func (s *TemplateString) Eval() any {
-	b := strings.Builder{}
-	for _, c := range s.Children {
-		b.WriteString(fmt.Sprint(c.Eval()))
+	if len(s.Children) == 0 {
+		return ""
 	}
-	return b.String()
+
+	templateBuffer.Reset()
+	formatHelper(buffer, s.Children)
+	return templateBuffer.String()
 }
+
 func (n *TemplateString) CompileJs(b *strings.Builder) {
 	b.WriteRune('`')
 	for _, c := range n.Children {

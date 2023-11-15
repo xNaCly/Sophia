@@ -7,17 +7,25 @@ import (
 )
 
 type Sub struct {
-	Token    token.Token
+	Token    *token.Token
 	Children []Node
 }
 
-func (s *Sub) GetToken() token.Token {
+func (s *Sub) GetToken() *token.Token {
 	return s.Token
 }
 
 func (s *Sub) Eval() any {
 	if len(s.Children) == 0 {
 		return 0.0
+	} else if len(s.Children) == 1 {
+		// fastpath for skipping loop and casts
+		return s.Children[0].Eval()
+	} else if len(s.Children) == 2 {
+		// fastpath for two children
+		f := s.Children[0]
+		s := s.Children[1]
+		return castFloatPanic(f.Eval(), f.GetToken()) - castFloatPanic(s.Eval(), s.GetToken())
 	}
 	res := 0.0
 	for i, c := range s.Children {

@@ -7,15 +7,27 @@ import (
 )
 
 type And struct {
-	Token    token.Token
+	Token    *token.Token
 	Children []Node
 }
 
-func (a *And) GetToken() token.Token {
+func (a *And) GetToken() *token.Token {
 	return a.Token
 }
 
 func (a *And) Eval() any {
+	// fastpaths
+	if len(a.Children) == 0 {
+		return false
+	} else if len(a.Children) == 1 {
+		c := a.Children[0]
+		return castBoolPanic(c.Eval(), c.GetToken())
+	} else if len(a.Children) == 2 {
+		f := a.Children[0]
+		s := a.Children[1]
+		return castBoolPanic(f.Eval(), f.GetToken()) && castBoolPanic(s.Eval(), s.GetToken())
+	}
+
 	for _, c := range a.Children {
 		v := castBoolPanic(c.Eval(), a.Token)
 		if !v {

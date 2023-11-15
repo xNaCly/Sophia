@@ -6,17 +6,18 @@ import (
 )
 
 type Params struct {
-	Token    token.Token
+	Token    *token.Token
 	Children []Node
 }
 
-func (p *Params) GetToken() token.Token {
+func (p *Params) GetToken() *token.Token {
 	return p.Token
 }
 
 func (p *Params) Eval() any {
 	return nil
 }
+
 func (n *Params) CompileJs(b *strings.Builder) {
 	for i, c := range n.Children {
 		c.CompileJs(b)

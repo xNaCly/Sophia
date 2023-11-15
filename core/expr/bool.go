@@ -6,11 +6,11 @@ import (
 )
 
 type Boolean struct {
-	Token token.Token
+	Token *token.Token
 	Value bool
 }
 
-func (b *Boolean) GetToken() token.Token {
+func (b *Boolean) GetToken() *token.Token {
 	return b.Token
 }
 

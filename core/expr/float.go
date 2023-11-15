@@ -6,11 +6,11 @@ import (
 )
 
 type Float struct {
-	Token token.Token
+	Token *token.Token
 	Value float64
 }
 
-func (f *Float) GetToken() token.Token {
+func (f *Float) GetToken() *token.Token {
 	return f.Token
 }
 

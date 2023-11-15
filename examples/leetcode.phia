@@ -10,10 +10,8 @@
 ;; returns a if bigger than b, otherwise b
 ;; max: float, float -> float
 (fun max (_ a b)
-    (let max) ;; created as nil
-    (match 
-        (if (lt a b) (let max b))
-        (let max a))
+    (let max a) ;; created as nil
+    (if (lt a b) (let max b))
     max) ;; return without extra statement
 
 ;; counts negative and positve numbers in arr, returns the higher amount
@@ -28,8 +26,8 @@
     (max neg pos))
 
 ;; used for benchmarking and profiling
-;;(for (_ i) 100_000
-    (put (solve example1)) ;; 3
-    (put (solve example3)) ;; 4
-    (put (solve example2)) ;; 4
-;;)
+(for (_ i) 250_000
+    (solve example1) ;; 3
+    (solve example3) ;; 4
+    (solve example2) ;; 4
+)

@@ -8,58 +8,58 @@ import (
 )
 
 type Call struct {
-	Token  token.Token
+	Token  *token.Token
 	Params []Node
 }
 
-func (c *Call) GetToken() token.Token {
+func (c *Call) GetToken() *token.Token {
 	return c.Token
 }
 
 func (c *Call) Eval() any {
-	oldSymbols := map[string]any{}
-	for k, v := range consts.SYMBOL_TABLE {
-		oldSymbols[k] = v
-	}
-
 	storedFunc, ok := consts.FUNC_TABLE[c.Token.Raw]
 	if !ok {
-		serror.Add(&c.Token, "Undefined function", "Function %q not defined", c.Token.Raw)
+		serror.Add(c.Token, "Undefined function", "Function %q not defined", c.Token.Raw)
 		serror.Panic()
 	}
 
 	def := castPanicIfNotType[*Func](storedFunc, c.Token)
 	defParams := castPanicIfNotType[*Params](def.Params, c.Token)
+	children := defParams.Children
 
-	if len(defParams.Children) != len(c.Params) {
-		paramLen := len(defParams.Children)
+	lchild := len(children)
+	if len(children) != len(c.Params) {
 		argLen := len(c.Params)
-		if paramLen < argLen {
-			serror.Add(&c.Token, "Too many arguments", "Too many arguments for %q, wanted %d, got %d", c.Token.Raw, len(defParams.Children), len(c.Params))
+		if lchild < argLen {
+			serror.Add(c.Token, "Too many arguments", "Too many arguments for %q, wanted %d, got %d", c.Token.Raw, lchild, len(c.Params))
 			serror.Panic()
-		} else if paramLen > argLen {
-			serror.Add(&c.Token, "Not enough arguments", "Not enough arguments for %q, wanted %d, got %d", c.Token.Raw, len(defParams.Children), len(c.Params))
+		} else if lchild > argLen {
+			serror.Add(c.Token, "Not enough arguments", "Not enough arguments for %q, wanted %d, got %d", c.Token.Raw, lchild, len(c.Params))
 			serror.Panic()
 		}
 	}
 
+	// store variable values from before entering the function scope
 	for i, arg := range c.Params {
-		consts.SYMBOL_TABLE[defParams.Children[i].GetToken().Raw] = arg.Eval()
+		name := children[i].GetToken().Raw
+		if val, ok := consts.SYMBOL_TABLE[name]; ok {
+			consts.SCOPE_TABLE[name] = val
+		}
+		consts.SYMBOL_TABLE[name] = arg.Eval()
 	}
-
-	// INFO: going out of scope, therefore we restore the previous state of the
-	// symbol table, due to the fact that we disallow functions with side
-	// effects
-	// TODO: maybe implement this similary to the for loop implementation?
-	defer func() {
-		consts.SYMBOL_TABLE = oldSymbols
-	}()
 
 	for i, stmt := range def.Body {
 		if i+1 == len(def.Body) {
 			return stmt.Eval()
 		}
 		stmt.Eval()
+	}
+
+	// going out of scope, therefore we restore variables used in the
+	// function scope to their previous value stored in the local scope table
+	for k, v := range consts.SCOPE_TABLE {
+		consts.SYMBOL_TABLE[k] = v
+		delete(consts.SCOPE_TABLE, k)
 	}
 
 	return nil

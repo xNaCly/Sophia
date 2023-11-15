@@ -7,16 +7,20 @@ import (
 )
 
 type If struct {
-	Token     token.Token
+	Token     *token.Token
 	Condition Node
 	Body      []Node
 }
 
-func (i *If) GetToken() token.Token {
+func (i *If) GetToken() *token.Token {
 	return i.Token
 }
 
 func (i *If) Eval() any {
+	if len(i.Body) == 0 {
+		debug.Log("opt: removed 'for loop' with no body at line", i.Token.Line)
+		return nil
+	}
 	cond := castBoolPanic(i.Condition.Eval(), i.Condition.GetToken())
 	if cond {
 		for _, c := range i.Body {

@@ -1,32 +1,35 @@
 package expr
 
 import (
-	"fmt"
+	"bytes"
+	"os"
 	"sophia/core/debug"
 	"sophia/core/token"
 	"strings"
 )
 
+var buffer = &bytes.Buffer{}
+
 type Put struct {
-	Token    token.Token
+	Token    *token.Token
 	Children []Node
 }
 
-func (p *Put) GetToken() token.Token {
+func (p *Put) GetToken() *token.Token {
 	return p.Token
 }
 
 func (p *Put) Eval() any {
-	b := strings.Builder{}
-	for i, c := range p.Children {
-		if i != 0 {
-			b.WriteRune(' ')
-		}
-		b.WriteString(fmt.Sprint(c.Eval()))
+	if len(p.Children) == 0 {
+		return nil
 	}
-	fmt.Printf("%s\n", b.String())
+	buffer.Reset()
+	formatHelper(buffer, p.Children)
+	buffer.WriteRune('\n')
+	buffer.WriteTo(os.Stdout)
 	return nil
 }
+
 func (n *Put) CompileJs(b *strings.Builder) {
 	cLen := len(n.Children)
 	if cLen == 0 {

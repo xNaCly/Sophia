@@ -30,8 +30,8 @@ func New(input string) *Lexer {
 	}
 }
 
-func (l *Lexer) Lex() []token.Token {
-	t := make([]token.Token, 0)
+func (l *Lexer) Lex() []*token.Token {
+	t := make([]*token.Token, 0)
 	for l.chr != 0 {
 		ttype := token.UNKNOWN
 
@@ -97,7 +97,7 @@ func (l *Lexer) Lex() []token.Token {
 				if tok, err := l.float(); err == nil {
 					t = append(t, tok)
 				} else {
-					serror.Add(&tok, "Invalid floating point number", "")
+					serror.Add(tok, "Invalid floating point number", "")
 				}
 				continue
 			}
@@ -113,7 +113,7 @@ func (l *Lexer) Lex() []token.Token {
 			}, "Unknown character", "Unexpected \"%c\"", l.chr)
 		}
 
-		t = append(t, token.Token{
+		t = append(t, &token.Token{
 			Pos:     l.pos,
 			Type:    ttype,
 			Line:    l.line,
@@ -123,7 +123,7 @@ func (l *Lexer) Lex() []token.Token {
 
 		l.advance()
 	}
-	t = append(t, token.Token{
+	t = append(t, &token.Token{
 		Type:    token.EOF,
 		Line:    l.line,
 		LinePos: l.linepos,
@@ -132,9 +132,9 @@ func (l *Lexer) Lex() []token.Token {
 	return t
 }
 
-func (l *Lexer) templateString() []token.Token {
-	el := make([]token.Token, 0)
-	el = append(el, token.Token{
+func (l *Lexer) templateString() []*token.Token {
+	el := make([]*token.Token, 0)
+	el = append(el, &token.Token{
 		Type:    token.TEMPLATE_STRING,
 		LinePos: l.linepos,
 		Pos:     l.pos,
@@ -152,7 +152,7 @@ func (l *Lexer) templateString() []token.Token {
 		} else if l.chr == '{' {
 			l.advance()
 			if b.Len() != 0 {
-				el = append(el, token.Token{
+				el = append(el, &token.Token{
 					Pos:     l.pos - (len(b.String()) + 2),
 					Type:    token.STRING,
 					Raw:     b.String(),
@@ -164,15 +164,15 @@ func (l *Lexer) templateString() []token.Token {
 			el = append(el, l.ident())
 			continue
 		} else if l.chr == '\n' || l.chr == 0 {
-			var errEl token.Token
+			var errEl *token.Token
 			if len(el) > 1 {
 				errEl = el[len(el)-1]
 			}
-			serror.Add(&errEl, "Unexpected new line or end of file in template string", "Consider closing the template string via ' or omitting the inserted new line")
-			return []token.Token{}
+			serror.Add(errEl, "Unexpected new line or end of file in template string", "Consider closing the template string via ' or omitting the inserted new line")
+			return []*token.Token{}
 		} else if l.chr == '\'' {
 			if b.Len() != 0 {
-				el = append(el, token.Token{
+				el = append(el, &token.Token{
 					Pos:     l.pos - (len(b.String()) + 2),
 					LinePos: l.linepos,
 					Type:    token.STRING,
@@ -191,7 +191,7 @@ func (l *Lexer) templateString() []token.Token {
 		l.advance()
 	}
 
-	el = append(el, token.Token{
+	el = append(el, &token.Token{
 		Type:    token.TEMPLATE_STRING,
 		LinePos: l.linepos,
 		Pos:     l.pos,
@@ -201,7 +201,7 @@ func (l *Lexer) templateString() []token.Token {
 	return el
 }
 
-func (l *Lexer) string() token.Token {
+func (l *Lexer) string() *token.Token {
 	l.advance()
 	b := strings.Builder{}
 	for l.chr != '"' && l.chr != 0 {
@@ -225,7 +225,7 @@ func (l *Lexer) string() token.Token {
 		l.advance()
 	}
 
-	return token.Token{
+	return &token.Token{
 		Pos:     l.pos - (len(str) + 2),
 		Type:    token.STRING,
 		LinePos: l.linepos - len(str) - 1,
@@ -234,7 +234,7 @@ func (l *Lexer) string() token.Token {
 	}
 }
 
-func (l *Lexer) ident() token.Token {
+func (l *Lexer) ident() *token.Token {
 	builder := strings.Builder{}
 	for unicode.IsLetter(rune(l.chr)) || l.chr == '_' || unicode.IsDigit(rune(l.chr)) {
 		builder.WriteRune(l.chr)
@@ -251,7 +251,7 @@ func (l *Lexer) ident() token.Token {
 	if tokenType, ok := token.KEYWORD_MAP[str]; ok {
 		ttype = tokenType
 	}
-	return token.Token{
+	return &token.Token{
 		Pos:     l.pos - len(str),
 		Type:    ttype,
 		LinePos: l.linepos - len(str),
@@ -260,14 +260,14 @@ func (l *Lexer) ident() token.Token {
 	}
 }
 
-func (l *Lexer) float() (token.Token, error) {
+func (l *Lexer) float() (*token.Token, error) {
 	builder := strings.Builder{}
 	for unicode.IsDigit(rune(l.chr)) || l.chr == '.' || l.chr == '_' || l.chr == 'e' || l.chr == '-' {
 		builder.WriteRune(l.chr)
 		l.advance()
 	}
 	str := builder.String()
-	return token.Token{
+	return &token.Token{
 		Pos:     l.pos - len(str),
 		Type:    token.FLOAT,
 		LinePos: l.linepos - len(str),

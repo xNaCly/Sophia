@@ -6,11 +6,11 @@ import (
 )
 
 type Lt struct {
-	Token    token.Token
+	Token    *token.Token
 	Children []Node
 }
 
-func (l *Lt) GetToken() token.Token {
+func (l *Lt) GetToken() *token.Token {
 	return l.Token
 }
 

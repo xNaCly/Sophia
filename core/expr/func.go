@@ -2,23 +2,28 @@ package expr
 
 import (
 	"sophia/core/consts"
+	"sophia/core/debug"
 	"sophia/core/token"
 	"strings"
 )
 
 // function definition
 type Func struct {
-	Token  token.Token
+	Token  *token.Token
 	Name   Node
 	Params Node
 	Body   []Node
 }
 
-func (f *Func) GetToken() token.Token {
+func (f *Func) GetToken() *token.Token {
 	return f.Token
 }
 
 func (f *Func) Eval() any {
+	if len(f.Body) == 0 {
+		debug.Log("opt: removed 'fun' with no body at line", f.Token.Line)
+		return nil
+	}
 	consts.FUNC_TABLE[f.Name.GetToken().Raw] = f
 	return nil
 }

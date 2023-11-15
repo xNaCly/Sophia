@@ -6,15 +6,19 @@ import (
 )
 
 type Equal struct {
-	Token    token.Token
+	Token    *token.Token
 	Children []Node
 }
 
-func (e *Equal) GetToken() token.Token {
+func (e *Equal) GetToken() *token.Token {
 	return e.Token
 }
 
 func (e *Equal) Eval() any {
+	if len(e.Children) == 2 {
+		// skipping list creating for multiple equal children
+		return e.Children[0].Eval() == e.Children[1].Eval()
+	}
 	list := make([]any, len(e.Children))
 	for i, c := range e.Children {
 		list[i] = c.Eval()

@@ -9,12 +9,12 @@ import (
 
 // defining a variable
 type Var struct {
-	Token token.Token
+	Token *token.Token
 	Ident Node
 	Value []Node
 }
 
-func (v *Var) GetToken() token.Token {
+func (v *Var) GetToken() *token.Token {
 	return v.Token
 }
 
@@ -22,7 +22,7 @@ func (v *Var) Eval() any {
 	var val any
 	if !(v.Ident.GetToken().Type == token.IDENT || v.Ident.GetToken().Type == token.LEFT_BRACKET) {
 		t := v.Ident.GetToken()
-		serror.Add(&t, "Variable error", "Expected an identifier, an array or object index for variable definition, got something else")
+		serror.Add(t, "Variable error", "Expected an identifier, an array or object index for variable definition, got something else")
 		serror.Panic()
 	} else if res, ok := v.Ident.(*Ident); ok {
 		if len(v.Value) > 1 {
@@ -42,7 +42,7 @@ func (v *Var) Eval() any {
 		requested, found := consts.SYMBOL_TABLE[ident.Name]
 		if !found {
 			t := v.Ident.GetToken()
-			serror.Add(&t, "Undefined variable", "Requested item %q not found", ident.Name)
+			serror.Add(t, "Undefined variable", "Requested item %q not found", ident.Name)
 			serror.Panic()
 		}
 		switch requested.(type) {
@@ -52,7 +52,7 @@ func (v *Var) Eval() any {
 				in, ok := index.Index.Eval().(float64)
 				if !ok {
 					t := index.Index.GetToken()
-					serror.Add(&t, "Index error", "Can't index array with %q, use a number", token.TOKEN_NAME_MAP[t.Type])
+					serror.Add(t, "Index error", "Can't index array with %q, use a number", token.TOKEN_NAME_MAP[t.Type])
 					serror.Panic()
 				}
 				arr[int(in)] = v.Value[0].Eval()
@@ -64,7 +64,7 @@ func (v *Var) Eval() any {
 				in, ok := index.Index.(*Ident)
 				if !ok {
 					t := index.GetToken()
-					serror.Add(&t, "Index error", "Can't index object with %q, use an identifier", token.TOKEN_NAME_MAP[t.Type])
+					serror.Add(t, "Index error", "Can't index object with %q, use an identifier", token.TOKEN_NAME_MAP[t.Type])
 					serror.Panic()
 				}
 
@@ -72,7 +72,7 @@ func (v *Var) Eval() any {
 				consts.SYMBOL_TABLE[ident.Name] = m
 			}
 		default:
-			serror.Add(&ident.Token, "Index error", "Element to index into of unknown type %T, not yet implemented", requested)
+			serror.Add(ident.Token, "Index error", "Element to index into of unknown type %T, not yet implemented", requested)
 			serror.Panic()
 		}
 	}

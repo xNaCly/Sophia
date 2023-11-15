@@ -7,17 +7,25 @@ import (
 )
 
 type Div struct {
-	Token    token.Token
+	Token    *token.Token
 	Children []Node
 }
 
-func (d *Div) GetToken() token.Token {
+func (d *Div) GetToken() *token.Token {
 	return d.Token
 }
 
 func (d *Div) Eval() any {
 	if len(d.Children) == 0 {
 		return 0.0
+	} else if len(d.Children) == 1 {
+		// fastpath for skipping loop and casts
+		return d.Children[0].Eval()
+	} else if len(d.Children) == 2 {
+		// fastpath for two children
+		f := d.Children[0]
+		s := d.Children[1]
+		return castFloatPanic(f.Eval(), f.GetToken()) / castFloatPanic(s.Eval(), s.GetToken())
 	}
 	res := 0.0
 	for i, c := range d.Children {

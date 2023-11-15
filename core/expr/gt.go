@@ -6,11 +6,11 @@ import (
 )
 
 type Gt struct {
-	Token    token.Token
+	Token    *token.Token
 	Children []Node
 }
 
-func (g *Gt) GetToken() token.Token {
+func (g *Gt) GetToken() *token.Token {
 	return g.Token
 }
 

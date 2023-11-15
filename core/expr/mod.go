@@ -8,17 +8,25 @@ import (
 )
 
 type Mod struct {
-	Token    token.Token
+	Token    *token.Token
 	Children []Node
 }
 
-func (m *Mod) GetToken() token.Token {
+func (m *Mod) GetToken() *token.Token {
 	return m.Token
 }
 
 func (m *Mod) Eval() any {
 	if len(m.Children) == 0 {
 		return 0.0
+	} else if len(m.Children) == 1 {
+		// fastpath for skipping loop and casts
+		return m.Children[0].Eval()
+	} else if len(m.Children) == 2 {
+		// fastpath for two children
+		f := m.Children[0]
+		s := m.Children[1]
+		return math.Mod(castFloatPanic(f.Eval(), f.GetToken()), castFloatPanic(s.Eval(), s.GetToken()))
 	}
 
 	res := 0.0
