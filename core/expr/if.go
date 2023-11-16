@@ -22,10 +22,14 @@ func (i *If) Eval() any {
 		return nil
 	}
 	cond := castBoolPanic(i.Condition.Eval(), i.Condition.GetToken())
-	if cond {
-		for _, c := range i.Body {
-			c.Eval()
+	if !cond {
+		return nil
+	}
+	for j, c := range i.Body {
+		if j+1 == len(i.Body) {
+			return c.Eval()
 		}
+		c.Eval()
 	}
 	return cond
 }

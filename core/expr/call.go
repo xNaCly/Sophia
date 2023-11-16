@@ -48,9 +48,12 @@ func (c *Call) Eval() any {
 		consts.SYMBOL_TABLE[name] = arg.Eval()
 	}
 
+	var ret any
+
 	for i, stmt := range def.Body {
 		if i+1 == len(def.Body) {
-			return stmt.Eval()
+			ret = stmt.Eval()
+			break
 		}
 		stmt.Eval()
 	}
@@ -62,7 +65,7 @@ func (c *Call) Eval() any {
 		delete(consts.SCOPE_TABLE, k)
 	}
 
-	return nil
+	return ret
 }
 
 func (n *Call) CompileJs(b *strings.Builder) {
