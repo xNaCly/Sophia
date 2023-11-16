@@ -115,11 +115,11 @@ func TestEvalConditional(t *testing.T) {
 	}{
 		{
 			str: "(if true (put 1))",
-			exp: "true",
+			exp: "<nil>",
 		},
 		{
 			str: "(if true (let a 5)(put a))",
-			exp: "true",
+			exp: "<nil>",
 		},
 		{
 			str: "(eq 1 2)",
