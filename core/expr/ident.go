@@ -14,7 +14,7 @@ type Ident struct {
 }
 
 func (i *Ident) GetChildren() []Node {
-	return nil
+	return []Node{}
 }
 
 func (n *Ident) SetChildren(c []Node) {}

@@ -49,7 +49,7 @@ func run(input string, filename string) (s []string, e error) {
 		return
 	}
 
-	if core.CONF.Debug {
+	if core.CONF.Ast {
 		out, _ := json.MarshalIndent(ast, "", "  ")
 		debug.Log(string(out))
 	}
@@ -59,7 +59,7 @@ func run(input string, filename string) (s []string, e error) {
 			debug.Log("done parsing - starting optimizer")
 			opt := optimizer.New()
 			ast = opt.Start(ast)
-			if core.CONF.Debug {
+			if core.CONF.Ast {
 				out, _ := json.MarshalIndent(ast, "", "  ")
 				debug.Log(string(out))
 			}

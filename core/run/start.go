@@ -15,6 +15,7 @@ func Start() {
 	target := flag.String("target", "", "specifiy target to compile sophia to")
 	dbg := flag.Bool("dbg", false, "enable debug logs")
 	allErrors := flag.Bool("all-errors", false, "display all found errors")
+	ast := flag.Bool("ast", false, "display the ast")
 	enableOptimizer := flag.Bool("enable-opt", false, "enable the experimental optimizer")
 	flag.Parse()
 	core.CONF = core.Config{
@@ -22,6 +23,7 @@ func Start() {
 		Target:          *target,
 		AllErrors:       *allErrors,
 		EnableOptimizer: *enableOptimizer,
+		Ast:             *ast,
 	}
 
 	if *dbg {

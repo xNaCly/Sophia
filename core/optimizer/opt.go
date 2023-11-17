@@ -4,26 +4,16 @@
 //   - precomputing constants if leafs are of type expr.Float or expr.Boolean
 package optimizer
 
-// Possible optimisations found by executing and benchmarking example/leetcode.phia:
-// Implemented:
-// - move float64 parsing from Node.Eval() to the parser - done
-// - Fastpath for expr.castPanicIfNotType via expr.castFloatPanic &
-//   expr.castBoolPanic to skip a heap allocation - done
-// - introduce token pointers instead of copies, could be faster because less
-//   memory usage
-// - Reuse variables in Node.Eval(), should reduce gc pressure and thus time
-//   spent in runtime.mallocgc
-// - reduce function calls in hot paths and the interpreter
-// Planned:
-// - Replace variable names with integers -> should reduce time spend in
-//   runtime.mapassign_faststr and aeshashbody (watch out for error handling,
-//   etc)
-// - precompute constants
-
 import (
 	"sophia/core/debug"
 	"sophia/core/expr"
 )
+
+// TODO: Replace variable names with integers -> should reduce time spend in
+// runtime.mapassign_faststr and aeshashbody (watch out for error handling,
+// etc)
+
+// TODO: precompute constants
 
 // Optimisations
 //   - Dead code elimination
@@ -44,8 +34,8 @@ import (
 //   - All statements referencing empty functions are removed, such as
 //     variables or expressions calling these functions
 type Optimiser struct {
-	nodes       []NodeTuple
-	emptyNodes  []NodeTuple
+	nodes       []NodeTuple // stores variables and functions that are possible defined but not usnot used
+	emptyNodes  []NodeTuple // stores expressions that are possible empty
 	didOptimise bool
 }
 
@@ -57,12 +47,13 @@ type NodeTuple struct {
 
 func New() *Optimiser {
 	return &Optimiser{
-		nodes: []NodeTuple{},
+		nodes:      []NodeTuple{},
+		emptyNodes: []NodeTuple{},
 	}
 }
 
 func (o *Optimiser) Start(ast []expr.Node) []expr.Node {
-	astHolder := &expr.Put{
+	astHolder := &expr.Root{
 		Children: ast,
 	}
 

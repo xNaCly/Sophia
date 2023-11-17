@@ -25,6 +25,7 @@ type Config struct {
 	AllErrors       bool
 	Target          string // target to compile sophia to
 	EnableOptimizer bool
+	Ast             bool // print ast
 }
 
 var CONF = Config{
