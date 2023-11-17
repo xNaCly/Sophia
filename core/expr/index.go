@@ -13,6 +13,11 @@ type Index struct {
 	Index   Node
 }
 
+func (i *Index) GetChildren() []Node {
+	return nil
+}
+
+func (n *Index) SetChildren(c []Node) {}
 func (i *Index) GetToken() *token.Token {
 	return i.Token
 }

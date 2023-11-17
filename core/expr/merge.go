@@ -11,14 +11,20 @@ type Merge struct {
 	Children []Node
 }
 
+func (m *Merge) GetChildren() []Node {
+	return m.Children
+}
+
+func (n *Merge) SetChildren(c []Node) {
+	n.Children = c
+}
+
 func (m *Merge) GetToken() *token.Token {
 	return m.Token
 }
 
 func (m *Merge) Eval() any {
-	if len(m.Children) == 0 {
-		return nil
-	} else if len(m.Children) == 1 {
+	if len(m.Children) == 1 {
 		return []any{m.Children[0].Eval()}
 	}
 

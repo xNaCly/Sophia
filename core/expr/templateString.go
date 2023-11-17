@@ -13,6 +13,14 @@ type TemplateString struct {
 	Children []Node
 }
 
+func (s *TemplateString) GetChildren() []Node {
+	return s.Children
+}
+
+func (n *TemplateString) SetChildren(c []Node) {
+	n.Children = c
+}
+
 func (s *TemplateString) GetToken() *token.Token {
 	return s.Token
 }

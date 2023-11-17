@@ -43,7 +43,7 @@ func TestEvalAritmetic(t *testing.T) {
 			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
 			l := lexer.New(i.str)
 			p := parser.New(l.Lex(), "test")
-			r := Eval(p.Parse())
+			r := Eval("repl", p.Parse())
 
 			if serror.HasErrors() {
 				t.Errorf("lexer or parser error for %q", i.str)
@@ -94,7 +94,7 @@ func TestEvalVariables(t *testing.T) {
 			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
 			l := lexer.New(i.str)
 			p := parser.New(l.Lex(), "test")
-			r := Eval(p.Parse())
+			r := Eval("repl", p.Parse())
 			if serror.HasErrors() {
 				t.Errorf("lexer or parser error for %q", i.str)
 			}
@@ -183,7 +183,7 @@ func TestEvalConditional(t *testing.T) {
 			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
 			l := lexer.New(i.str)
 			p := parser.New(l.Lex(), "test")
-			r := Eval(p.Parse())
+			r := Eval("repl", p.Parse())
 			if serror.HasErrors() {
 				t.Errorf("lexer or parser error for %q", i.str)
 			}
@@ -224,7 +224,7 @@ func TestEvalMerge(t *testing.T) {
 			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
 			l := lexer.New(i.str)
 			p := parser.New(l.Lex(), "test")
-			r := Eval(p.Parse())
+			r := Eval("repl", p.Parse())
 			if serror.HasErrors() {
 				t.Errorf("lexer or parser error for %q", i.str)
 			}
@@ -263,7 +263,7 @@ func TestEvalFunction(t *testing.T) {
 			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
 			l := lexer.New(i.str)
 			p := parser.New(l.Lex(), "test")
-			r := Eval(p.Parse())
+			r := Eval("repl", p.Parse())
 			if serror.HasErrors() {
 				t.Errorf("lexer or parser error for %q", i.str)
 			}
@@ -285,7 +285,7 @@ func TestEvalLoop(t *testing.T) {
 		exp string
 	}{
 		{
-			str: "(let sum 0)(let arr 9)(for (_ e) arr (let sum (+ e sum)))(+ sum)",
+			str: "(let sum 0)(let arr 9)(for (_ e) arr (let sum (+ e sum)))(let r sum)",
 			exp: "36",
 		},
 	}
@@ -294,7 +294,7 @@ func TestEvalLoop(t *testing.T) {
 			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
 			l := lexer.New(i.str)
 			p := parser.New(l.Lex(), "test")
-			r := Eval(p.Parse())
+			r := Eval("repl", p.Parse())
 			if serror.HasErrors() {
 				t.Errorf("lexer or parser error for %q", i.str)
 			}

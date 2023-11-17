@@ -10,6 +10,12 @@ type Float struct {
 	Value float64
 }
 
+func (f *Float) GetChildren() []Node {
+	return nil
+}
+
+func (n *Float) SetChildren(c []Node) {}
+
 func (f *Float) GetToken() *token.Token {
 	return f.Token
 }

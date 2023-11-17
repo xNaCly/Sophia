@@ -2,7 +2,6 @@ package expr
 
 import (
 	"math"
-	"sophia/core/debug"
 	"sophia/core/token"
 	"strings"
 )
@@ -12,17 +11,20 @@ type Mod struct {
 	Children []Node
 }
 
+func (m *Mod) GetChildren() []Node {
+	return m.Children
+}
+
+func (n *Mod) SetChildren(c []Node) {
+	n.Children = c
+}
+
 func (m *Mod) GetToken() *token.Token {
 	return m.Token
 }
 
 func (m *Mod) Eval() any {
-	if len(m.Children) == 0 {
-		return 0.0
-	} else if len(m.Children) == 1 {
-		// fastpath for skipping loop and casts
-		return m.Children[0].Eval()
-	} else if len(m.Children) == 2 {
+	if len(m.Children) == 2 {
 		// fastpath for two children
 		f := m.Children[0]
 		s := m.Children[1]
@@ -40,16 +42,10 @@ func (m *Mod) Eval() any {
 	return float64(res)
 }
 func (n *Mod) CompileJs(b *strings.Builder) {
-	cLen := len(n.Children)
-	if cLen == 0 {
-		debug.Log("opt: removed illogical '%' expression containing no children at line", n.Token.Line)
-		return
-	} else {
-		for i, c := range n.Children {
-			c.CompileJs(b)
-			if i+1 < cLen {
-				b.WriteRune('%')
-			}
+	for i, c := range n.Children {
+		c.CompileJs(b)
+		if i+1 < len(n.Children) {
+			b.WriteRune('%')
 		}
 	}
 }

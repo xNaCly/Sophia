@@ -10,6 +10,12 @@ type Boolean struct {
 	Value bool
 }
 
+func (b *Boolean) GetChildren() []Node {
+	return nil
+}
+
+func (n *Boolean) SetChildren(c []Node) {}
+
 func (b *Boolean) GetToken() *token.Token {
 	return b.Token
 }

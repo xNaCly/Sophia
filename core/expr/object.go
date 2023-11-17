@@ -15,6 +15,12 @@ type Object struct {
 	Children []ObjectPair
 }
 
+func (o *Object) GetChildren() []Node {
+	return nil
+}
+
+func (n *Object) SetChildren(c []Node) {}
+
 func (o *Object) GetToken() *token.Token {
 	return o.Token
 }

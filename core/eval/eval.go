@@ -6,12 +6,18 @@ import (
 	"strings"
 )
 
-func Eval(ast []expr.Node) []string {
-	out := make([]string, len(ast))
-	for i, c := range ast {
-		out[i] = fmt.Sprint(c.Eval())
+func Eval(t string, ast []expr.Node) []string {
+	if t == "repl" {
+		r := make([]string, len(ast))
+		for i, c := range ast {
+			r[i] = fmt.Sprint(c.Eval())
+		}
+		return r
 	}
-	return out
+	for _, c := range ast {
+		c.Eval()
+	}
+	return []string{}
 }
 
 func CompileJs(ast []expr.Node) string {

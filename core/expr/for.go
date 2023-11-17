@@ -2,7 +2,6 @@ package expr
 
 import (
 	"sophia/core/consts"
-	"sophia/core/debug"
 	"sophia/core/serror"
 	"sophia/core/token"
 	"strings"
@@ -16,15 +15,19 @@ type For struct {
 	Body     []Node
 }
 
+func (f *For) GetChildren() []Node {
+	return f.Body
+}
+
+func (n *For) SetChildren(c []Node) {
+	n.Body = c
+}
+
 func (f *For) GetToken() *token.Token {
 	return f.Token
 }
 
 func (f *For) Eval() any {
-	if len(f.Body) == 0 {
-		debug.Log("opt: removed 'for loop' with no body at line", f.Token.Line)
-		return nil
-	}
 	params := f.Params.(*Params).Children
 	if len(params) < 1 {
 		serror.Add(f.Token, "Not enough arguments", "Expected at least %d parameters for loop, got %d.", 1, len(params))
@@ -64,11 +67,6 @@ func (f *For) Eval() any {
 	return nil
 }
 func (n *For) CompileJs(b *strings.Builder) {
-	// a for loop without any content can be savely removed from execution
-	if len(n.Body) == 0 {
-		debug.Log("opt: removed 'for loop' with no body at line", n.Token.Line)
-		return
-	}
 	b.WriteString("for(")
 	b.WriteString("let ")
 	if n.LoopOver.GetToken().Type == token.FLOAT {

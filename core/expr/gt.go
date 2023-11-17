@@ -10,6 +10,14 @@ type Gt struct {
 	Children []Node
 }
 
+func (g *Gt) GetChildren() []Node {
+	return g.Children
+}
+
+func (n *Gt) SetChildren(c []Node) {
+	n.Children = c
+}
+
 func (g *Gt) GetToken() *token.Token {
 	return g.Token
 }

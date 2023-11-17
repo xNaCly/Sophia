@@ -11,6 +11,17 @@ type Neg struct {
 	Children Node
 }
 
+func (n *Neg) GetChildren() []Node {
+	return []Node{n.Children}
+}
+
+func (n *Neg) SetChildren(c []Node) {
+	if len(c) == 0 {
+		return
+	}
+	n.Children = c[0]
+}
+
 func (n *Neg) GetToken() *token.Token {
 	return n.Token
 }

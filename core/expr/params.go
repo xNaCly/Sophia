@@ -10,6 +10,14 @@ type Params struct {
 	Children []Node
 }
 
+func (p *Params) GetChildren() []Node {
+	return p.Children
+}
+
+func (n *Params) SetChildren(c []Node) {
+	n.Children = c
+}
+
 func (p *Params) GetToken() *token.Token {
 	return p.Token
 }

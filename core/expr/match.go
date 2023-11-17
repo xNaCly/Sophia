@@ -10,6 +10,14 @@ type Match struct {
 	Branches []Node
 }
 
+func (m *Match) GetChildren() []Node {
+	return m.Branches
+}
+
+func (n *Match) SetChildren(c []Node) {
+	n.Branches = c
+}
+
 func (m *Match) GetToken() *token.Token {
 	return m.Token
 }

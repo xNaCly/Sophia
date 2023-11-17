@@ -1,7 +1,6 @@
 package expr
 
 import (
-	"sophia/core/debug"
 	"sophia/core/token"
 	"strings"
 )
@@ -12,15 +11,19 @@ type If struct {
 	Body      []Node
 }
 
+func (i *If) GetChildren() []Node {
+	return i.Body
+}
+
+func (n *If) SetChildren(c []Node) {
+	n.Body = c
+}
+
 func (i *If) GetToken() *token.Token {
 	return i.Token
 }
 
 func (i *If) Eval() any {
-	if len(i.Body) == 0 {
-		debug.Log("opt: removed 'for loop' with no body at line", i.Token.Line)
-		return false
-	}
 	cond := castBoolPanic(i.Condition.Eval(), i.Condition.GetToken())
 	if !cond {
 		return false
@@ -31,10 +34,6 @@ func (i *If) Eval() any {
 	return true
 }
 func (n *If) CompileJs(b *strings.Builder) {
-	if len(n.Body) == 0 {
-		debug.Log("opt: removed 'if' with no body at line", n.Token.Line)
-		return
-	}
 	b.WriteString("if(")
 	n.Condition.CompileJs(b)
 	b.WriteRune(')')

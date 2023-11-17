@@ -9,6 +9,12 @@ type String struct {
 	Token *token.Token
 }
 
+func (s *String) GetChildren() []Node {
+	return nil
+}
+
+func (n *String) SetChildren(c []Node) {}
+
 func (s *String) GetToken() *token.Token {
 	return s.Token
 }

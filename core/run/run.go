@@ -8,6 +8,7 @@ import (
 	"sophia/core/debug"
 	"sophia/core/eval"
 	"sophia/core/lexer"
+	"sophia/core/optimizer"
 	"sophia/core/parser"
 	"sophia/core/serror"
 )
@@ -53,6 +54,24 @@ func run(input string, filename string) (s []string, e error) {
 		debug.Log(string(out))
 	}
 
+	if filename != "repl" {
+		if core.CONF.EnableOptimizer {
+			debug.Log("done parsing - starting optimizer")
+			opt := optimizer.New()
+			ast = opt.Start(ast)
+			if core.CONF.Debug {
+				out, _ := json.MarshalIndent(ast, "", "  ")
+				debug.Log(string(out))
+			}
+		}
+	} else {
+		debug.Log("done parsing - starting eval")
+	}
+
+	if len(ast) == 0 {
+		return
+	}
+
 	if len(core.CONF.Target) > 0 {
 		trgt := core.CONF.Target
 		debug.Log("done parsing - no errors, starting compilation for", trgt)
@@ -62,8 +81,7 @@ func run(input string, filename string) (s []string, e error) {
 		}
 		fmt.Println(eval.CompileJs(ast))
 	} else {
-		debug.Log("done parsing - starting eval")
-		s = eval.Eval(ast)
+		s = eval.Eval(filename, ast)
 		debug.Log("done evaling")
 	}
 

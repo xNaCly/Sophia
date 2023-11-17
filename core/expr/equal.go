@@ -10,6 +10,14 @@ type Equal struct {
 	Children []Node
 }
 
+func (e *Equal) GetChildren() []Node {
+	return e.Children
+}
+
+func (n *Equal) SetChildren(c []Node) {
+	n.Children = c
+}
+
 func (e *Equal) GetToken() *token.Token {
 	return e.Token
 }

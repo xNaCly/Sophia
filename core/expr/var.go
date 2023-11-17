@@ -14,6 +14,14 @@ type Var struct {
 	Value []Node
 }
 
+func (v *Var) GetChildren() []Node {
+	return v.Value
+}
+
+func (n *Var) SetChildren(c []Node) {
+	n.Value = c
+}
+
 func (v *Var) GetToken() *token.Token {
 	return v.Token
 }

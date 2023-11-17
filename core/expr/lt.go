@@ -10,6 +10,14 @@ type Lt struct {
 	Children []Node
 }
 
+func (l *Lt) GetChildren() []Node {
+	return l.Children
+}
+
+func (n *Lt) SetChildren(c []Node) {
+	n.Children = c
+}
+
 func (l *Lt) GetToken() *token.Token {
 	return l.Token
 }

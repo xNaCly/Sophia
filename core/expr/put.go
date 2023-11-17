@@ -15,14 +15,19 @@ type Put struct {
 	Children []Node
 }
 
+func (p *Put) GetChildren() []Node {
+	return p.Children
+}
+
+func (n *Put) SetChildren(c []Node) {
+	n.Children = c
+}
+
 func (p *Put) GetToken() *token.Token {
 	return p.Token
 }
 
 func (p *Put) Eval() any {
-	if len(p.Children) == 0 {
-		return nil
-	}
 	buffer.Reset()
 	formatHelper(buffer, p.Children)
 	buffer.WriteRune('\n')

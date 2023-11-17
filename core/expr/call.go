@@ -12,6 +12,14 @@ type Call struct {
 	Params []Node
 }
 
+func (c *Call) GetChildren() []Node {
+	return c.Params
+}
+
+func (n *Call) SetChildren(c []Node) {
+	n.Params = c
+}
+
 func (c *Call) GetToken() *token.Token {
 	return c.Token
 }

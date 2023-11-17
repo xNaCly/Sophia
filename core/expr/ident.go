@@ -13,6 +13,12 @@ type Ident struct {
 	Name  string
 }
 
+func (i *Ident) GetChildren() []Node {
+	return nil
+}
+
+func (n *Ident) SetChildren(c []Node) {}
+
 func (i *Ident) GetToken() *token.Token {
 	return i.Token
 }

@@ -2,7 +2,6 @@ package parser
 
 import (
 	"io"
-	"log"
 	"os"
 	"sophia/core/expr"
 	"sophia/core/lexer"
@@ -207,7 +206,7 @@ func (p *Parser) parseStatment() expr.Node {
 		}
 	case token.IF:
 		if len(childs) == 0 {
-			log.Printf("err: expected at least two argument for condition, got %d.", len(childs))
+			serror.Add(op, "Not enough arguments", "Expected at least two arguments for condition, got %d.", len(childs))
 			return nil
 		}
 		cond := childs[0]
