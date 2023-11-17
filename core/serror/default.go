@@ -29,7 +29,8 @@ func Default() *ErrorFormatter {
 }
 
 func Panic() {
-	panic("Runtime error")
+	err := defaultFormatter.errors[len(defaultFormatter.errors)-1]
+	panic(err.Title + ": " + err.Info)
 }
 
 func NewFormatter(config *core.Config, input string, filename string) *ErrorFormatter {
