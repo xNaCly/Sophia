@@ -27,12 +27,13 @@ func (s *Sub) Eval() any {
 		s := s.Children[1]
 		return castFloatPanic(f.Eval(), f.GetToken()) - castFloatPanic(s.Eval(), s.GetToken())
 	}
+
 	res := 0.0
 	for i, c := range s.Children {
 		if i == 0 {
-			res = castFloatPanic(c.Eval(), s.GetToken())
+			res = castFloatPanic(c.Eval(), c.GetToken())
 		} else {
-			res -= castFloatPanic(c.Eval(), s.GetToken())
+			res -= castFloatPanic(c.Eval(), c.GetToken())
 		}
 	}
 	return res

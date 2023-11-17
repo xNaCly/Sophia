@@ -31,9 +31,9 @@ func (a *Add) Eval() any {
 	res := 0.0
 	for i, c := range a.Children {
 		if i == 0 {
-			res = castFloatPanic(c.Eval(), a.Token)
+			res = castFloatPanic(c.Eval(), c.GetToken())
 		} else {
-			res += castFloatPanic(c.Eval(), a.Token)
+			res += castFloatPanic(c.Eval(), c.GetToken())
 		}
 	}
 	return res

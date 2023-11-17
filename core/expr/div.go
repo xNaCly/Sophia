@@ -30,9 +30,9 @@ func (d *Div) Eval() any {
 	res := 0.0
 	for i, c := range d.Children {
 		if i == 0 {
-			res = castFloatPanic(c.Eval(), d.Token)
+			res = castFloatPanic(c.Eval(), c.GetToken())
 		} else {
-			res /= castFloatPanic(c.Eval(), d.Token)
+			res /= castFloatPanic(c.Eval(), c.GetToken())
 		}
 	}
 	return res

@@ -31,9 +31,9 @@ func (m *Mul) Eval() any {
 	res := 0.0
 	for i, c := range m.Children {
 		if i == 0 {
-			res = castFloatPanic(c.Eval(), m.Token)
+			res = castFloatPanic(c.Eval(), c.GetToken())
 		} else {
-			res *= castFloatPanic(c.Eval(), m.Token)
+			res *= castFloatPanic(c.Eval(), c.GetToken())
 		}
 	}
 	return res

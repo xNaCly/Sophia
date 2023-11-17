@@ -22,8 +22,8 @@ func (m *Match) Eval() any {
 	for _, c := range m.Branches {
 		if c.GetToken().Type == token.IF {
 			o := c.Eval()
-			if o != nil {
-				return o
+			if o.(bool) {
+				return nil
 			}
 		} else {
 			return c.Eval()
