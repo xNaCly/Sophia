@@ -16,14 +16,12 @@ func Start() {
 	dbg := flag.Bool("dbg", false, "enable debug logs")
 	allErrors := flag.Bool("all-errors", false, "display all found errors")
 	ast := flag.Bool("ast", false, "display the ast")
-	enableOptimizer := flag.Bool("enable-opt", false, "enable the experimental optimizer")
 	flag.Parse()
 	core.CONF = core.Config{
-		Debug:           *dbg,
-		Target:          *target,
-		AllErrors:       *allErrors,
-		EnableOptimizer: *enableOptimizer,
-		Ast:             *ast,
+		Debug:     *dbg,
+		Target:    *target,
+		AllErrors: *allErrors,
+		Ast:       *ast,
 	}
 
 	if *dbg {

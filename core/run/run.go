@@ -55,14 +55,12 @@ func run(input string, filename string) (s []string, e error) {
 	}
 
 	if filename != "repl" {
-		if core.CONF.EnableOptimizer {
-			debug.Log("done parsing - starting optimizer")
-			opt := optimizer.New()
-			ast = opt.Start(ast)
-			if core.CONF.Ast {
-				out, _ := json.MarshalIndent(ast, "", "  ")
-				debug.Log(string(out))
-			}
+		debug.Log("done parsing - starting optimizer")
+		opt := optimizer.New()
+		ast = opt.Start(ast)
+		if core.CONF.Ast {
+			out, _ := json.MarshalIndent(ast, "", "  ")
+			debug.Log(string(out))
 		}
 	} else {
 		debug.Log("done parsing - starting eval")

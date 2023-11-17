@@ -21,11 +21,10 @@ var TARGETS = map[string]struct{}{
 }
 
 type Config struct {
-	Debug           bool // enable debug logs
-	AllErrors       bool
-	Target          string // target to compile sophia to
-	EnableOptimizer bool
-	Ast             bool // print ast
+	Debug     bool // enable debug logs
+	AllErrors bool
+	Target    string // target to compile sophia to
+	Ast       bool   // print ast
 }
 
 var CONF = Config{

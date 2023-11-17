@@ -54,8 +54,9 @@ func New() *Optimiser {
 
 func (o *Optimiser) Start(ast []expr.Node) []expr.Node {
 	astHolder := &expr.Root{
-		Children: ast,
+		Children: make([]expr.Node, len(ast)),
 	}
+	copy(astHolder.Children, ast)
 
 	// walk ast and populate counters for unused variables and functions
 	for _, node := range ast {
@@ -178,13 +179,12 @@ func (o *Optimiser) walkAst(parent, node expr.Node) {
 		}
 	case *expr.Ident:
 		// if a variable with a matching name is subject to removal we want to remove its uses as well
-		if o.containsNode(o.emptyNodes, v.Name) {
+		if o.containsNode(o.emptyNodes, v.Name) || o.containsNode(o.nodes, v.Name) {
 			o.emptyNodes = append(o.emptyNodes, NodeTuple{Name: v.Name, Parent: parent, Child: v})
 		}
 
 		// detects a variable usage, removes the item from the tracker
 		o.removeNodeByName(o.nodes, v.Name)
-
 	}
 
 	children := node.GetChildren()

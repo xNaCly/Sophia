@@ -14,7 +14,8 @@ func TestOptimizer(t *testing.T) {
 		"(match)",
 		"(for (_ i) 20)",
 		"(fun dummy (_))(put (dummy))",
-		// "(fun dummy (_))(let b (dummy))(put b)",
+		"(fun dummy (_))(let b (dummy))(put b)",
+		"(let b 12)(fun dummy (_))(let b (dummy))(put b)",
 	}
 	for _, test := range tests {
 		tokens := lexer.New(test).Lex()
