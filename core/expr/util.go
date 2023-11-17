@@ -22,7 +22,7 @@ func formatHelper(buffer *bytes.Buffer, children []Node) {
 		case string:
 			buffer.WriteString(v)
 		case float64:
-			buffer.WriteString(strconv.FormatFloat(v, 'g', 2, 64))
+			buffer.WriteString(strconv.FormatFloat(v, 'g', 12, 64))
 		case bool:
 			if v {
 				buffer.WriteString("true")
