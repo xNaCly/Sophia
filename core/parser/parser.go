@@ -228,13 +228,17 @@ func (p *Parser) parseStatment() expr.Node {
 			Value: childs[1:],
 		}
 	case token.MERGE:
+		if len(childs) < 2 {
+			serror.Add(op, "Incorrect parameter amount", "Expected at least two arguments for merge, got %d.", len(childs))
+			return nil
+		}
 		stmt = &expr.Merge{
 			Token:    op,
 			Children: childs,
 		}
 	case token.EQUAL:
 		if len(childs) < 2 {
-			serror.Add(op, "Incorrect parameter amount", "Expected at least two statements for equality check, got %d.", len(childs))
+			serror.Add(op, "Incorrect parameter amount", "Expected at least two arguments for equality check, got %d.", len(childs))
 			return nil
 		}
 		stmt = &expr.Equal{
@@ -251,41 +255,73 @@ func (p *Parser) parseStatment() expr.Node {
 			Children: childs[0],
 		}
 	case token.OR:
+		if len(childs) < 2 {
+			serror.Add(op, "Incorrect parameter amount", "Expected 2 or more arguments for or, got %d.", len(childs))
+			return nil
+		}
 		stmt = &expr.Or{
 			Token:    op,
 			Children: childs,
 		}
 	case token.AND:
+		if len(childs) < 2 {
+			serror.Add(op, "Incorrect parameter amount", "Expected 2 or more arguments for and, got %d.", len(childs))
+			return nil
+		}
 		stmt = &expr.And{
 			Token:    op,
 			Children: childs,
 		}
 	case token.ADD:
+		if len(childs) < 2 {
+			serror.Add(op, "Incorrect parameter amount", "Expected 2 or more arguments for addition, got %d.", len(childs))
+			return nil
+		}
 		stmt = &expr.Add{
 			Token:    op,
 			Children: childs,
 		}
 	case token.SUB:
+		if len(childs) < 2 {
+			serror.Add(op, "Incorrect parameter amount", "Expected 2 or more arguments for subtraction, got %d.", len(childs))
+			return nil
+		}
 		stmt = &expr.Sub{
 			Token:    op,
 			Children: childs,
 		}
 	case token.DIV:
+		if len(childs) < 2 {
+			serror.Add(op, "Incorrect parameter amount", "Expected 2 or more arguments for division, got %d.", len(childs))
+			return nil
+		}
 		stmt = &expr.Div{
 			Token:    op,
 			Children: childs,
 		}
 	case token.MUL:
+		if len(childs) < 2 {
+			serror.Add(op, "Incorrect parameter amount", "Expected 2 or more arguments for multiplication, got %d.", len(childs))
+			return nil
+		}
 		stmt = &expr.Mul{
 			Token:    op,
 			Children: childs,
 		}
 	case token.MOD:
+		if len(childs) < 2 {
+			serror.Add(op, "Incorrect parameter amount", "Expected 2 or more arguments for mod, got %d.", len(childs))
+			return nil
+		}
 		stmt = &expr.Mod{
 			Token:    op,
 			Children: childs,
 		}
 	case token.PUT:
+		if len(childs) == 0 {
+			serror.Add(op, "Incorrect parameter amount", "Expected 1 or more arguments for put, got %d.", len(childs))
+			return nil
+		}
 		stmt = &expr.Put{
 			Token:    op,
 			Children: childs,
