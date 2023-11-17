@@ -1,8 +1,8 @@
 ;; vim: syntax=lisp
 (let beforeLast 0)
 (let lst 1)
-(for (_ i) 15
+(for (_ i) 40
     (let t (+ beforeLast lst))
-    (put t)
     (let beforeLast lst)
+    (put t)
     (let lst t))
