@@ -36,7 +36,7 @@ func run(input string, filename string) (s []string, e error) {
 	}
 	debug.Log("lexed", len(tokens), "token")
 
-	if core.CONF.Debug {
+	if core.CONF.Tokens {
 		debug.Log(debug.Token(tokens))
 	}
 
@@ -51,7 +51,7 @@ func run(input string, filename string) (s []string, e error) {
 
 	if core.CONF.Ast {
 		out, _ := json.MarshalIndent(ast, "", "  ")
-		debug.Log(string(out))
+		fmt.Println("ast:", string(out))
 	}
 
 	if filename != "repl" {
@@ -60,7 +60,7 @@ func run(input string, filename string) (s []string, e error) {
 		ast = opt.Start(ast)
 		if core.CONF.Ast {
 			out, _ := json.MarshalIndent(ast, "", "  ")
-			debug.Log(string(out))
+			fmt.Println("optimized ast:", string(out))
 		}
 	} else {
 		debug.Log("done parsing - starting eval")

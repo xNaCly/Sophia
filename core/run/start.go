@@ -16,12 +16,14 @@ func Start() {
 	dbg := flag.Bool("dbg", false, "enable debug logs")
 	allErrors := flag.Bool("all-errors", false, "display all found errors")
 	ast := flag.Bool("ast", false, "display the ast")
+	toks := flag.Bool("tokens", false, "display lexed tokens")
 	flag.Parse()
 	core.CONF = core.Config{
 		Debug:     *dbg,
 		Target:    *target,
 		AllErrors: *allErrors,
 		Ast:       *ast,
+		Tokens:    *toks,
 	}
 
 	if *dbg {

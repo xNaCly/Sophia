@@ -25,6 +25,7 @@ type Config struct {
 	AllErrors bool
 	Target    string // target to compile sophia to
 	Ast       bool   // print ast
+	Tokens    bool   // print lexed tokens
 }
 
 var CONF = Config{

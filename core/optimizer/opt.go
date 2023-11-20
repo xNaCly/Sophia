@@ -5,15 +5,22 @@
 package optimizer
 
 import (
+	"math/rand"
 	"sophia/core/debug"
 	"sophia/core/expr"
+	"strings"
 )
+
+var alphabet = []rune("0123456789ABCDEF")
+var alphabetlen = len(alphabet)
 
 // TODO: Replace variable names with integers -> should reduce time spend in
 // runtime.mapassign_faststr and aeshashbody (watch out for error handling,
 // etc)
 
 // TODO: precompute constants
+
+// TODO: dead code elim, empty if, match, put, for, fun and all references to them
 
 // Optimisations
 //   - Dead code elimination
@@ -34,21 +41,23 @@ import (
 //   - All statements referencing empty functions are removed, such as
 //     variables or expressions calling these functions
 type Optimiser struct {
-	nodes       []NodeTuple // stores variables and functions that are possible defined but not usnot used
-	emptyNodes  []NodeTuple // stores expressions that are possible empty
+	variables   map[string]Node // counter for keeping track of functions
+	functions   map[string]Node // counter for keeping track of variables
+	builder     strings.Builder
 	didOptimise bool
 }
 
-type NodeTuple struct {
-	Name   string
+type Node struct {
+	Used   bool
 	Parent expr.Node
 	Child  expr.Node
 }
 
 func New() *Optimiser {
 	return &Optimiser{
-		nodes:      []NodeTuple{},
-		emptyNodes: []NodeTuple{},
+		variables: map[string]Node{},
+		functions: map[string]Node{},
+		builder:   strings.Builder{},
 	}
 }
 
@@ -63,44 +72,50 @@ func (o *Optimiser) Start(ast []expr.Node) []expr.Node {
 		o.walkAst(astHolder, node)
 	}
 
-	// unused variables and functions
-	for i := 0; i < len(o.nodes); i++ {
-		tuple := o.nodes[i]
-		if tuple.Parent == nil {
+	// unused variables
+	for k, v := range o.variables {
+		if v.Used {
 			continue
 		}
-		ch := tuple.Parent.GetChildren()
+		if v.Parent == nil {
+			continue
+		}
+		ch := v.Parent.GetChildren()
 		if ch == nil {
 			continue
 		}
 		for i, c := range ch {
-			if c == tuple.Child {
-				ch[i] = ch[len(ch)-1]
-				ch = ch[:len(ch)-1]
-				tuple.Parent.SetChildren(ch)
-				debug.Logf("removed: %T(%s) [%d:%d]\n", tuple.Child, tuple.Name, tuple.Child.GetToken().Line+1, tuple.Child.GetToken().LinePos)
+			if c == v.Child {
+				ch = append(ch[:i], ch[i+1:]...)
+				v.Parent.SetChildren(ch)
+				t := v.Child.GetToken()
+				debug.Logf("removed: %T(%s) [%d:%d]\n", v.Child, k, t.Line+1, t.LinePos)
+				delete(o.variables, k)
 				o.didOptimise = true
 				break
 			}
 		}
 	}
 
-	// dead code removal
-	for i := 0; i < len(o.emptyNodes); i++ {
-		tuple := o.emptyNodes[i]
-		if tuple.Parent == nil {
+	// unused functions
+	for k, v := range o.functions {
+		if v.Used {
 			continue
 		}
-		ch := tuple.Parent.GetChildren()
+		if v.Parent == nil {
+			continue
+		}
+		ch := v.Parent.GetChildren()
 		if ch == nil {
 			continue
 		}
 		for i, c := range ch {
-			if c == tuple.Child {
-				ch[i] = ch[len(ch)-1]
-				ch = ch[:len(ch)-1]
-				tuple.Parent.SetChildren(ch)
-				debug.Logf("removed: %T(%s) [%d:%d]\n", tuple.Child, tuple.Name, tuple.Child.GetToken().Line+1, tuple.Child.GetToken().LinePos)
+			if c == v.Child {
+				ch = append(ch[:i], ch[i+1:]...)
+				v.Parent.SetChildren(ch)
+				t := v.Child.GetToken()
+				debug.Logf("removed: %T(%s) [%d:%d]\n", v.Child, k, t.Line+1, t.LinePos)
+				delete(o.functions, k)
 				o.didOptimise = true
 				break
 			}
@@ -115,32 +130,15 @@ func (o *Optimiser) Start(ast []expr.Node) []expr.Node {
 	return astHolder.Children
 }
 
-func (o *Optimiser) removeNodeByName(nodes []NodeTuple, name string) []NodeTuple {
-	for i, k := range nodes {
-		if k.Name == name {
-			nodes[i] = nodes[len(nodes)-1]
-			return nodes[:len(nodes)-1]
-		}
+// postFix appends a random id of length 5 to val, returns result
+func (o *Optimiser) postFix(val string) string {
+	o.builder.WriteString(val)
+	o.builder.WriteRune('#')
+	for i := 0; i < 5; i++ {
+		o.builder.WriteRune(alphabet[rand.Intn(alphabetlen)])
 	}
-	return nodes
-}
-
-func (o *Optimiser) containsNode(nodes []NodeTuple, name string) bool {
-	for _, k := range nodes {
-		if k.Name == name {
-			return true
-		}
-	}
-	return false
-}
-
-func (o *Optimiser) isEmpty(node expr.Node) bool {
-	if node == nil {
-		return false
-	} else if len(node.GetChildren()) == 0 {
-		return true
-	}
-	return false
+	defer o.builder.Reset()
+	return o.builder.String()
 }
 
 func (o *Optimiser) walkAst(parent, node expr.Node) {
@@ -149,42 +147,36 @@ func (o *Optimiser) walkAst(parent, node expr.Node) {
 	}
 
 	switch v := node.(type) {
-	case *expr.If, *expr.Match, *expr.For, *expr.Put:
-		// empty expressions are subject to removal
-		if o.isEmpty(v) {
-			o.emptyNodes = append(o.emptyNodes, NodeTuple{Parent: parent, Child: v})
-		}
 	case *expr.Func:
-		// detect a function definition
-		o.nodes = append(o.nodes, NodeTuple{Name: v.Name.GetToken().Raw, Parent: parent, Child: v})
-
-		// empty node are subject to removal
-		if o.isEmpty(v) {
-			o.emptyNodes = append(o.emptyNodes, NodeTuple{Name: v.Name.GetToken().Raw, Parent: parent, Child: v})
+		name := v.Name.GetToken().Raw
+		if fun, ok := o.functions[name]; ok {
+			o.functions[o.postFix(name)] = fun
 		}
+		o.functions[name] = Node{Used: false, Parent: parent, Child: v}
 	case *expr.Call:
-		// detects a function usage, removes the item from the unused functions tracker
-		o.removeNodeByName(o.nodes, v.Token.Raw)
-
-		// if a function with a matching name is subject to removal we want to remove the call as well
-		if o.containsNode(o.emptyNodes, v.Token.Raw) {
-			o.emptyNodes = append(o.emptyNodes, NodeTuple{Name: v.Token.Raw, Parent: parent, Child: v})
+		name := v.Token.Raw
+		// detects a function usage, updates counter
+		if val, ok := o.functions[name]; ok && !val.Used {
+			c := val
+			c.Used = true
+			o.functions[name] = c
 		}
 	case *expr.Var:
 		// detect a variable definition
-		o.nodes = append(o.nodes, NodeTuple{Name: v.Ident.GetToken().Raw, Parent: parent, Child: v})
-
-		if o.isEmpty(v) {
-			o.emptyNodes = append(o.emptyNodes, NodeTuple{Parent: parent, Child: v})
+		name := v.Ident.GetToken().Raw
+		if variable, ok := o.variables[name]; ok {
+			o.variables[o.postFix(name)] = variable
 		}
+		o.variables[name] = Node{Used: false, Parent: parent, Child: v}
 	case *expr.Ident:
-		// if a variable with a matching name is subject to removal we want to remove its uses as well
-		if o.containsNode(o.emptyNodes, v.Name) || o.containsNode(o.nodes, v.Name) {
-			o.emptyNodes = append(o.emptyNodes, NodeTuple{Name: v.Name, Parent: parent, Child: v})
+		// detects a variable usage, updates counter
+		name := v.Name
+		if val, ok := o.variables[name]; ok && !val.Used {
+			c := val
+			c.Used = true
+			o.variables[name] = c
+			// !ok impossible codepath
 		}
-
-		// detects a variable usage, removes the item from the tracker
-		o.removeNodeByName(o.nodes, v.Name)
 	}
 
 	children := node.GetChildren()

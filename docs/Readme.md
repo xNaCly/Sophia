@@ -94,5 +94,23 @@ currently using the visitor pattern for evaluation, which means the interpreter
 is not fast. I am thinking about a bytecode interpreter rewrite, but I am
 nowhere near experienced enough for that yet. The lexer and parser itself
 aren't doing much work and are pretty fast - the evaluation is the slowest part
-of the interpreter. If anyone reading this has ideas for improving the
-performance either create an issue or a pr please :^).
+of the interpreter.
+
+I recently improved the interpreter performance by doing a lot less in hot
+paths, such as computing float and boolean values at parse time, see
+[daf3767](https://github.com/xNaCly/Sophia/commit/daf3767245389060b4706064bb6027be8d72e0ad).
+This improved the performance for the specific test script by 5.67 times. I
+also added an optimizer for several optimisations that are preformed by
+modifying the abstract syntax tree:
+
+- [x] stripping unused variables
+- [x] stripping unused functions
+- [ ] computing constant expressions
+- [ ] replacing variable and function names with integers for faster hash map
+      access
+- [ ] removing empty constructs:
+  - [ ] empty functions
+  - [ ] empty if
+  - [ ] empty for
+  - [ ] empty put
+  - [ ] empty match
