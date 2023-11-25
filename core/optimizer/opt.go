@@ -6,7 +6,6 @@ package optimizer
 
 import (
 	"math/rand"
-	"sophia/core/debug"
 	"sophia/core/expr"
 	"strings"
 )
@@ -17,6 +16,8 @@ var alphabetlen = len(alphabet)
 // TODO: Replace variable names with integers -> should reduce time spend in
 // runtime.mapassign_faststr and aeshashbody (watch out for error handling,
 // etc)
+
+// TODO: Remove unused variables and functions
 
 // TODO: precompute constants
 
@@ -62,72 +63,75 @@ func New() *Optimiser {
 }
 
 func (o *Optimiser) Start(ast []expr.Node) []expr.Node {
-	astHolder := &expr.Root{
-		Children: make([]expr.Node, len(ast)),
-	}
-	copy(astHolder.Children, ast)
+	// INFO: disabled due to several bugs
 
-	// walk ast and populate counters for unused variables and functions
-	for _, node := range ast {
-		o.walkAst(astHolder, node)
-	}
+	// astHolder := &expr.Root{
+	// 	Children: make([]expr.Node, len(ast)),
+	// }
+	// copy(astHolder.Children, ast)
 
-	// unused variables
-	for k, v := range o.variables {
-		if v.Used {
-			continue
-		}
-		if v.Parent == nil {
-			continue
-		}
-		ch := v.Parent.GetChildren()
-		if ch == nil {
-			continue
-		}
-		for i, c := range ch {
-			if c == v.Child {
-				ch = append(ch[:i], ch[i+1:]...)
-				v.Parent.SetChildren(ch)
-				t := v.Child.GetToken()
-				debug.Logf("removed: %T(%s) [%d:%d]\n", v.Child, k, t.Line+1, t.LinePos)
-				delete(o.variables, k)
-				o.didOptimise = true
-				break
-			}
-		}
-	}
+	// // walk ast and populate counters for unused variables and functions
+	// for _, node := range ast {
+	// 	o.walkAst(astHolder, node)
+	// }
 
-	// unused functions
-	for k, v := range o.functions {
-		if v.Used {
-			continue
-		}
-		if v.Parent == nil {
-			continue
-		}
-		ch := v.Parent.GetChildren()
-		if ch == nil {
-			continue
-		}
-		for i, c := range ch {
-			if c == v.Child {
-				ch = append(ch[:i], ch[i+1:]...)
-				v.Parent.SetChildren(ch)
-				t := v.Child.GetToken()
-				debug.Logf("removed: %T(%s) [%d:%d]\n", v.Child, k, t.Line+1, t.LinePos)
-				delete(o.functions, k)
-				o.didOptimise = true
-				break
-			}
-		}
-	}
+	// // unused variables
+	// for k, v := range o.variables {
+	// 	if v.Used {
+	// 		continue
+	// 	}
+	// 	if v.Parent == nil {
+	// 		continue
+	// 	}
+	// 	ch := v.Parent.GetChildren()
+	// 	if ch == nil {
+	// 		continue
+	// 	}
+	// 	for i, c := range ch {
+	// 		if c == v.Child {
+	// 			ch = append(ch[:i], ch[i+1:]...)
+	// 			v.Parent.SetChildren(ch)
+	// 			t := v.Child.GetToken()
+	// 			debug.Logf("removed: %T(%s) [%d:%d]\n", v.Child, k, t.Line+1, t.LinePos)
+	// 			delete(o.variables, k)
+	// 			o.didOptimise = true
+	// 			break
+	// 		}
+	// 	}
+	// }
 
-	if o.didOptimise {
-		o.didOptimise = false
-		return o.Start(astHolder.Children)
-	}
+	// // unused functions
+	// for k, v := range o.functions {
+	// 	if v.Used {
+	// 		continue
+	// 	}
+	// 	if v.Parent == nil {
+	// 		continue
+	// 	}
+	// 	ch := v.Parent.GetChildren()
+	// 	if ch == nil {
+	// 		continue
+	// 	}
+	// 	for i, c := range ch {
+	// 		if c == v.Child {
+	// 			ch = append(ch[:i], ch[i+1:]...)
+	// 			v.Parent.SetChildren(ch)
+	// 			t := v.Child.GetToken()
+	// 			debug.Logf("removed: %T(%s) [%d:%d]\n", v.Child, k, t.Line+1, t.LinePos)
+	// 			delete(o.functions, k)
+	// 			o.didOptimise = true
+	// 			break
+	// 		}
+	// 	}
+	// }
 
-	return astHolder.Children
+	// if o.didOptimise {
+	// 	o.didOptimise = false
+	// 	return o.Start(astHolder.Children)
+	// }
+
+	// return astHolder.Children
+	return ast
 }
 
 // postFix appends a random id of length 5 to val, returns result
