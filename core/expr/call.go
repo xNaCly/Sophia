@@ -59,6 +59,13 @@ func (c *Call) Eval() any {
 	var ret any
 
 	for i, stmt := range def.Body {
+		// enabling early returns
+		if consts.RETURN.HasValue {
+			t := consts.RETURN.Value
+			consts.RETURN.HasValue = false
+			consts.RETURN.Value = nil
+			return t
+		}
 		if i+1 == len(def.Body) {
 			ret = stmt.Eval()
 			break
@@ -66,12 +73,22 @@ func (c *Call) Eval() any {
 		stmt.Eval()
 	}
 
-	// going out of scope, therefore we restore variables used in the
-	// function scope to their previous value stored in the local scope table
-	for k, v := range consts.SCOPE_TABLE {
-		consts.SYMBOL_TABLE[k] = v
-		delete(consts.SCOPE_TABLE, k)
+	// if last line was a return
+	if consts.RETURN.HasValue {
+		t := consts.RETURN.Value
+		consts.RETURN.HasValue = false
+		consts.RETURN.Value = nil
+		return t
 	}
+
+	defer func() {
+		// going out of scope, therefore we restore variables used in the
+		// function scope to their previous value stored in the local scope table
+		for k, v := range consts.SCOPE_TABLE {
+			consts.SYMBOL_TABLE[k] = v
+			delete(consts.SCOPE_TABLE, k)
+		}
+	}()
 
 	return ret
 }

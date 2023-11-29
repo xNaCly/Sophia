@@ -106,6 +106,18 @@ func (p *Parser) parseStatment() expr.Node {
 	}
 
 	switch op.Type {
+	case token.RETURN:
+		var child expr.Node
+		if len(childs) > 1 {
+			serror.Add(op, "Too many arguments", "Expected zero or one argument to return, got %d.", len(childs))
+			return nil
+		} else if len(childs) == 1 {
+			child = childs[0]
+		}
+		stmt = &expr.Return{
+			Token: op,
+			Child: child,
+		}
 	case token.MATCH:
 		stmt = &expr.Match{
 			Token:    op,

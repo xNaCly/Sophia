@@ -42,6 +42,7 @@ const (
 	MATCH
 	LOAD
 	MERGE
+	RETURN
 
 	EOF
 )
@@ -82,4 +83,5 @@ var TOKEN_NAME_MAP = map[int]string{
 	LOAD:            "LOAD",
 	MERGE:           "MERGE",
 	EOF:             "EOF",
+	RETURN:          "RETURN",
 }

@@ -114,11 +114,11 @@ func TestEvalConditional(t *testing.T) {
 		exp string
 	}{
 		{
-			str: "(if true (put 1))",
+			str: "(if true)",
 			exp: "true",
 		},
 		{
-			str: "(if true (let a 5)(put a))",
+			str: "(if true (let a 5))",
 			exp: "true",
 		},
 		{
@@ -287,6 +287,51 @@ func TestEvalLoop(t *testing.T) {
 		{
 			str: "(let sum 0)(let arr 9)(for (_ e) arr (let sum (+ e sum)))(let r sum)",
 			exp: "36",
+		},
+	}
+	for _, i := range input {
+		t.Run(i.str, func(t *testing.T) {
+			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
+			l := lexer.New(i.str)
+			p := parser.New(l.Lex(), "test")
+			r := Eval("repl", p.Parse())
+			if serror.HasErrors() {
+				t.Errorf("lexer or parser error for %q", i.str)
+			}
+			if len(r) == 0 {
+				t.Errorf("eval result empty for %q", i.str)
+				return
+			}
+			got := r[len(r)-1]
+			if i.exp != got {
+				t.Errorf("got %q, wanted %q", got, i.exp)
+			}
+		})
+	}
+}
+func TestEvalReturn(t *testing.T) {
+	input := []struct {
+		str string
+		exp string
+	}{
+		{
+			str: "(fun square (_n) (*n n))(square 12)",
+			exp: "144",
+		},
+		{
+			str: "(fun square (_n) (return (*n n)))(square 12)",
+			exp: "144",
+		},
+		{
+			str: `
+(fun test (_ n) 
+    (if (lt n 0) 
+        (return -1))
+    (return (*n n)
+))
+(test -12)
+`,
+			exp: "-1",
 		},
 	}
 	for _, i := range input {

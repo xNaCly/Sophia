@@ -1,18 +1,15 @@
 ;; vim: syntax=lisp
 ;; leetcode 327 Maximum Count of positive integer and negative integer
-(let example1 
-    (not 2) ;; negated: (not 2) -> -2
-    (not 1) 
-    (not 1) 1 2 3)
-(let example2 (not 3) (not 2) (not 1) 0 0 1 2)
+(let example1 -2 -1 -1 1 2 3)
+(let example2 -3 -2 -1 0 0 1 2)
 (let example3 5 20 66 1314)
 
 ;; returns a if bigger than b, otherwise b
 ;; max: float, float -> float
-(fun max (_ a b)
-    (let max a) ;; created as nil
-    (if (lt a b) (let max b))
-    max) ;; return without extra statement
+(fun max (_ a b) 
+    (if (lt a b) 
+        (return b)) 
+    a) ;; return without extra statement
 
 ;; counts negative and positve numbers in arr, returns the higher amount
 ;; solve: [float] -> float

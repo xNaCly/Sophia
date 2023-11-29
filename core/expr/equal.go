@@ -36,6 +36,7 @@ func (e *Equal) Eval() any {
 	}
 	return true
 }
+
 func (n *Equal) CompileJs(b *strings.Builder) {
 	cLen := len(n.Children)
 	if cLen == 2 {
