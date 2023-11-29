@@ -12,10 +12,10 @@ import (
 // float64 and booleans. Uses a passed in buffer for skipping memory
 // allocation for each call. Remember to reset the buffer before calling this
 // function.
-func formatHelper(buffer *bytes.Buffer, children []Node) {
+func formatHelper(buffer *bytes.Buffer, children []Node, sep rune) {
 	for i, c := range children {
-		if i != 0 {
-			buffer.WriteRune(' ')
+		if i != 0 && sep != 0 {
+			buffer.WriteRune(sep)
 		}
 		v := c.Eval()
 		switch v := v.(type) {

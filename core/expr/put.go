@@ -29,7 +29,7 @@ func (p *Put) GetToken() *token.Token {
 
 func (p *Put) Eval() any {
 	buffer.Reset()
-	formatHelper(buffer, p.Children)
+	formatHelper(buffer, p.Children, ' ')
 	buffer.WriteRune('\n')
 	buffer.WriteTo(os.Stdout)
 	return nil

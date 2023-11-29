@@ -31,7 +31,7 @@ func (s *TemplateString) Eval() any {
 	}
 
 	templateBuffer.Reset()
-	formatHelper(buffer, s.Children)
+	formatHelper(buffer, s.Children, 0)
 	return templateBuffer.String()
 }
 
