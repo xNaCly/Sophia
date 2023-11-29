@@ -44,7 +44,16 @@ func (l *Lexer) Lex() []*token.Token {
 				ttype = token.ADD
 			}
 		case '-':
-			ttype = token.SUB
+			if unicode.IsDigit(l.peek()) {
+				if tok, err := l.float(); err == nil {
+					t = append(t, tok)
+				} else {
+					serror.Add(tok, "Invalid floating point number", "")
+				}
+				continue
+			} else {
+				ttype = token.SUB
+			}
 		case '/':
 			ttype = token.DIV
 		case '*':
@@ -93,7 +102,7 @@ func (l *Lexer) Lex() []*token.Token {
 			if unicode.IsLetter(l.chr) {
 				t = append(t, l.ident())
 				continue
-			} else if unicode.IsDigit(rune(l.chr)) {
+			} else if unicode.IsDigit(l.chr) {
 				if tok, err := l.float(); err == nil {
 					t = append(t, tok)
 				} else {
@@ -236,7 +245,7 @@ func (l *Lexer) string() *token.Token {
 
 func (l *Lexer) ident() *token.Token {
 	builder := strings.Builder{}
-	for unicode.IsLetter(rune(l.chr)) || l.chr == '_' || unicode.IsDigit(rune(l.chr)) {
+	for unicode.IsLetter(l.chr) || l.chr == '_' || unicode.IsDigit(l.chr) {
 		builder.WriteRune(l.chr)
 		l.advance()
 	}
@@ -262,7 +271,7 @@ func (l *Lexer) ident() *token.Token {
 
 func (l *Lexer) float() (*token.Token, error) {
 	builder := strings.Builder{}
-	for unicode.IsDigit(rune(l.chr)) || l.chr == '.' || l.chr == '_' || l.chr == 'e' || l.chr == '-' {
+	for unicode.IsDigit(l.chr) || l.chr == '.' || l.chr == '_' || l.chr == 'e' || l.chr == '-' {
 		builder.WriteRune(l.chr)
 		l.advance()
 	}

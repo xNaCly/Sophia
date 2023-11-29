@@ -41,6 +41,7 @@ func TestLexerFloats(t *testing.T) {
 		"0.1e-3",
 		"1.2e-2",
 		"15e4",
+		"-12",
 	}
 	for _, v := range in {
 		t.Run(v, func(t *testing.T) {
