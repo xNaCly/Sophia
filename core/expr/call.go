@@ -61,10 +61,10 @@ func (c *Call) Eval() any {
 	for i, stmt := range def.Body {
 		// enabling early returns
 		if consts.RETURN.HasValue {
-			t := consts.RETURN.Value
+			ret = consts.RETURN.Value
 			consts.RETURN.HasValue = false
 			consts.RETURN.Value = nil
-			return t
+			break
 		}
 		if i+1 == len(def.Body) {
 			ret = stmt.Eval()
@@ -75,10 +75,9 @@ func (c *Call) Eval() any {
 
 	// if last line was a return
 	if consts.RETURN.HasValue {
-		t := consts.RETURN.Value
+		ret = consts.RETURN.Value
 		consts.RETURN.HasValue = false
 		consts.RETURN.Value = nil
-		return t
 	}
 
 	defer func() {
