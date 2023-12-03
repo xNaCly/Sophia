@@ -44,7 +44,10 @@ func repl(run func(input string, filename string) ([]string, error)) {
 			if error != nil {
 				log.Println(error)
 			} else {
-				fmt.Println("=", val)
+				fmt.Println("=")
+				for _, v := range val {
+					fmt.Println(" ", v)
+				}
 			}
 		}
 	}
