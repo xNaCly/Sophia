@@ -27,7 +27,7 @@ func (g *Gt) Eval() any {
 }
 
 func (n *Gt) CompileJs(b *strings.Builder) {
-	b.WriteString(n.Children[0].GetToken().Raw)
-	b.WriteRune('>')
-	b.WriteString(n.Children[1].GetToken().Raw)
+	n.Children[0].CompileJs(b)
+	b.WriteRune('<')
+	n.Children[1].CompileJs(b)
 }
