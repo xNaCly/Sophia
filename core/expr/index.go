@@ -8,9 +8,9 @@ import (
 )
 
 type Index struct {
-	Token   *token.Token
-	Element Node
-	Index   Node
+	Token  *token.Token
+	Target Node
+	Index  []Node
 }
 
 func (i *Index) GetChildren() []Node {
@@ -22,61 +22,81 @@ func (i *Index) GetToken() *token.Token {
 	return i.Token
 }
 
-func (i *Index) Eval() any {
-	ident := castPanicIfNotType[*Ident](i.Element, i.Element.GetToken())
-	requested, found := consts.SYMBOL_TABLE[ident.Name]
-	if !found {
-		serror.Add(ident.Token, "Index error", "Requested element %q not defined", ident.Name)
-		serror.Panic()
-	}
-
-	switch requested.(type) {
+func indexHelper(parent *Ident, target any, index []Node) any {
+	switch v := target.(type) {
 	case []interface{}:
 		{
-			arr := requested.([]interface{})
-			index, ok := i.Index.Eval().(float64)
+			// eg: [array.0]
+			in := index[0]
+			idx, ok := in.Eval().(float64)
 			if !ok {
-				t := i.Index.GetToken()
+				t := in.GetToken()
 				serror.Add(t, "Index error", "Can't index array with %q, use a number", token.TOKEN_NAME_MAP[t.Type])
 				serror.Panic()
 			}
-			return arr[int(index)]
+			curTarget := v[int(idx)]
+
+			if len(index) == 1 {
+				return curTarget
+			}
+
+			// eg: [array.0.x]
+			return indexHelper(parent, curTarget, index[1:])
 		}
 	case map[string]interface{}:
 		{
-			m := requested.(map[string]interface{})
-			index, ok := i.Index.(*Ident)
+			// eq: [map.x]
+			in := index[0]
+			idx, ok := in.(*Ident)
 			if !ok {
-				t := i.Index.GetToken()
-				serror.Add(t, "Index error", "Can't index object with %q, use a number", token.TOKEN_NAME_MAP[t.Type])
+				t := idx.GetToken()
+				serror.Add(t, "Index error", "Can't index object with %q, use a string", token.TOKEN_NAME_MAP[t.Type])
 				serror.Panic()
 			}
-			return m[index.Name]
+			curTarget := v[idx.Name]
+			if len(index) == 1 {
+				return curTarget
+			}
+
+			// eg: [map.x.y]
+			return indexHelper(parent, curTarget, index[1:])
 		}
 	case nil:
-		serror.Add(ident.Token, "Index error", "Can not access nothing (nil)")
+		serror.Add(parent.Token, "Index error", "Can not access nothing (nil)")
 		serror.Panic()
 	default:
-		serror.Add(ident.Token, "Index error", "Element to index into of unknown type %T, not yet implemented", requested)
+		serror.Add(parent.Token, "Index error", "Element to index into of unknown type %T, not yet implemented", target)
 		serror.Panic()
 	}
 	return nil
 }
 
-func (i *Index) CompileJs(b *strings.Builder) {
-	i.Element.CompileJs(b)
-	b.WriteRune('[')
-	switch i.Index.(type) {
-	case *Ident:
-		b.WriteRune('"')
-		i.Index.CompileJs(b)
-		b.WriteRune('"')
-	case *Float:
-		i.Index.CompileJs(b)
-	default:
-		t := i.Index.GetToken()
-		serror.Add(t, "Index error", "Element to index into of unknown type, not yet implemented")
+func (i *Index) Eval() any {
+	ident := castPanicIfNotType[*Ident](i.Target, i.Target.GetToken())
+	requested, found := consts.SYMBOL_TABLE[ident.Name]
+	if !found {
+		serror.Add(ident.Token, "Index error", "Requested element %q not defined", ident.Name)
 		serror.Panic()
 	}
-	b.WriteRune(']')
+	return indexHelper(ident, requested, i.Index)
+}
+
+func (i *Index) CompileJs(b *strings.Builder) {
+	i.Target.CompileJs(b)
+	for _, index := range i.Index {
+		b.WriteRune('[')
+		switch v := index.(type) {
+		case *Ident:
+			b.WriteRune('"')
+			v.CompileJs(b)
+			b.WriteRune('"')
+		case *Float:
+			v.CompileJs(b)
+		default:
+			t := v.GetToken()
+			serror.Add(t, "Index error", "Element to index into of unknown type, not yet implemented")
+			serror.Panic()
+		}
+		b.WriteRune(']')
+	}
 }

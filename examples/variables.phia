@@ -10,22 +10,21 @@
 
 (let firstEl [list.0])
 
-(let person { 
-    name: "anon" 
-    age: 25 
-})
-(let [person.name] "anon2")
-(let [person.test] "test")
-(let newAge 
-    (/ [person.age] 2))
-(let [person.age] newAge)
-
-(let person1 {
-    name: "name"
-    data: {
-        test: "test"
+;; objects
+(let person {
+    name: "anon"
+    bank: {
+        money: 2500
+        institute: {
+            name: "western union"
+        }
     }
+    age: 25
 })
 
-(let pData [person.data])
-(put [pData.data])
+(put [person.bank.money]) ;; 2500
+(put [person.bank.institute.name]) ;; "western union"
+
+(let arr person 1 2 3 4 5)
+(put [arr.0.name]) ;; "anon"
+

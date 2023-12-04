@@ -45,44 +45,47 @@ func (v *Var) Eval() any {
 		}
 		consts.SYMBOL_TABLE[res.Name] = val
 	} else {
-		index := castPanicIfNotType[*Index](v.Ident, v.Ident.GetToken())
-		ident := castPanicIfNotType[*Ident](index.Element, index.Element.GetToken())
-		requested, found := consts.SYMBOL_TABLE[ident.Name]
-		if !found {
-			t := v.Ident.GetToken()
-			serror.Add(t, "Undefined variable", "Requested item %q not found", ident.Name)
-			serror.Panic()
-		}
-		switch requested.(type) {
-		case []interface{}:
-			{
-				arr := requested.([]interface{})
-				in, ok := index.Index.Eval().(float64)
-				if !ok {
-					t := index.Index.GetToken()
-					serror.Add(t, "Index error", "Can't index array with %q, use a number", token.TOKEN_NAME_MAP[t.Type])
-					serror.Panic()
-				}
-				arr[int(in)] = v.Value[0].Eval()
-				consts.SYMBOL_TABLE[ident.Name] = arr
-			}
-		case map[string]interface{}:
-			{
-				m := requested.(map[string]interface{})
-				in, ok := index.Index.(*Ident)
-				if !ok {
-					t := index.GetToken()
-					serror.Add(t, "Index error", "Can't index object with %q, use an identifier", token.TOKEN_NAME_MAP[t.Type])
-					serror.Panic()
-				}
+		serror.Add(v.Ident.GetToken(), "Currently disabled", "Mutating via indexing is currently disabled")
+		serror.Panic()
+		// mutating via index
+		// index := castPanicIfNotType[*Index](v.Ident, v.Ident.GetToken())
+		// ident := castPanicIfNotType[*Ident](index.Element, index.Element.GetToken())
+		// requested, found := consts.SYMBOL_TABLE[ident.Name]
+		// if !found {
+		// 	t := v.Ident.GetToken()
+		// 	serror.Add(t, "Undefined variable", "Requested item %q not found", ident.Name)
+		// 	serror.Panic()
+		// }
+		// switch requested.(type) {
+		// case []interface{}:
+		// 	{
+		// 		arr := requested.([]interface{})
+		// 		in, ok := index.Index.Eval().(float64)
+		// 		if !ok {
+		// 			t := index.Index.GetToken()
+		// 			serror.Add(t, "Index error", "Can't index array with %q, use a number", token.TOKEN_NAME_MAP[t.Type])
+		// 			serror.Panic()
+		// 		}
+		// 		arr[int(in)] = v.Value[0].Eval()
+		// 		consts.SYMBOL_TABLE[ident.Name] = arr
+		// 	}
+		// case map[string]interface{}:
+		// 	{
+		// 		m := requested.(map[string]interface{})
+		// 		in, ok := index.Index.(*Ident)
+		// 		if !ok {
+		// 			t := index.GetToken()
+		// 			serror.Add(t, "Index error", "Can't index object with %q, use an identifier", token.TOKEN_NAME_MAP[t.Type])
+		// 			serror.Panic()
+		// 		}
 
-				m[in.Name] = v.Value[0].Eval()
-				consts.SYMBOL_TABLE[ident.Name] = m
-			}
-		default:
-			serror.Add(ident.Token, "Index error", "Element to index into of unknown type %T, not yet implemented", requested)
-			serror.Panic()
-		}
+		// 		m[in.Name] = v.Value[0].Eval()
+		// 		consts.SYMBOL_TABLE[ident.Name] = m
+		// 	}
+		// default:
+		// 	serror.Add(ident.Token, "Index error", "Element to index into of unknown type %T, not yet implemented", requested)
+		// 	serror.Panic()
+		// }
 	}
 
 	return val

@@ -309,6 +309,7 @@ func TestEvalLoop(t *testing.T) {
 		})
 	}
 }
+
 func TestEvalReturn(t *testing.T) {
 	input := []struct {
 		str string
@@ -332,6 +333,66 @@ func TestEvalReturn(t *testing.T) {
 (test -12)
 `,
 			exp: "-1",
+		},
+	}
+	for _, i := range input {
+		t.Run(i.str, func(t *testing.T) {
+			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
+			l := lexer.New(i.str)
+			p := parser.New(l.Lex(), "test")
+			r := Eval("repl", p.Parse())
+			if serror.HasErrors() {
+				t.Errorf("lexer or parser error for %q", i.str)
+			}
+			if len(r) == 0 {
+				t.Errorf("eval result empty for %q", i.str)
+				return
+			}
+			got := r[len(r)-1]
+			if i.exp != got {
+				t.Errorf("got %q, wanted %q", got, i.exp)
+			}
+		})
+	}
+}
+
+func TestEvalObject(t *testing.T) {
+	input := []struct {
+		str string
+		exp string
+	}{
+		{
+			str: `
+(let person {
+    name: "anon"
+    bank: {
+        money: 2500
+        institute: {
+            name: "western union"
+        }
+    }
+    age: 25
+})
+(let bankName [person.bank.institute.name])
+            `,
+			exp: "western union",
+		},
+		{
+			str: `
+(let person {
+    name: "anon"
+    bank: {
+        money: 2500
+        institute: {
+            name: "western union"
+        }
+    }
+    age: 25
+})
+(let arr [person.bank] 2 3 4)
+(let money [arr.0.money])
+            `,
+			exp: "2500",
 		},
 	}
 	for _, i := range input {

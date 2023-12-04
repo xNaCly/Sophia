@@ -394,15 +394,23 @@ func (p *Parser) parseIndex() expr.Node {
 	p.peekError(token.LEFT_BRACKET, "missing index start")
 	o := expr.Index{
 		Token: p.peek(),
+		Index: make([]expr.Node, 0),
 	}
 	p.advance()
 	p.peekError(token.IDENT, "missing element to index into")
-	o.Element = p.parseArguments()
+	o.Target = p.parseArguments()
 	p.advance()
 	p.peekError(token.DOT, "missing index element and property divider")
 	p.advance()
-	o.Index = p.parseArguments()
+	o.Index = append(o.Index, p.parseArguments())
 	p.advance()
+
+	for p.peekIs(token.DOT) {
+		p.advance()
+		o.Index = append(o.Index, p.parseArguments())
+		p.advance()
+	}
+
 	p.peekError(token.RIGHT_BRACKET, "missing index end")
 	return &o
 }
