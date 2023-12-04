@@ -271,7 +271,7 @@ func (l *Lexer) ident() *token.Token {
 
 func (l *Lexer) float() (*token.Token, error) {
 	builder := strings.Builder{}
-	for unicode.IsDigit(l.chr) || l.chr == '.' || l.chr == '_' || l.chr == 'e' || l.chr == '-' {
+	for unicode.IsDigit(l.chr) || (l.chr == '.' && unicode.IsDigit(l.peek())) || l.chr == '_' || l.chr == 'e' || l.chr == '-' {
 		builder.WriteRune(l.chr)
 		l.advance()
 	}
