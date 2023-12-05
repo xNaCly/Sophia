@@ -27,7 +27,8 @@ func (f *Func) GetToken() *token.Token {
 }
 
 func (f *Func) Eval() any {
-	consts.FUNC_TABLE[f.Name.GetToken().Raw] = f
+	ident := f.Name.(*Ident)
+	consts.FUNC_TABLE[ident.Key] = f
 	return nil
 }
 

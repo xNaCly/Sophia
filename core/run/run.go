@@ -8,7 +8,6 @@ import (
 	"sophia/core/debug"
 	"sophia/core/eval"
 	"sophia/core/lexer"
-	"sophia/core/optimizer"
 	"sophia/core/parser"
 	"sophia/core/serror"
 )
@@ -54,17 +53,7 @@ func run(input string, filename string) (s []string, e error) {
 		fmt.Println("ast:", string(out))
 	}
 
-	if filename != "repl" {
-		debug.Log("done parsing - starting optimizer")
-		opt := optimizer.New()
-		ast = opt.Start(ast)
-		if core.CONF.Ast {
-			out, _ := json.MarshalIndent(ast, "", "  ")
-			fmt.Println("optimized ast:", string(out))
-		}
-	} else {
-		debug.Log("done parsing - starting eval")
-	}
+	debug.Log("done parsing - starting eval")
 
 	if len(ast) == 0 {
 		return

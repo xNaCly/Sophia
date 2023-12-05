@@ -11,10 +11,37 @@ import (
 	"strings"
 )
 
+type allocator struct {
+	functions map[string]uint32
+	funcCount uint32
+	variables map[string]uint32
+	varCount  uint32
+}
+
+func (a *allocator) newFunc(name string) uint32 {
+	a.funcCount++
+	a.functions[name] = a.funcCount
+	return a.funcCount
+}
+
+func (a *allocator) newVar(name string) uint32 {
+	a.varCount++
+	a.variables[name] = a.varCount
+	return a.varCount
+}
+
+var alloc = allocator{
+	varCount:  0,
+	funcCount: 0,
+	functions: map[string]uint32{},
+	variables: map[string]uint32{},
+}
+
 type Parser struct {
-	token    []*token.Token
-	filename string
-	pos      int
+	token     []*token.Token
+	filename  string
+	allocator allocator
+	pos       int
 }
 
 func New(tokens []*token.Token, filename string) *Parser {
@@ -23,9 +50,10 @@ func New(tokens []*token.Token, filename string) *Parser {
 		return &Parser{}
 	}
 	return &Parser{
-		token:    tokens,
-		pos:      0,
-		filename: filename,
+		token:     tokens,
+		pos:       0,
+		allocator: alloc,
+		filename:  filename,
 	}
 }
 
@@ -147,7 +175,7 @@ func (p *Parser) parseStatment() expr.Node {
 		params := childs[0]
 		t := params.GetToken()
 		if params.GetToken().Type != token.PARAM {
-			serror.Add(t, "Type error", "Expected the first argument for loop definition to be of type PARAM, got %q.", token.TOKEN_NAME_MAP[childs[0].GetToken().Type])
+			serror.Add(t, "Type error", "Expected the first argument for loop definition to be of type PARAM, got %q.", token.TOKEN_NAME_MAP[t.Type])
 			return nil
 		}
 		if len(params.(*expr.Params).Children) != 1 {
@@ -163,6 +191,7 @@ func (p *Parser) parseStatment() expr.Node {
 	case token.IDENT:
 		stmt = &expr.Call{
 			Token:  op,
+			Key:    p.allocator.functions[op.Raw],
 			Params: childs,
 		}
 	case token.LT:
@@ -200,20 +229,23 @@ func (p *Parser) parseStatment() expr.Node {
 			serror.Add(op, "Not enough parameters", "Expected 2 parameters, one for function name and one for parameters, got %d.", len(childs))
 			return nil
 		}
-		t := childs[0].GetToken()
-		if t.Type != token.IDENT {
+		ident, ok := childs[0].(*expr.Ident)
+		if !ok {
+			t := childs[0].GetToken()
 			serror.Add(t, "Type error", "Expected the first argument for function definition to be of type IDENT, got %q.", token.TOKEN_NAME_MAP[t.Type])
 			return nil
 		}
-		t = childs[1].GetToken()
-		if childs[1].GetToken().Type != token.PARAM {
+		params, ok := childs[1].(*expr.Params)
+		if !ok {
+			t := childs[1].GetToken()
 			serror.Add(t, "Type error", "Expected the second argument for function definition to be of type PARAM, got %q.", token.TOKEN_NAME_MAP[t.Type])
 			return nil
 		}
+		ident.Key = p.allocator.newFunc(ident.Name)
 		stmt = &expr.Func{
 			Token:  op,
-			Name:   childs[0],
-			Params: childs[1],
+			Name:   ident,
+			Params: params,
 			Body:   childs[2:],
 		}
 	case token.IF:
@@ -232,7 +264,12 @@ func (p *Parser) parseStatment() expr.Node {
 			serror.Add(op, "Not enough arguments", "Expected at least one argument for variable declaration, got %d.", len(childs))
 			return nil
 		}
-		ident := childs[0]
+		ident, ok := childs[0].(*expr.Ident)
+		if !ok {
+			serror.Add(childs[0].GetToken(), "Wrong parameter", "Expected identifier, got %T.", childs[0])
+			return nil
+		}
+		ident.Key = p.allocator.newVar(ident.Name)
 		stmt = &expr.Var{
 			Token: op,
 			Ident: ident,
@@ -376,9 +413,11 @@ func (p *Parser) parseArguments() expr.Node {
 			Token: p.peek(),
 		}
 	} else if p.peekIs(token.IDENT) {
+		t := p.peek()
 		child = &expr.Ident{
-			Token: p.peek(),
-			Name:  p.peek().Raw,
+			Token: t,
+			Key:   p.allocator.variables[t.Raw],
+			Name:  t.Raw,
 		}
 	} else if p.peekIs(token.BOOL) {
 		child = &expr.Boolean{

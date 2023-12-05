@@ -23,7 +23,7 @@
     (max neg pos))
 
 ;; used for benchmarking and profiling
-(for (_ i) 250_000
+(for (_ i) 500_000
     (solve example1) ;; 3
     (solve example3) ;; 4
     (solve example2) ;; 4

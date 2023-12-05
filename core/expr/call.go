@@ -9,6 +9,7 @@ import (
 
 type Call struct {
 	Token  *token.Token
+	Key    uint32
 	Params []Node
 }
 
@@ -25,7 +26,7 @@ func (c *Call) GetToken() *token.Token {
 }
 
 func (c *Call) Eval() any {
-	storedFunc, ok := consts.FUNC_TABLE[c.Token.Raw]
+	storedFunc, ok := consts.FUNC_TABLE[c.Key]
 	if !ok {
 		serror.Add(c.Token, "Undefined function", "Function %q not defined", c.Token.Raw)
 		serror.Panic()
@@ -49,11 +50,11 @@ func (c *Call) Eval() any {
 
 	// store variable values from before entering the function scope
 	for i, arg := range c.Params {
-		name := children[i].GetToken().Raw
-		if val, ok := consts.SYMBOL_TABLE[name]; ok {
-			consts.SCOPE_TABLE[name] = val
+		name := children[i].(*Ident)
+		if val, ok := consts.SYMBOL_TABLE[name.Key]; ok {
+			consts.SCOPE_TABLE[name.Key] = val
 		}
-		consts.SYMBOL_TABLE[name] = arg.Eval()
+		consts.SYMBOL_TABLE[name.Key] = arg.Eval()
 	}
 
 	var ret any

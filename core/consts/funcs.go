@@ -5,5 +5,5 @@ type Return struct {
 	Value    any
 }
 
-var FUNC_TABLE = make(map[string]any, 16)
+var FUNC_TABLE = make(map[uint32]any, 16)
 var RETURN = Return{}

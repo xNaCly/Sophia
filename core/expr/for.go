@@ -34,7 +34,7 @@ func (f *For) Eval() any {
 		serror.Panic()
 	}
 	element := castPanicIfNotType[*Ident](params[0], params[0].GetToken())
-	oldValue, foundOldValue := consts.SYMBOL_TABLE[element.Name]
+	oldValue, foundOldValue := consts.SYMBOL_TABLE[element.Key]
 
 	v := f.LoopOver.Eval()
 	switch v.(type) {
@@ -42,7 +42,7 @@ func (f *For) Eval() any {
 		loopOver := castPanicIfNotType[[]interface{}](v, f.LoopOver.GetToken())
 
 		for _, el := range loopOver {
-			consts.SYMBOL_TABLE[element.Name] = el
+			consts.SYMBOL_TABLE[element.Key] = el
 			for _, stmt := range f.Body {
 				stmt.Eval()
 			}
@@ -50,7 +50,7 @@ func (f *For) Eval() any {
 	case float64:
 		con := v.(float64)
 		for i := 0.0; i < con; i++ {
-			consts.SYMBOL_TABLE[element.Name] = i
+			consts.SYMBOL_TABLE[element.Key] = i
 			for _, stmt := range f.Body {
 				stmt.Eval()
 			}
@@ -62,7 +62,7 @@ func (f *For) Eval() any {
 	}
 
 	if foundOldValue {
-		consts.SYMBOL_TABLE[element.Name] = oldValue
+		consts.SYMBOL_TABLE[element.Key] = oldValue
 	}
 	return nil
 }

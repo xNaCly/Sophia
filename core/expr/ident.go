@@ -10,6 +10,7 @@ import (
 // using a variable
 type Ident struct {
 	Token *token.Token
+	Key   uint32
 	Name  string
 }
 
@@ -24,7 +25,7 @@ func (i *Ident) GetToken() *token.Token {
 }
 
 func (i *Ident) Eval() any {
-	val, ok := consts.SYMBOL_TABLE[i.Name]
+	val, ok := consts.SYMBOL_TABLE[i.Key]
 	if !ok {
 		serror.Add(i.Token, "Undefined variable", "Variable %q is not defined.", i.Name)
 		serror.Panic()
