@@ -70,9 +70,14 @@ func (n *For) CompileJs(b *strings.Builder) {
 	b.WriteString("for(")
 	b.WriteString("let ")
 	if n.LoopOver.GetToken().Type == token.FLOAT {
-		b.WriteString("i = 0; i < ")
+		b.WriteString(n.Params.GetChildren()[0].GetToken().Raw)
+		b.WriteString("=0;")
+		b.WriteString(n.Params.GetChildren()[0].GetToken().Raw)
+		b.WriteString("<")
 		b.WriteString(n.LoopOver.GetToken().Raw)
-		b.WriteString("; i++")
+		b.WriteString(";")
+		b.WriteString(n.Params.GetChildren()[0].GetToken().Raw)
+		b.WriteString("++")
 	} else {
 		n.Params.CompileJs(b)
 		b.WriteString(" of ")

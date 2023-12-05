@@ -3,6 +3,7 @@ package parser
 import (
 	"io"
 	"os"
+	"sophia/core/alloc"
 	"sophia/core/expr"
 	"sophia/core/lexer"
 	"sophia/core/serror"
@@ -11,37 +12,10 @@ import (
 	"strings"
 )
 
-type allocator struct {
-	functions map[string]uint32
-	funcCount uint32
-	variables map[string]uint32
-	varCount  uint32
-}
-
-func (a *allocator) newFunc(name string) uint32 {
-	a.funcCount++
-	a.functions[name] = a.funcCount
-	return a.funcCount
-}
-
-func (a *allocator) newVar(name string) uint32 {
-	a.varCount++
-	a.variables[name] = a.varCount
-	return a.varCount
-}
-
-var alloc = allocator{
-	varCount:  0,
-	funcCount: 0,
-	functions: map[string]uint32{},
-	variables: map[string]uint32{},
-}
-
 type Parser struct {
-	token     []*token.Token
-	filename  string
-	allocator allocator
-	pos       int
+	token    []*token.Token
+	filename string
+	pos      int
 }
 
 func New(tokens []*token.Token, filename string) *Parser {
@@ -50,10 +24,9 @@ func New(tokens []*token.Token, filename string) *Parser {
 		return &Parser{}
 	}
 	return &Parser{
-		token:     tokens,
-		pos:       0,
-		allocator: alloc,
-		filename:  filename,
+		token:    tokens,
+		pos:      0,
+		filename: filename,
 	}
 }
 
@@ -191,7 +164,7 @@ func (p *Parser) parseStatment() expr.Node {
 	case token.IDENT:
 		stmt = &expr.Call{
 			Token:  op,
-			Key:    p.allocator.functions[op.Raw],
+			Key:    alloc.Default.Functions[op.Raw],
 			Params: childs,
 		}
 	case token.LT:
@@ -241,7 +214,7 @@ func (p *Parser) parseStatment() expr.Node {
 			serror.Add(t, "Type error", "Expected the second argument for function definition to be of type PARAM, got %q.", token.TOKEN_NAME_MAP[t.Type])
 			return nil
 		}
-		ident.Key = p.allocator.newFunc(ident.Name)
+		ident.Key = alloc.NewFunc(ident.Name)
 		stmt = &expr.Func{
 			Token:  op,
 			Name:   ident,
@@ -269,7 +242,9 @@ func (p *Parser) parseStatment() expr.Node {
 			serror.Add(childs[0].GetToken(), "Wrong parameter", "Expected identifier, got %T.", childs[0])
 			return nil
 		}
-		ident.Key = p.allocator.newVar(ident.Name)
+		if _, ok := alloc.Default.Variables[ident.Name]; !ok {
+			ident.Key = alloc.NewVar(ident.Name)
+		}
 		stmt = &expr.Var{
 			Token: op,
 			Ident: ident,
@@ -416,7 +391,7 @@ func (p *Parser) parseArguments() expr.Node {
 		t := p.peek()
 		child = &expr.Ident{
 			Token: t,
-			Key:   p.allocator.variables[t.Raw],
+			Key:   alloc.Default.Variables[t.Raw],
 			Name:  t.Raw,
 		}
 	} else if p.peekIs(token.BOOL) {
