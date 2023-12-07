@@ -1,3 +1,4 @@
+;; vim: syntax=lisp
 (fun bin (_ n k)
     (if (gt k n) 
         (return -1))
