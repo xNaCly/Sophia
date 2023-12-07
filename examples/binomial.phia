@@ -1,0 +1,26 @@
+(fun bin (_ n k)
+    (if (gt k n) 
+        (return -1))
+    (if (and (eq k n) (eq k 0)) 
+        (return 1))
+
+    ;; Due to the symmetry of the binomial coefficient with regard to k and n −
+	;; k, calculation may be optimised by setting the upper limit of the
+	;; product above to the smaller of k and n − k, see
+	;; https://en.wikipedia.org/wiki/Binomial_coefficient#Computing_the_value_of_binomial_coefficients
+    (let kn (- n k))
+    (if (lt kn k) 
+        (let k kn))
+
+    ;; see https://en.wikipedia.org/wiki/Binomial_coefficient#Multiplicative_formula
+    (let r 1)
+    (for (_ i) k
+        (let r 
+            (/ (* r (- n i)) (+ i 1)))
+        )
+    r)
+
+(put (bin 1 1)) ;; 1
+(put (bin 6 3)) ;; 20
+(put (bin 49 6)) ;; 20
+(put (bin 20 15)) ;; 15504
