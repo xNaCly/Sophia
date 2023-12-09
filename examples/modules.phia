@@ -1,0 +1,36 @@
+;; vim: syntax=lisp
+
+;; WARNING: this is not yet implemented and thus subject to change
+
+;; predefined modules, inspired by and linking to certain GO's standard library
+(use strings)
+;; results in ["192", "168", "0", "217"]
+(put (strings::split "192.168.0.217" ".")) 
+
+;; allows access to formatted text, such as printf or sprintf
+(use fmt) 
+(fmt::printf "Hello %q" "traveler")
+(put (fmt::sprintf "Hello %q" "Space"))
+
+;; function attached to objects / methods are not available in sophia, however
+;; you are encouraged to create a module for the object containing these
+;; functions and accepting the object as the first function parameter.
+
+;; custom module
+(module person
+    (fun str (_ p) (++ "person: " p.name)
+
+    (module extract ;; namespaces can be nested
+        (fun name (_ p) p.name)
+    )
+)
+
+;; using a custom namespace
+(use person)
+(let pers { name: "anon" })
+(put (person::string pers))
+
+;; using nested namespace
+(use person::extract)
+(put (person::extract::name pers))
+
