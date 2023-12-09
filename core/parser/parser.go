@@ -356,23 +356,9 @@ func (p *Parser) parseStatment() expr.Node {
 	return stmt
 }
 
-func (p *Parser) parseArguments() expr.Node {
+func (p *Parser) parseConstants() expr.Node {
 	var child expr.Node
-	p.peekErrorMany("Missing or unknown argument",
-		token.FLOAT,
-		token.STRING,
-		token.IDENT,
-		token.BOOL,
-		token.LEFT_CURLY,
-		token.LEFT_BRACKET,
-		token.TEMPLATE_STRING)
-	if p.peekIs(token.LEFT_BRACKET) {
-		child = p.parseIndex()
-	} else if p.peekIs(token.LEFT_CURLY) {
-		child = p.parseObject()
-	} else if p.peekIs(token.TEMPLATE_STRING) {
-		child = p.parseTemplateString()
-	} else if p.peekIs(token.FLOAT) {
+	if p.peekIs(token.FLOAT) {
 		t := p.peek()
 		value, err := strconv.ParseFloat(t.Raw, 64)
 		if err != nil {
@@ -383,16 +369,16 @@ func (p *Parser) parseArguments() expr.Node {
 			Token: t,
 			Value: value,
 		}
-	} else if p.peekIs(token.STRING) {
-		child = &expr.String{
-			Token: p.peek(),
-		}
 	} else if p.peekIs(token.IDENT) {
 		t := p.peek()
 		child = &expr.Ident{
 			Token: t,
 			Key:   alloc.Default.Variables[t.Raw],
 			Name:  t.Raw,
+		}
+	} else if p.peekIs(token.STRING) {
+		child = &expr.String{
+			Token: p.peek(),
 		}
 	} else if p.peekIs(token.BOOL) {
 		child = &expr.Boolean{
@@ -401,32 +387,45 @@ func (p *Parser) parseArguments() expr.Node {
 			Value: p.peek().Raw == "true",
 		}
 	}
+
 	return child
 }
 
-func (p *Parser) parseIndex() expr.Node {
-	p.peekError(token.LEFT_BRACKET, "missing index start")
-	o := expr.Index{
-		Token: p.peek(),
-		Index: make([]expr.Node, 0),
+// TODO: indexing via [] instead of .?: arr.0.1 is treated as arr, ., 0.1 by
+// the lexer instead of arr, ., 0, ., 1 - it does work for objects doe:
+// object.field.name is parsed correctly
+func (p *Parser) parseArguments() expr.Node {
+	var child expr.Node
+	p.peekErrorMany("Missing or unknown argument",
+		token.FLOAT,
+		token.STRING,
+		token.IDENT,
+		token.BOOL,
+		token.LEFT_CURLY,
+		token.TEMPLATE_STRING)
+	if p.peekNext().Type == token.DOT && (p.peekIs(token.IDENT) || p.peekIs(token.FLOAT)) {
+		t := &expr.Index{
+			Token:  p.peek(),
+			Target: p.parseConstants(),
+			Index:  make([]expr.Node, 0),
+		}
+		p.advance() // skip ident
+		for p.peekIs(token.DOT) {
+			p.advance()
+			t.Index = append(t.Index, p.parseConstants())
+			if p.peekNext().Type == token.DOT {
+				p.advance()
+			}
+		}
+		child = t
+	} else if p.peekIs(token.LEFT_CURLY) {
+		child = p.parseObject()
+	} else if p.peekIs(token.TEMPLATE_STRING) {
+		child = p.parseTemplateString()
+	} else {
+		child = p.parseConstants()
 	}
-	p.advance()
-	p.peekError(token.IDENT, "missing element to index into")
-	o.Target = p.parseArguments()
-	p.advance()
-	p.peekError(token.DOT, "missing index element and property divider")
-	p.advance()
-	o.Index = append(o.Index, p.parseArguments())
-	p.advance()
-
-	for p.peekIs(token.DOT) {
-		p.advance()
-		o.Index = append(o.Index, p.parseArguments())
-		p.advance()
-	}
-
-	p.peekError(token.RIGHT_BRACKET, "missing index end")
-	return &o
+	return child
 }
 
 func (p *Parser) parseObject() expr.Node {
@@ -482,7 +481,7 @@ func (p *Parser) peekNext() *token.Token {
 	if p.peekIs(token.EOF) {
 		return p.peek()
 	}
-	return p.token[p.pos]
+	return p.token[p.pos+1]
 }
 
 func (p *Parser) peekIs(tokenType int) bool {

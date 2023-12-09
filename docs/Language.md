@@ -317,12 +317,13 @@ denoted as `key: value`, see below for an example:
 
 ## Accessing object and list elements
 
-Objects are only as useful as the data they contain, therefore the syntax for accessing said data is as intuitive as possible:
+Objects are only as useful as the data they contain, therefore the syntax for
+accessing said data is as intuitive as possible:
 
 ```lisp
 (let person { name: "anon" age: 25})
 ;; accessing the '.name' value from the 'person' object
-(put [person.name])
+(put person.name)
 ```
 
 The same can be applied to lists:
@@ -330,14 +331,14 @@ The same can be applied to lists:
 ```lisp
 (let list 1 2 3 4)
 ;; accessing the first element in the 'l'-list
-(put [list.0])
+(put list.0)
 ```
 
 Updating the values at either the key or the index is possible via the same syntax:
 
 ```lisp
-(let [list.0] 5)
-(let [person.name] "unknown")
+(let list.0 5)
+(let person.name "unknown")
 (put list person)
 [5 2 3 4] map[age:25 name:unknown]
 ```
@@ -345,7 +346,7 @@ Updating the values at either the key or the index is possible via the same synt
 Objects support one more feature, which is the addition of new keys also via the same syntax:
 
 ```lisp
-(let [person.newKey] "thisIsNew")
+(let person.newKey "thisIsNew")
 (put person)
  map[age:25 name:unknown newKey:thisisNew]
 ```

@@ -1,8 +1,6 @@
 package parser
 
 import (
-	"log"
-	"os"
 	"sophia/core"
 	"sophia/core/lexer"
 	"sophia/core/serror"
@@ -23,9 +21,6 @@ func TestParserHelloWorld(t *testing.T) {
 }
 
 func TestParserErrors(t *testing.T) {
-	null, _ := os.Open(os.DevNull)
-	os.Stdout = null
-	log.SetOutput(null)
 	in := []string{
 		". darvin)",
 		"(. 1",
@@ -45,6 +40,27 @@ func TestParserErrors(t *testing.T) {
 			p.Parse()
 			if !serror.HasErrors() {
 				t.Errorf("parsing should fail for %q, it did not", s)
+			}
+		})
+	}
+}
+
+func TestParserIndex(t *testing.T) {
+	in := []string{
+		"(put person.name)",
+		"(put person.data.name)",
+		"(put person.data.0.name)",
+	}
+	for _, s := range in {
+		t.Run(s, func(t *testing.T) {
+			serror.SetDefault(serror.NewFormatter(&core.CONF, s, "test"))
+			l := lexer.New(s)
+			tokens := l.Lex()
+			p := New(tokens, "test")
+			p.Parse()
+			if serror.HasErrors() {
+				serror.Display()
+				t.Errorf("parsing should not fail for %q, it did", s)
 			}
 		})
 	}

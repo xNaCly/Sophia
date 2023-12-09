@@ -62,10 +62,10 @@ func indexHelper(parent *Ident, target any, index []Node) any {
 			return indexHelper(parent, curTarget, index[1:])
 		}
 	case nil:
-		serror.Add(parent.Token, "Index error", "Can not access nothing (nil)")
+		serror.Add(index[0].GetToken(), "Index error", "Can not access nothing (nil)")
 		serror.Panic()
 	default:
-		serror.Add(parent.Token, "Index error", "Element to index into of unknown type %T, not yet implemented", target)
+		serror.Add(index[0].GetToken(), "Index error", "Can not index into %T", target)
 		serror.Panic()
 	}
 	return nil
