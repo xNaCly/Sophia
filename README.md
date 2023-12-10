@@ -13,7 +13,7 @@ Examples [here](https://xnacly.github.io/Sophia/)
 )
 
 (let n 12)
-(let res (square a))
+(let res (square n))
 
 (put '{n}*{n} is {res}')
 ;; 12*12 is 144

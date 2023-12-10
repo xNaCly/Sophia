@@ -25,12 +25,11 @@
     )
 )
 
-;; using a custom namespace
+;; using a custom module
 (use person)
 (let pers { name: "anon" })
 (put (person::string pers))
 
-;; using nested namespace
+;; using nested module
 (use person::extract)
-(put (person::extract::name pers))
-
+(put (person::extract::module pers))
