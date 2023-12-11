@@ -402,6 +402,7 @@ func (p *Parser) parseArguments() expr.Node {
 		token.IDENT,
 		token.BOOL,
 		token.LEFT_CURLY,
+		token.LEFT_BRACKET,
 		token.TEMPLATE_STRING)
 	if p.peekNext().Type == token.DOT && (p.peekIs(token.IDENT) || p.peekIs(token.FLOAT)) {
 		t := &expr.Index{
@@ -422,10 +423,29 @@ func (p *Parser) parseArguments() expr.Node {
 		child = p.parseObject()
 	} else if p.peekIs(token.TEMPLATE_STRING) {
 		child = p.parseTemplateString()
+	} else if p.peekIs(token.LEFT_BRACKET) {
+		child = p.parseArray()
 	} else {
 		child = p.parseConstants()
 	}
 	return child
+}
+
+func (p *Parser) parseArray() expr.Node {
+	p.peekError(token.LEFT_BRACKET, "missing object start")
+	o := expr.Array{
+		Token:    p.peek(),
+		Children: make([]expr.Node, 0),
+	}
+	p.advance()
+
+	for !p.peekIs(token.RIGHT_BRACKET) && !p.peekIs(token.EOF) {
+		o.Children = append(o.Children, p.parseArguments())
+		p.advance()
+	}
+
+	p.peekError(token.RIGHT_BRACKET, "missing array end")
+	return &o
 }
 
 func (p *Parser) parseObject() expr.Node {

@@ -10,6 +10,7 @@ import (
 	"sophia/core/lexer"
 	"sophia/core/parser"
 	"sophia/core/serror"
+	"strings"
 )
 
 func run(input string, filename string) (s []string, e error) {
@@ -19,6 +20,12 @@ func run(input string, filename string) (s []string, e error) {
 		}
 		if err := recover(); err != nil {
 			serror.Display()
+			if err, ok := err.(error); ok {
+				// catch all for panics
+				if !strings.Contains(err.Error(), "sophia: ") {
+					fmt.Println(err)
+				}
+			}
 			return
 		}
 	}()
