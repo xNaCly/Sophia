@@ -245,7 +245,7 @@ func (l *Lexer) string() *token.Token {
 
 func (l *Lexer) ident() *token.Token {
 	builder := strings.Builder{}
-	for unicode.IsLetter(l.chr) || l.chr == '_' || unicode.IsDigit(l.chr) {
+	for unicode.IsLetter(l.chr) || l.chr == '_' || unicode.IsDigit(l.chr) || l.chr == '-' {
 		builder.WriteRune(l.chr)
 		l.advance()
 	}
