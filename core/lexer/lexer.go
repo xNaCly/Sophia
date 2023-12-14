@@ -56,6 +56,8 @@ func (l *Lexer) Lex() []*token.Token {
 			}
 		case '/':
 			ttype = token.DIV
+		case '#':
+			ttype = token.HASHTAG
 		case '*':
 			ttype = token.MUL
 		case '%':

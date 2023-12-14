@@ -14,9 +14,9 @@ const (
 	SUB
 	DIV
 	MUL
-	PUT
 	MOD
 	PARAM
+	HASHTAG // #
 
 	// structure
 	LEFT_CURLY
@@ -29,6 +29,7 @@ const (
 	RIGHT_BRACKET
 
 	// keywords
+	PUT
 	LET
 	FUNC
 	IF
