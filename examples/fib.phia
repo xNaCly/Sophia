@@ -11,4 +11,4 @@
 (let expected 102_334_155)
 (if 
     (not (eq result expected))
-    (put 'error "{result}" should have been equal to "{expected}"!'))
+    (println 'error "{result}" should have been equal to "{expected}"!'))

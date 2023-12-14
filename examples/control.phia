@@ -1,9 +1,9 @@
 ;; vim: syntax=lisp
 (if true
-    (put "the condition is true"))
+    (println "the condition is true"))
 
 (if false
-    (put "?"))
+    (println "?"))
 
 (eq 1 1)
 (eq "equal" "equal")
@@ -14,18 +14,18 @@
 (gt 10 1)
 
 (let a 1)
-(put "a == a -> " (eq a a))
+(println "a == a -> " (eq a a))
 
 (or false true false)
 
 (let a false)
-(put "a | a | true -> " (or a a true))
+(println "a | a | true -> " (or a a true))
 
 (and true false)
 
 (let a true)
-(put "a & a -> " (and a a))
+(println "a & a -> " (and a a))
 
 (not (eq 1 2))
 
-(put "not (and a) -> " (not (and a a)))
+(println "not (and a) -> " (not (and a a)))

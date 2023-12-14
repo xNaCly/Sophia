@@ -5,12 +5,12 @@
 ;; predefined modules, inspired by and linking to certain GO's standard library
 (use strings)
 ;; results in ["192", "168", "0", "217"]
-(put (strings::split "192.168.0.217" ".")) 
+(println (strings::split "192.168.0.217" ".")) 
 
 ;; allows access to formatted text, such as printf or sprintf
 (use fmt) 
 (fmt::printf "Hello %q" "traveler")
-(put (fmt::sprintf "Hello %q" "Space"))
+(println (fmt::sprintf "Hello %q" "Space"))
 
 ;; function attached to objects / methods are not available in sophia, however
 ;; you are encouraged to create a module for the object containing these
@@ -28,8 +28,8 @@
 ;; using a custom module
 (use person)
 (let pers { name: "anon" })
-(put (person::string pers))
+(println (person::string pers))
 
 ;; using nested module
 (use person::extract)
-(put (person::extract::module pers))
+(println (person::extract::module pers))

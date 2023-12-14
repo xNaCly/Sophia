@@ -3,19 +3,20 @@ package expr
 import (
 	"math"
 	"sophia/core/token"
+"sophia/core/types"
 	"strings"
 )
 
 type Mod struct {
 	Token    *token.Token
-	Children []Node
+	Children []types.Node
 }
 
-func (m *Mod) GetChildren() []Node {
+func (m *Mod) GetChildren() []types.Node {
 	return m.Children
 }
 
-func (n *Mod) SetChildren(c []Node) {
+func (n *Mod) SetChildren(c []types.Node) {
 	n.Children = c
 }
 

@@ -4,6 +4,7 @@ import (
 	"sophia/core/consts"
 	"sophia/core/serror"
 	"sophia/core/token"
+"sophia/core/types"
 	"strings"
 )
 
@@ -14,11 +15,11 @@ type Ident struct {
 	Name  string
 }
 
-func (i *Ident) GetChildren() []Node {
-	return []Node{}
+func (i *Ident) GetChildren() []types.Node {
+	return []types.Node{}
 }
 
-func (n *Ident) SetChildren(c []Node) {}
+func (n *Ident) SetChildren(c []types.Node) {}
 
 func (i *Ident) GetToken() *token.Token {
 	return i.Token

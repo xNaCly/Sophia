@@ -4,20 +4,21 @@ import (
 	"sophia/core/consts"
 	"sophia/core/serror"
 	"sophia/core/token"
+	"sophia/core/types"
 	"strings"
 )
 
 type Call struct {
 	Token  *token.Token
 	Key    uint32
-	Params []Node
+	Params []types.Node
 }
 
-func (c *Call) GetChildren() []Node {
+func (c *Call) GetChildren() []types.Node {
 	return c.Params
 }
 
-func (n *Call) SetChildren(c []Node) {
+func (n *Call) SetChildren(c []types.Node) {
 	n.Params = c
 }
 
@@ -32,7 +33,12 @@ func (c *Call) Eval() any {
 		serror.Panic()
 	}
 
-	def := castPanicIfNotType[*Func](storedFunc, c.Token)
+	def, ok := storedFunc.(*Func)
+	if !ok {
+		// this branch is hit if a function is not of type *Func which only happens for built ins, thus the cast can not fail
+		function, _ := storedFunc.(func(token *token.Token, n ...types.Node) any)
+		return function(c.Token, c.Params...)
+	}
 	defParams := castPanicIfNotType[*Params](def.Params, c.Token)
 	children := defParams.Children
 

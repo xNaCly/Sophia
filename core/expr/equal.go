@@ -2,19 +2,20 @@ package expr
 
 import (
 	"sophia/core/token"
+"sophia/core/types"
 	"strings"
 )
 
 type Equal struct {
 	Token    *token.Token
-	Children []Node
+	Children []types.Node
 }
 
-func (e *Equal) GetChildren() []Node {
+func (e *Equal) GetChildren() []types.Node {
 	return e.Children
 }
 
-func (n *Equal) SetChildren(c []Node) {
+func (n *Equal) SetChildren(c []types.Node) {
 	n.Children = c
 }
 

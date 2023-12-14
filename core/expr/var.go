@@ -3,6 +3,7 @@ package expr
 import (
 	"sophia/core/consts"
 	"sophia/core/token"
+"sophia/core/types"
 	"strings"
 )
 
@@ -10,14 +11,14 @@ import (
 type Var struct {
 	Token *token.Token
 	Ident *Ident
-	Value []Node
+	Value []types.Node
 }
 
-func (v *Var) GetChildren() []Node {
+func (v *Var) GetChildren() []types.Node {
 	return v.Value
 }
 
-func (n *Var) SetChildren(c []Node) {
+func (n *Var) SetChildren(c []types.Node) {
 	n.Value = c
 }
 

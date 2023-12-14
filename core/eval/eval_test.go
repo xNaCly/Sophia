@@ -254,7 +254,7 @@ func TestEvalFunction(t *testing.T) {
 			exp: "24",
 		},
 		{
-			str: "(fun print (_ a) (put a))(let y 12 23 12)(print y)",
+			str: "(fun print (_ a) (println a))(let y 12 23 12)(print y)",
 			exp: "<nil>",
 		},
 	}

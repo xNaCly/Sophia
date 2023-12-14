@@ -1,2 +1,2 @@
 ;; vim: syntax=lisp
-(put "hello world!")
+(println "hello world!")

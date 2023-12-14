@@ -1,14 +1,14 @@
 ;; vim: syntax=lisp
-(put
+(println
     "1+2=" (+ 1 2))
-(put
+(println
     "1-2=" (- 1 2))
-(put
+(println
     "1*2=" (* 1 2))
-(put
+(println
     "1/2=" (/ 1 2))
 
-(put
+(println
     "1%2=" (% 1 2))
 
 (- 25

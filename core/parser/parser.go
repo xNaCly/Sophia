@@ -8,6 +8,7 @@ import (
 	"sophia/core/lexer"
 	"sophia/core/serror"
 	"sophia/core/token"
+	"sophia/core/types"
 	"strconv"
 	"strings"
 )
@@ -30,8 +31,8 @@ func New(tokens []*token.Token, filename string) *Parser {
 	}
 }
 
-func (p *Parser) Parse() []expr.Node {
-	res := make([]expr.Node, 0)
+func (p *Parser) Parse() []types.Node {
+	res := make([]types.Node, 0)
 	for !p.peekIs(token.EOF) {
 		stmt := p.parseStatment()
 		if stmt != nil && stmt.GetToken().Type == token.LOAD {
@@ -48,8 +49,8 @@ func (p *Parser) Parse() []expr.Node {
 	return res
 }
 
-func (p *Parser) loadNewSource(node *expr.Load) []expr.Node {
-	res := make([]expr.Node, 0)
+func (p *Parser) loadNewSource(node *expr.Load) []types.Node {
+	res := make([]types.Node, 0)
 	for i := 0; i < len(node.Imports); i++ {
 		name := node.Imports[i].GetToken()
 		file, err := os.Open(name.Raw)
@@ -74,9 +75,9 @@ func (p *Parser) loadNewSource(node *expr.Load) []expr.Node {
 	return res
 }
 
-func (p *Parser) parseStatment() expr.Node {
-	childs := make([]expr.Node, 0)
-	var stmt expr.Node
+func (p *Parser) parseStatment() types.Node {
+	childs := make([]types.Node, 0)
+	var stmt types.Node
 	p.peekError(token.LEFT_BRACE, "Missing statement start")
 	p.advance()
 
@@ -85,7 +86,7 @@ func (p *Parser) parseStatment() expr.Node {
 	p.advance()
 
 	for {
-		var child expr.Node
+		var child types.Node
 		if p.peekIs(token.EOF) || p.peekIs(token.RIGHT_BRACE) {
 			break
 		} else if p.peekIs(token.LEFT_BRACE) {
@@ -108,7 +109,7 @@ func (p *Parser) parseStatment() expr.Node {
 
 	switch op.Type {
 	case token.RETURN:
-		var child expr.Node
+		var child types.Node
 		if len(childs) > 1 {
 			serror.Add(op, "Too many arguments", "Expected zero or one argument to return, got %d.", len(childs))
 			return nil
@@ -340,15 +341,6 @@ func (p *Parser) parseStatment() expr.Node {
 			Token:    op,
 			Children: childs,
 		}
-	case token.PUT:
-		if len(childs) == 0 {
-			serror.Add(op, "Incorrect parameter amount", "Expected 1 or more arguments for put, got %d.", len(childs))
-			return nil
-		}
-		stmt = &expr.Put{
-			Token:    op,
-			Children: childs,
-		}
 	}
 
 	p.peekError(token.RIGHT_BRACE, "Missing statement end")
@@ -356,13 +348,13 @@ func (p *Parser) parseStatment() expr.Node {
 	return stmt
 }
 
-func (p *Parser) parseConstants() expr.Node {
+func (p *Parser) parseConstants() types.Node {
 	p.peekErrorMany("Missing or unknown constant", token.CONSTANTS...)
-	var child expr.Node
+	var child types.Node
 	if p.peekIs(token.HASHTAG) {
 		arr := &expr.Array{
 			Token:    p.token[p.pos-1],
-			Children: make([]expr.Node, 0),
+			Children: make([]types.Node, 0),
 		}
 		p.advance() // skip #
 		p.peekError(token.LEFT_BRACKET, "Missing array start")
@@ -406,8 +398,8 @@ func (p *Parser) parseConstants() expr.Node {
 	return child
 }
 
-func (p *Parser) parseArguments() expr.Node {
-	var child expr.Node
+func (p *Parser) parseArguments() types.Node {
+	var child types.Node
 	p.peekErrorMany("Missing or unknown argument",
 		token.FLOAT,
 		token.STRING,
@@ -420,7 +412,7 @@ func (p *Parser) parseArguments() expr.Node {
 		t := &expr.Index{
 			Token:  p.peek(),
 			Target: p.parseConstants(),
-			Index:  make([]expr.Node, 0),
+			Index:  make([]types.Node, 0),
 		}
 		p.advance() // skip ident
 		for p.peekIs(token.LEFT_BRACKET) {
@@ -442,7 +434,7 @@ func (p *Parser) parseArguments() expr.Node {
 	return child
 }
 
-func (p *Parser) parseObject() expr.Node {
+func (p *Parser) parseObject() types.Node {
 	p.peekError(token.LEFT_CURLY, "missing object start")
 	o := expr.Object{
 		Token:    p.peek(),
@@ -470,7 +462,7 @@ func (p *Parser) parseObject() expr.Node {
 func (p *Parser) parseTemplateString() *expr.TemplateString {
 	t := &expr.TemplateString{
 		Token:    p.peek(),
-		Children: make([]expr.Node, 0),
+		Children: make([]types.Node, 0),
 	}
 	p.advance()
 	for !p.peekIs(token.TEMPLATE_STRING) {

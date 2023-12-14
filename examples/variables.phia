@@ -22,9 +22,9 @@
     age: 25
 })
 
-(put person["bank"]["money"]) ;; 2500
-(put person["bank"]["institute"]["name"]) ;; "western union"
+(println person["bank"]["money"]) ;; 2500
+(println person["bank"]["institute"]["name"]) ;; "western union"
 
 (let arr person 1 2 3 4 5)
-(put arr[0]["name"]) ;; "anon"
+(println arr[0]["name"]) ;; "anon"
 

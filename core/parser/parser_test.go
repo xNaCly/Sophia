@@ -8,7 +8,7 @@ import (
 )
 
 func TestParserHelloWorld(t *testing.T) {
-	in := `(put "Hello World!")`
+	in := `(println "Hello World!")`
 
 	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test"))
 	l := lexer.New(in)
@@ -47,9 +47,9 @@ func TestParserErrors(t *testing.T) {
 
 func TestParserIndex(t *testing.T) {
 	in := []string{
-		`(put person["name"])`,
-		`(put person["data"]["name"])`,
-		`(put person["data"]["name"][0])`,
+		`(println person["name"])`,
+		`(println person["data"]["name"])`,
+		`(println person["data"]["name"][0])`,
 	}
 	for _, s := range in {
 		t.Run(s, func(t *testing.T) {

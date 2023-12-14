@@ -21,7 +21,7 @@
         )
     r)
 
-(put (bin 1 1)) ;; 1
-(put (bin 6 3)) ;; 20
-(put (bin 49 6)) ;; 20
-(put (bin 20 15)) ;; 15504
+(println (bin 1 1)) ;; 1
+(println (bin 6 3)) ;; 20
+(println (bin 49 6)) ;; 20
+(println (bin 20 15)) ;; 15504

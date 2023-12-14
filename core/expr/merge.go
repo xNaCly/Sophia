@@ -3,19 +3,20 @@ package expr
 import (
 	"sophia/core/debug"
 	"sophia/core/token"
+"sophia/core/types"
 	"strings"
 )
 
 type Merge struct {
 	Token    *token.Token
-	Children []Node
+	Children []types.Node
 }
 
-func (m *Merge) GetChildren() []Node {
+func (m *Merge) GetChildren() []types.Node {
 	return m.Children
 }
 
-func (n *Merge) SetChildren(c []Node) {
+func (n *Merge) SetChildren(c []types.Node) {
 	n.Children = c
 }
 

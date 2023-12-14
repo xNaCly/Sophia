@@ -3,22 +3,23 @@ package expr
 import (
 	"sophia/core/consts"
 	"sophia/core/token"
+"sophia/core/types"
 	"strings"
 )
 
 // function definition
 type Func struct {
 	Token  *token.Token
-	Name   Node
-	Params Node
-	Body   []Node
+	Name   types.Node
+	Params types.Node
+	Body   []types.Node
 }
 
-func (f *Func) GetChildren() []Node {
+func (f *Func) GetChildren() []types.Node {
 	return f.Body
 }
 
-func (n *Func) SetChildren(c []Node) {
+func (n *Func) SetChildren(c []types.Node) {
 	n.Body = c
 }
 

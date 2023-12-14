@@ -4,25 +4,26 @@ import (
 	"sophia/core/consts"
 	"sophia/core/serror"
 	"sophia/core/token"
+"sophia/core/types"
 	"strings"
 )
 
 type Index struct {
 	Token  *token.Token
-	Target Node
-	Index  []Node
+	Target types.Node
+	Index  []types.Node
 }
 
-func (i *Index) GetChildren() []Node {
+func (i *Index) GetChildren() []types.Node {
 	return nil
 }
 
-func (n *Index) SetChildren(c []Node) {}
+func (n *Index) SetChildren(c []types.Node) {}
 func (i *Index) GetToken() *token.Token {
 	return i.Token
 }
 
-func indexHelper(target any, index []Node) any {
+func indexHelper(target any, index []types.Node) any {
 	switch v := target.(type) {
 	case []interface{}:
 		{

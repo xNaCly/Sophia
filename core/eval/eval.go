@@ -2,11 +2,11 @@ package eval
 
 import (
 	"fmt"
-	"sophia/core/expr"
+	"sophia/core/types"
 	"strings"
 )
 
-func Eval(t string, ast []expr.Node) []string {
+func Eval(t string, ast []types.Node) []string {
 	if t == "repl" {
 		r := make([]string, len(ast))
 		for i, c := range ast {
@@ -20,7 +20,7 @@ func Eval(t string, ast []expr.Node) []string {
 	return []string{}
 }
 
-func CompileJs(ast []expr.Node) string {
+func CompileJs(ast []types.Node) string {
 	b := strings.Builder{}
 	for _, c := range ast {
 		l := b.Len()

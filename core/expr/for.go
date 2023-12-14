@@ -4,22 +4,23 @@ import (
 	"sophia/core/consts"
 	"sophia/core/serror"
 	"sophia/core/token"
+"sophia/core/types"
 	"strings"
 )
 
 // function definition
 type For struct {
 	Token    *token.Token
-	Params   Node
-	LoopOver Node
-	Body     []Node
+	Params   types.Node
+	LoopOver types.Node
+	Body     []types.Node
 }
 
-func (f *For) GetChildren() []Node {
+func (f *For) GetChildren() []types.Node {
 	return f.Body
 }
 
-func (n *For) SetChildren(c []Node) {
+func (n *For) SetChildren(c []types.Node) {
 	n.Body = c
 }
 

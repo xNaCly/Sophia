@@ -2,6 +2,7 @@ package expr
 
 import (
 	"sophia/core/token"
+"sophia/core/types"
 	"strings"
 )
 
@@ -10,11 +11,11 @@ type Boolean struct {
 	Value bool
 }
 
-func (b *Boolean) GetChildren() []Node {
+func (b *Boolean) GetChildren() []types.Node {
 	return nil
 }
 
-func (n *Boolean) SetChildren(c []Node) {}
+func (n *Boolean) SetChildren(c []types.Node) {}
 
 func (b *Boolean) GetToken() *token.Token {
 	return b.Token

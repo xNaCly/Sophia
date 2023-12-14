@@ -2,19 +2,20 @@ package expr
 
 import (
 	"sophia/core/token"
+"sophia/core/types"
 	"strings"
 )
 
 type Array struct {
 	Token    *token.Token
-	Children []Node
+	Children []types.Node
 }
 
-func (a *Array) GetChildren() []Node {
+func (a *Array) GetChildren() []types.Node {
 	return a.Children
 }
 
-func (a *Array) SetChildren(c []Node) {
+func (a *Array) SetChildren(c []types.Node) {
 	a.Children = c
 }
 

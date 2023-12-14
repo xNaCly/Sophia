@@ -3,19 +3,20 @@ package expr
 import (
 	"sophia/core/debug"
 	"sophia/core/token"
+"sophia/core/types"
 	"strings"
 )
 
 type Or struct {
 	Token    *token.Token
-	Children []Node
+	Children []types.Node
 }
 
-func (o *Or) GetChildren() []Node {
+func (o *Or) GetChildren() []types.Node {
 	return o.Children
 }
 
-func (n *Or) SetChildren(c []Node) {
+func (n *Or) SetChildren(c []types.Node) {
 	n.Children = c
 }
 

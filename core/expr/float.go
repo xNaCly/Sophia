@@ -2,6 +2,7 @@ package expr
 
 import (
 	"sophia/core/token"
+"sophia/core/types"
 	"strings"
 )
 
@@ -10,11 +11,11 @@ type Float struct {
 	Value float64
 }
 
-func (f *Float) GetChildren() []Node {
+func (f *Float) GetChildren() []types.Node {
 	return nil
 }
 
-func (n *Float) SetChildren(c []Node) {}
+func (n *Float) SetChildren(c []types.Node) {}
 
 func (f *Float) GetToken() *token.Token {
 	return f.Token

@@ -16,7 +16,6 @@ var EXPECTED_KEYWORDS = []int{
 	DIV,
 	MUL,
 	MOD,
-	PUT,
 	LET,
 	IF,
 	EQUAL,
@@ -37,7 +36,6 @@ var EXPECTED_KEYWORDS = []int{
 
 var KEYWORD_MAP = map[string]int{
 	"return": RETURN,
-	"put":    PUT,
 	"let":    LET,
 	"if":     IF,
 	"eq":     EQUAL,

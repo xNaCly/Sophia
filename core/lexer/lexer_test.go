@@ -9,7 +9,7 @@ import (
 )
 
 func TestLexerHelloWorld(t *testing.T) {
-	in := `(put "Hello World!")`
+	in := `(println "Hello World!")`
 
 	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test"))
 	l := New(in)
@@ -20,7 +20,7 @@ func TestLexerHelloWorld(t *testing.T) {
 
 	expected := []int{
 		token.LEFT_BRACE,
-		token.PUT,
+		token.IDENT,
 		token.STRING,
 		token.RIGHT_BRACE,
 		token.EOF,
@@ -94,7 +94,7 @@ func TestLexerIdent(t *testing.T) {
 }
 
 func TestLexerOperators(t *testing.T) {
-	in := `put +-/*% let () if eq or and not ++ fun _ for gt lt match #`
+	in := `+-/*% let () if eq or and not ++ fun _ for gt lt match #`
 	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test"))
 	l := New(in)
 	to := l.Lex()
@@ -103,7 +103,6 @@ func TestLexerOperators(t *testing.T) {
 	}
 
 	expected := []int{
-		token.PUT,
 		token.ADD,
 		token.SUB,
 		token.DIV,

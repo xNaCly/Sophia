@@ -29,7 +29,6 @@ const (
 	RIGHT_BRACKET
 
 	// keywords
-	PUT
 	LET
 	FUNC
 	IF
@@ -59,7 +58,6 @@ var TOKEN_NAME_MAP = map[int]string{
 	SUB:             "-",
 	DIV:             "/",
 	MUL:             "*",
-	PUT:             "put",
 	MOD:             "%",
 	PARAM:           "_",
 	LEFT_CURLY:      "{",

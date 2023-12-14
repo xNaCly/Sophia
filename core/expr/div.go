@@ -2,19 +2,20 @@ package expr
 
 import (
 	"sophia/core/token"
+"sophia/core/types"
 	"strings"
 )
 
 type Div struct {
 	Token    *token.Token
-	Children []Node
+	Children []types.Node
 }
 
-func (d *Div) GetChildren() []Node {
+func (d *Div) GetChildren() []types.Node {
 	return d.Children
 }
 
-func (n *Div) SetChildren(c []Node) {
+func (n *Div) SetChildren(c []types.Node) {
 	n.Children = c
 }
 

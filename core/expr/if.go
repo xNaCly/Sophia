@@ -2,20 +2,21 @@ package expr
 
 import (
 	"sophia/core/token"
+"sophia/core/types"
 	"strings"
 )
 
 type If struct {
 	Token     *token.Token
-	Condition Node
-	Body      []Node
+	Condition types.Node
+	Body      []types.Node
 }
 
-func (i *If) GetChildren() []Node {
+func (i *If) GetChildren() []types.Node {
 	return i.Body
 }
 
-func (n *If) SetChildren(c []Node) {
+func (n *If) SetChildren(c []types.Node) {
 	n.Body = c
 }
 

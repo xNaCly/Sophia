@@ -2,19 +2,20 @@ package expr
 
 import (
 	"sophia/core/token"
+"sophia/core/types"
 	"strings"
 )
 
 type Match struct {
 	Token    *token.Token
-	Branches []Node
+	Branches []types.Node
 }
 
-func (m *Match) GetChildren() []Node {
+func (m *Match) GetChildren() []types.Node {
 	return m.Branches
 }
 
-func (n *Match) SetChildren(c []Node) {
+func (n *Match) SetChildren(c []types.Node) {
 	n.Branches = c
 }
 

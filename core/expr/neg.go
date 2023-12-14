@@ -3,19 +3,20 @@ package expr
 import (
 	"sophia/core/serror"
 	"sophia/core/token"
+"sophia/core/types"
 	"strings"
 )
 
 type Neg struct {
 	Token    *token.Token
-	Children Node
+	Children types.Node
 }
 
-func (n *Neg) GetChildren() []Node {
-	return []Node{n.Children}
+func (n *Neg) GetChildren() []types.Node {
+	return []types.Node{n.Children}
 }
 
-func (n *Neg) SetChildren(c []Node) {
+func (n *Neg) SetChildren(c []types.Node) {
 	if len(c) == 0 {
 		return
 	}

@@ -1,23 +1,24 @@
 package expr
 
 import (
-	"bytes"
+	"sophia/core/consts"
 	"sophia/core/token"
+	"sophia/core/types"
 	"strings"
 )
 
-var templateBuffer = &bytes.Buffer{}
+var buffer = &strings.Builder{}
 
 type TemplateString struct {
 	Token    *token.Token
-	Children []Node
+	Children []types.Node
 }
 
-func (s *TemplateString) GetChildren() []Node {
+func (s *TemplateString) GetChildren() []types.Node {
 	return s.Children
 }
 
-func (n *TemplateString) SetChildren(c []Node) {
+func (n *TemplateString) SetChildren(c []types.Node) {
 	n.Children = c
 }
 
@@ -30,9 +31,9 @@ func (s *TemplateString) Eval() any {
 		return ""
 	}
 
-	templateBuffer.Reset()
-	formatHelper(buffer, s.Children, 0)
-	return templateBuffer.String()
+	buffer.Reset()
+	consts.FormatHelper(buffer, s.Children, 0)
+	return buffer.String()
 }
 
 func (n *TemplateString) CompileJs(b *strings.Builder) {

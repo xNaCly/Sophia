@@ -2,18 +2,19 @@ package expr
 
 import (
 	"sophia/core/token"
+"sophia/core/types"
 	"strings"
 )
 
 type Root struct {
-	Children []Node
+	Children []types.Node
 }
 
-func (r *Root) GetChildren() []Node {
+func (r *Root) GetChildren() []types.Node {
 	return r.Children
 }
 
-func (r *Root) SetChildren(c []Node) {
+func (r *Root) SetChildren(c []types.Node) {
 	r.Children = c
 }
 

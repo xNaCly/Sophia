@@ -3,12 +3,13 @@ package expr
 import (
 	"sophia/core/serror"
 	"sophia/core/token"
+"sophia/core/types"
 	"strings"
 )
 
 type ObjectPair struct {
-	Key   Node
-	Value Node
+	Key   types.Node
+	Value types.Node
 }
 
 type Object struct {
@@ -16,11 +17,11 @@ type Object struct {
 	Children []ObjectPair
 }
 
-func (o *Object) GetChildren() []Node {
+func (o *Object) GetChildren() []types.Node {
 	return nil
 }
 
-func (n *Object) SetChildren(c []Node) {}
+func (n *Object) SetChildren(c []types.Node) {}
 
 func (o *Object) GetToken() *token.Token {
 	return o.Token
