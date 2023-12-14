@@ -171,7 +171,7 @@ The `++` operator can be applied to lists, strings, booleans, floats:
 (++ 1 arr)
 ;; [1 1 2 3]
 
-(# 1 2 3 5) ;; defining a list
+#[1 2 3 5] ;; defining a list
 ```
 
 ## Comparison
@@ -324,8 +324,8 @@ accessing said data is as intuitive as possible:
 
 ```lisp
 (let person { name: "anon" age: 25})
-;; accessing the '.name' value from the 'person' object
-(put person.name)
+;; accessing the 'name' value from the 'person' object
+(put person["name"])
 ```
 
 The same can be applied to lists:
@@ -333,25 +333,25 @@ The same can be applied to lists:
 ```lisp
 (let list 1 2 3 4)
 ;; accessing the first element in the 'l'-list
-(put list.0)
+(put list[0])
 ```
 
-Updating the values at either the key or the index is possible via the same syntax:
+<!-- Updating the values at either the key or the index is possible via the same syntax: -->
 
-```lisp
-(let list.0 5)
-(let person.name "unknown")
-(put list person)
-[5 2 3 4] map[age:25 name:unknown]
-```
+<!-- ```lisp -->
+<!-- (let list.0 5) -->
+<!-- (let person.name "unknown") -->
+<!-- (put list person) -->
+<!-- [5 2 3 4] map[age:25 name:unknown] -->
+<!-- ``` -->
 
-Objects support one more feature, which is the addition of new keys also via the same syntax:
+<!-- Objects support one more feature, which is the addition of new keys also via the same syntax: -->
 
-```lisp
-(let person.newKey "thisIsNew")
-(put person)
- map[age:25 name:unknown newKey:thisisNew]
-```
+<!-- ```lisp -->
+<!-- (let person[newKey] "thisIsNew") -->
+<!-- (put person) -->
+<!--  map[age:25 name:unknown newKey:thisisNew] -->
+<!-- ``` -->
 
 ## Functions
 

@@ -373,24 +373,24 @@ func TestEvalObject(t *testing.T) {
     }
     age: 25
 })
-(let bankName person.bank.institute.name)
+(let bankName person["bank"]["institute"]["name"])
             `,
 			exp: "western union",
 		},
 		{
 			str: `
-		(let person {
-		name: "anon"
-		bank: {
-		money: 2500
-		institute: {
-		name: "western union"
-		}
-		}
-		age: 25
-		})
-		(let arr person.bank 2 3 4)
-		(let money arr.0.money)
+(let person {
+    name: "anon"
+    bank: {
+        money: 2500
+        institute: {
+            name: "western union"
+        }
+    }
+    age: 25
+})
+(let arr person["bank"] 2 3 4)
+(let money arr[0]["money"])
 		`,
 			exp: "2500",
 		},
@@ -422,8 +422,12 @@ func TestEvalArray(t *testing.T) {
 		exp string
 	}{
 		{
-			str: `(let b (# 1 2 3 4 5))(let r b.1)`,
+			str: `(let b #[1 2 3 4 5])(let r b[1])`,
 			exp: "2",
+		},
+		{
+			str: `(let b 5 #[1 2 3 4 5])(let r b[1][0])`,
+			exp: "1",
 		},
 	}
 	for _, i := range input {

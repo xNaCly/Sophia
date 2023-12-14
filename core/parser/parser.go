@@ -80,21 +80,6 @@ func (p *Parser) parseStatment() expr.Node {
 	p.peekError(token.LEFT_BRACE, "Missing statement start")
 	p.advance()
 
-	if p.peekIs(token.HASHTAG) {
-		arr := &expr.Array{
-			Token:    p.token[p.pos-1],
-			Children: make([]expr.Node, 0),
-		}
-		p.advance()
-		for !(p.peekIs(token.RIGHT_BRACE) || p.peekIs(token.EOF)) {
-			arr.Children = append(arr.Children, p.parseArguments())
-			p.advance()
-		}
-		p.peekError(token.RIGHT_BRACE, "Missing statement end")
-		p.advance()
-		return arr
-	}
-
 	p.peekErrorMany("Missing or unknown operator", token.EXPECTED_KEYWORDS...)
 	op := p.peek()
 	p.advance()
@@ -374,7 +359,21 @@ func (p *Parser) parseStatment() expr.Node {
 func (p *Parser) parseConstants() expr.Node {
 	p.peekErrorMany("Missing or unknown constant", token.CONSTANTS...)
 	var child expr.Node
-	if p.peekIs(token.FLOAT) {
+	if p.peekIs(token.HASHTAG) {
+		arr := &expr.Array{
+			Token:    p.token[p.pos-1],
+			Children: make([]expr.Node, 0),
+		}
+		p.advance() // skip #
+		p.peekError(token.LEFT_BRACKET, "Missing array start")
+		p.advance()
+		for !(p.peekIs(token.RIGHT_BRACKET) || p.peekIs(token.EOF)) {
+			arr.Children = append(arr.Children, p.parseArguments())
+			p.advance()
+		}
+		p.peekError(token.RIGHT_BRACKET, "Missing statement end")
+		child = arr
+	} else if p.peekIs(token.FLOAT) {
 		t := p.peek()
 		value, err := strconv.ParseFloat(t.Raw, 64)
 		if err != nil {
@@ -407,9 +406,6 @@ func (p *Parser) parseConstants() expr.Node {
 	return child
 }
 
-// TODO: indexing via [] instead of .?: arr.0.1 is treated as arr, ., 0.1 by
-// the lexer instead of arr, ., 0, ., 1 - it does work for objects doe:
-// object.field.name is parsed correctly
 func (p *Parser) parseArguments() expr.Node {
 	var child expr.Node
 	p.peekErrorMany("Missing or unknown argument",
@@ -417,20 +413,22 @@ func (p *Parser) parseArguments() expr.Node {
 		token.STRING,
 		token.IDENT,
 		token.BOOL,
+		token.HASHTAG,
 		token.LEFT_CURLY,
 		token.TEMPLATE_STRING)
-	if p.peekNext().Type == token.DOT && (p.peekIs(token.IDENT) || p.peekIs(token.FLOAT)) {
+	if p.peekNext().Type == token.LEFT_BRACKET && p.peekIs(token.IDENT) {
 		t := &expr.Index{
 			Token:  p.peek(),
 			Target: p.parseConstants(),
 			Index:  make([]expr.Node, 0),
 		}
 		p.advance() // skip ident
-		for p.peekIs(token.DOT) {
-			p.advance()
+		for p.peekIs(token.LEFT_BRACKET) {
+			p.advance() // skip [
 			t.Index = append(t.Index, p.parseConstants())
-			if p.peekNext().Type == token.DOT {
-				p.advance()
+			p.advance() // skip ident
+			if p.peekNext().Type == token.LEFT_BRACKET {
+				p.advance() // skip ]
 			}
 		}
 		child = t

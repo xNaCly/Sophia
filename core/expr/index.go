@@ -41,8 +41,8 @@ func indexHelper(target any, index []Node) any {
 				serror.Panic()
 			}
 			idx := int(idxf)
-			if idx > len(v) {
-				serror.Add(in.GetToken(), "Out of bounds error", "Array has length of %d, index %d can not be accessed", len(v), idx)
+			if idx >= len(v) {
+				serror.Add(in.GetToken(), "Out of bounds error", "Array has length of %d, index %d can not be accessed, first index is 0", len(v), idx)
 				serror.Panic()
 			}
 			curTarget := v[int(idx)]
@@ -58,19 +58,28 @@ func indexHelper(target any, index []Node) any {
 		{
 			// eq: [map.x]
 			in := index[0]
+			var indexVal string
 			switch V := in.(type) {
+			case *Ident:
+				var ok bool
+				indexVal, ok = V.Eval().(string)
+				if !ok {
+					t := V.GetToken()
+					serror.Add(t, "Index error", "Can't index object with %q, use a string or an identifier", token.TOKEN_NAME_MAP[t.Type])
+					serror.Panic()
+				}
+			case *String:
+				indexVal = V.Token.Raw
 			case *Float:
 				t := in.GetToken()
 				serror.Add(t, "Index error", "Can't index object.%g, not an array", V.Value)
 				serror.Panic()
-			}
-			idx, ok := in.(*Ident)
-			if !ok {
-				t := idx.GetToken()
-				serror.Add(t, "Index error", "Can't index object with %q, use a string", token.TOKEN_NAME_MAP[t.Type])
+			default:
+				t := V.GetToken()
+				serror.Add(t, "Index error", "Can't index object with %q, use a string or an identifier", token.TOKEN_NAME_MAP[t.Type])
 				serror.Panic()
 			}
-			curTarget := v[idx.Name]
+			curTarget := v[indexVal]
 			if len(index) == 1 {
 				return curTarget
 			}
@@ -87,10 +96,10 @@ func indexHelper(target any, index []Node) any {
 	default:
 		switch V := index[0].(type) {
 		case *Ident:
-			serror.Add(index[0].GetToken(), "Index error", "Not an object, can't use <target>.%s", V.Name)
+			serror.Add(index[0].GetToken(), "Index error", "Target not an object, can't use <target>.%s", V.Name)
 			serror.Panic()
 		case *Float:
-			serror.Add(index[0].GetToken(), "Index error", "Not an array, can't use <target>.%g", V.Value)
+			serror.Add(index[0].GetToken(), "Index error", "Target not an array, can't use <target>.%g", V.Value)
 			serror.Panic()
 		}
 	}

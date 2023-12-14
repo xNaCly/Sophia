@@ -5,6 +5,7 @@ var CONSTANTS = []int{
 	STRING,
 	IDENT,
 	BOOL,
+	HASHTAG,    // array
 	LEFT_CURLY, // object
 }
 

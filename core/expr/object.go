@@ -1,6 +1,7 @@
 package expr
 
 import (
+	"sophia/core/serror"
 	"sophia/core/token"
 	"strings"
 )
@@ -28,7 +29,14 @@ func (o *Object) GetToken() *token.Token {
 func (o *Object) Eval() any {
 	m := make(map[string]any, len(o.Children))
 	for _, c := range o.Children {
-		m[castPanicIfNotType[*Ident](c.Key, c.Key.GetToken()).Name] = c.Value.Eval()
+		ident, ok := c.Key.(*Ident)
+		if !ok {
+			t := c.Key.GetToken()
+			// TODO: support floats as object keys? idk should i?
+			serror.Add(t, "Illegal object key", "Can not use %q as object key, use any identifier", token.TOKEN_NAME_MAP[t.Type])
+			serror.Panic()
+		}
+		m[ident.Name] = c.Value.Eval()
 	}
 	return m
 }
