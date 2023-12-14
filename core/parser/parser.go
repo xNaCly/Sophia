@@ -74,12 +74,27 @@ func (p *Parser) loadNewSource(node *expr.Load) []expr.Node {
 	return res
 }
 
-// INFO: @SamuelScheit fixed this, i dont even know how and he doesnt either
 func (p *Parser) parseStatment() expr.Node {
 	childs := make([]expr.Node, 0)
 	var stmt expr.Node
 	p.peekError(token.LEFT_BRACE, "Missing statement start")
 	p.advance()
+
+	if p.peekIs(token.HASHTAG) {
+		arr := &expr.Array{
+			Token:    p.token[p.pos-1],
+			Children: make([]expr.Node, 0),
+		}
+		p.advance()
+		for !(p.peekIs(token.RIGHT_BRACE) || p.peekIs(token.EOF)) {
+			arr.Children = append(arr.Children, p.parseArguments())
+			p.advance()
+		}
+		p.peekError(token.RIGHT_BRACE, "Missing statement end")
+		p.advance()
+		return arr
+	}
+
 	p.peekErrorMany("Missing or unknown operator", token.EXPECTED_KEYWORDS...)
 	op := p.peek()
 	p.advance()
@@ -357,6 +372,7 @@ func (p *Parser) parseStatment() expr.Node {
 }
 
 func (p *Parser) parseConstants() expr.Node {
+	p.peekErrorMany("Missing or unknown constant", token.CONSTANTS...)
 	var child expr.Node
 	if p.peekIs(token.FLOAT) {
 		t := p.peek()
@@ -402,7 +418,6 @@ func (p *Parser) parseArguments() expr.Node {
 		token.IDENT,
 		token.BOOL,
 		token.LEFT_CURLY,
-		token.LEFT_BRACKET,
 		token.TEMPLATE_STRING)
 	if p.peekNext().Type == token.DOT && (p.peekIs(token.IDENT) || p.peekIs(token.FLOAT)) {
 		t := &expr.Index{
@@ -423,29 +438,10 @@ func (p *Parser) parseArguments() expr.Node {
 		child = p.parseObject()
 	} else if p.peekIs(token.TEMPLATE_STRING) {
 		child = p.parseTemplateString()
-	} else if p.peekIs(token.LEFT_BRACKET) {
-		child = p.parseArray()
 	} else {
 		child = p.parseConstants()
 	}
 	return child
-}
-
-func (p *Parser) parseArray() expr.Node {
-	p.peekError(token.LEFT_BRACKET, "missing object start")
-	o := expr.Array{
-		Token:    p.peek(),
-		Children: make([]expr.Node, 0),
-	}
-	p.advance()
-
-	for !p.peekIs(token.RIGHT_BRACKET) && !p.peekIs(token.EOF) {
-		o.Children = append(o.Children, p.parseArguments())
-		p.advance()
-	}
-
-	p.peekError(token.RIGHT_BRACKET, "missing array end")
-	return &o
 }
 
 func (p *Parser) parseObject() expr.Node {

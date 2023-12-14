@@ -170,6 +170,8 @@ The `++` operator can be applied to lists, strings, booleans, floats:
 ;; [1 2 3 1]
 (++ 1 arr)
 ;; [1 1 2 3]
+
+(# 1 2 3 5) ;; defining a list
 ```
 
 ## Comparison

@@ -65,3 +65,24 @@ func TestParserIndex(t *testing.T) {
 		})
 	}
 }
+
+func TestParserArray(t *testing.T) {
+	in := []string{
+		"(let array (# 1 2 3 4 5))",
+		"(for (_ i) (# 1 2 3 4 5))",
+		"(++ (# 1 2 3 4 5) 1 2)",
+	}
+	for _, s := range in {
+		t.Run(s, func(t *testing.T) {
+			serror.SetDefault(serror.NewFormatter(&core.CONF, s, "test"))
+			l := lexer.New(s)
+			tokens := l.Lex()
+			p := New(tokens, "test")
+			p.Parse()
+			if serror.HasErrors() {
+				serror.Display()
+				t.Errorf("parsing should not fail for %q, it did", s)
+			}
+		})
+	}
+}

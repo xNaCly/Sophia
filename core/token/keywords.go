@@ -1,5 +1,13 @@
 package token
 
+var CONSTANTS = []int{
+	FLOAT,
+	STRING,
+	IDENT,
+	BOOL,
+	LEFT_CURLY, // object
+}
+
 // operators
 var EXPECTED_KEYWORDS = []int{
 	ADD,
