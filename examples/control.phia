@@ -28,4 +28,4 @@
 
 (not (eq 1 2))
 
-(put "not (and a) -> " (not (and a)))
+(put "not (and a) -> " (not (and a a)))
