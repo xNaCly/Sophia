@@ -19,15 +19,21 @@ chapter. The documentation is designed for readers which are considered
 experienced programmers and are able to create rudimentary programs in
 programming language such as c or python.
 
+## News
+
+For the latest and greatest on sophia lang development, see my blog
+[here](https://xnacly.me/tags/sophia/).
+
 ## Overview
 
 The documentation is split up into the following files:
 
-| Page                      | Description                                                      |
-| ------------------------- | ---------------------------------------------------------------- |
-| [Language](./Language.md) | Overview over the sophia programming language                    |
-| [Examples](./Examples.md) | Examples with in depth explanations                              |
-| [Internal](./Internal.md) | Overview over the inner workings and the code of the interpreter |
+| Page                        | Description                                                                                   |
+| --------------------------- | --------------------------------------------------------------------------------------------- |
+| [Language](./Language.md)   | Overview over the sophia programming language                                                 |
+| [Examples](./Examples.md)   | Examples with in depth explanations                                                           |
+| [Embedding](./Embedding.md) | Guide for embedding sophia into applications and registering go functions for usage in sophia |
+| [Internal](./Internal.md)   | Overview over the inner workings and the code of the interpreter                              |
 
 ## Motivation
 
