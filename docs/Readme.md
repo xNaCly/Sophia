@@ -7,16 +7,10 @@ comparisons (and, or, not) arithmetics (+,-,/,\*,%), declarations (let, fun),
 merging lists (++) as well as printing to stdout.
 
 It's implementation can be fed expressions from stdin, the repl, a file or a
-flag. The Sophia language can be interpreted or compiled to the following
-languages or be interpreted:
-
-- [x] Javascript
-- [ ] Python
-
-The unchecked programming languages are a work in progess.
+flag. The Sophia language is implemented with a tree walk interpreter.
 
 ```sophia
-(put "$ man sophia")
+(println "Hello World")
 ```
 
 The Sophia language documentation is split up into several chapters.
@@ -96,21 +90,6 @@ nowhere near experienced enough for that yet. The lexer and parser itself
 aren't doing much work and are pretty fast - the evaluation is the slowest part
 of the interpreter.
 
-I recently improved the interpreter performance by doing a lot less in hot
-paths, such as computing float and boolean values at parse time, see
-[daf3767](https://github.com/xNaCly/Sophia/commit/daf3767245389060b4706064bb6027be8d72e0ad).
-This improved the performance for the specific test script by 5.67 times. I
-also added an optimizer for several optimisations that are preformed by
-modifying the abstract syntax tree:
+For recent optimisiation work, see:
 
-- [x] stripping unused variables
-- [x] stripping unused functions
-- [ ] computing constant expressions
-- [ ] replacing variable and function names with integers for faster hash map
-      access
-- [ ] removing empty constructs:
-  - [ ] empty functions
-  - [ ] empty if
-  - [ ] empty for
-  - [ ] empty put
-  - [ ] empty match
+- [Improving Programming Language Performance](https://xnacly.me/posts/2023/language-performance/)

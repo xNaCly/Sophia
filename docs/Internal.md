@@ -34,7 +34,7 @@ The above statement can be roughly translated into the following list of token:
 | Token type    | Line index | Line | Raw value     |
 | ------------- | ---------- | ---- | ------------- |
 | `LEFT_BRACE`  | 0          | 0    | `(`           |
-| `PUT`         | 1          | 0    | `put`         |
+| `IDENT`       | 1          | 0    | `println`     |
 | `STRING`      | 7          | 0    | `hello world` |
 | `RIGHT_BRACE` | 18         | 0    | `)`           |
 
@@ -55,7 +55,7 @@ With our example:
 
 ```
 LEFT_BRACE      -> valid expression start, proceed
-PUT             -> valid operator, proceed
+println         -> valid function, proceed
 "hello world"   -> valid argument for operator, proceed
 RIGHT_BRACE     -> valid expression end, return ast
 ```
@@ -64,7 +64,7 @@ The resulting abstract syntax tree of our before defined expression expressed us
 
 ```json
 {
-  "put": {
+  "println": {
     "children": [
       {
         "string": {
@@ -118,52 +118,13 @@ type Node interface {
 Therefore a string can be accepted as a value for all other expressions which
 accept structures of type `Node` as values for their attributes.
 
-Taking a look at the `Put` expression definition we notice the `Children`
-attribute of type `[]Node`.
-
-```go
-package expr
-
-import (
-	"fmt"
-	"sophia/core/token"
-	"strings"
-)
-
-type Put struct {
-	Token    token.Token
-	Children []Node
-}
-
-func (p *Put) GetToken() token.Token {
-	return p.Token
-}
-
-func (p *Put) Eval() any {
-	b := strings.Builder{}
-	for i, c := range p.Children {
-		if i != 0 {
-			b.WriteRune(' ')
-		}
-		b.WriteString(fmt.Sprint(c.Eval()))
-	}
-	fmt.Printf("%s\n", b.String())
-	return nil
-}
-```
-
-This definition allows the interpreter to call the `Node.Eval()` function on
-the `Put` structure, which will call the `Node.Eval()` function and return its
-values on all its children, which will do the same if they contain children.
-This makes for a nice, easy but slow recursive evaluation.
-
 ### Typechecking
 
-The `Put` structure accepts children which can contain all values, other
-operations, such as arithmetics should and can not accept arguments of all
-types. To fix this the `expr` package contains the `expr.castPanicIfNotType`
-function, which does exactly what its name implies - it panics if the given
-argument is not of the generic type specified. It's used extensively in functions such as `expr.Add.Eval()`:
+Some Nodes accept children of all types, other operations, such as arithmetics
+should and can not accept arguments of all types. To fix this the `expr`
+package contains the `expr.castPanicIfNotType` function, which does exactly
+what its name implies - it panics if the given argument is not of the generic
+type specified. It's used extensively in functions such as `expr.Add.Eval()`:
 
 ```go
 // core/expr/add.go
@@ -264,7 +225,7 @@ Providing the lexer with input containing more than one line, the lexer shows co
 ```
 $ cat err.phia
 ;; this input contains two errors
-(put " ?)
+(println " ?)
 (? "test")
 $ sophia err.phia
 error: Unterminated string
@@ -272,8 +233,8 @@ error: Unterminated string
 	at: /home/teo/err.phia:2:7:
 
 	   1| ;; this input contains two errors
-	   2| (put " ?)
-	    |       ^^^^
+	   2| (println " ?)
+	    |          ^^^^
 	   3| (? "test")
 	   4|
 
@@ -284,7 +245,7 @@ error: Unknown character
 	at: /home/teo/err.phia:3:2:
 
 	   1| ;; this input contains two errors
-	   2| (put " ?)
+	   2| (println " ?)
 	   3| (? "test")
 	    |  ^
 	   4|
@@ -301,33 +262,30 @@ languages grammar, for instance in the aforementioned expression we could've
 put a second keyword after `put`, which would not match our language grammar:
 
 ```lisp
-(put put)
+(println put)
 ```
 
-Interpreter error:
-
 ```
-$ sophia -exp "(put put)"
-error: Unexpected Token
+$ sophia -exp '(println put)'
+error: Undefined variable
 
-	at: repl:1:6:
+        at: cli:1:10:
 
-	   1| (put put)
-	    |      ^^^
+            1| (println put)
+             |          ^^^
 
-Missing or unknown argument: Expected any of 'FLOAT,STRING,IDENT,BOOL,LEFT_CURLY,LEFT_BRACKET,TEMPLATE_STRING' got 'PUT'.
-Semantic errors found, skipping remaining interpreter stages. (evaluation)
+Variable "put" is not defined.
 ```
 
 Trying to define a function without an identifier as its name results in the following error:
 
 ```
-$ sophia -exp '(fun (_) (put))'
+$ sophia -exp '(fun (_) (println))'
 error: Type error
 
 	at: cli:1:7:
 
-	   1| (fun (_) (put))
+	   1| (fun (_) (println))
 	    |       ^
 
 Expected the first argument for function definition to be of type IDENT, got "PARAM".
@@ -354,12 +312,12 @@ Semantic errors found, skipping remaining interpreter stages. (evaluation)
 Using an undefined variable or function:
 
 ```
-$ sophia -exp '(put a)'
+$ sophia -exp '(println a)'
 rror: Undefined variable
 
 	at: cli:1:6:
 
-	   1| (put a)
+	   1| (println a)
 	    |      ^
 
 Variable "a" is not defined.
@@ -377,12 +335,12 @@ Function "square" not defined
 Iterating of anything which is not a container:
 
 ```
-$ sophia -exp '(for (_ i) "test" (put "iteration" i))'
+$ sophia -exp '(for (_ i) "test" (println "iteration" i))'
 error: Invalid iterator
 
 	at: cli:1:13:
 
-	   1| (for (_ i) "test" (put "iteration" i))
+	   1| (for (_ i) "test" (println "iteration" i))
 	    |             ^^^^
 
 expected container or upper bound for iteration, got: string
