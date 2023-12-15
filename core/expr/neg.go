@@ -28,16 +28,17 @@ func (n *Neg) GetToken() *token.Token {
 
 func (n *Neg) Eval() any {
 	child := n.Children.Eval()
-	var r any
 	switch v := child.(type) {
+	case nil:
+		return false
 	case float64:
-		r = v * -1
+		return v * -1
 	case bool:
-		r = !v
+		return !v
 	default:
 		t := n.Children.GetToken()
-		serror.Add(t, "Type Error", "Expected float64 or bool, got %T", child)
+		serror.Add(t, "Type Error", "Expected float64, bool or nil, got %T", child)
 		serror.Panic()
 	}
-	return r
+	return nil
 }
