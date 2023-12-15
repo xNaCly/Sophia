@@ -12,18 +12,12 @@ import (
 
 func Start() {
 	execute := flag.String("exp", "", "specifiy expression to execute")
-	target := flag.String("target", "", "specifiy target to compile sophia to")
 	dbg := flag.Bool("dbg", false, "enable debug logs")
 	allErrors := flag.Bool("all-errors", false, "display all found errors")
-	ast := flag.Bool("ast", false, "display the ast")
-	toks := flag.Bool("tokens", false, "display lexed tokens")
 	flag.Parse()
 	core.CONF = core.Config{
 		Debug:     *dbg,
-		Target:    *target,
 		AllErrors: *allErrors,
-		Ast:       *ast,
-		Tokens:    *toks,
 	}
 
 	if *dbg {
@@ -62,9 +56,6 @@ func Start() {
 			log.Fatalln("\n" + err.Error())
 		}
 	} else {
-		if len(core.CONF.Target) > 0 {
-			log.Fatalf("got compile target %q, but no file or expression to compile, exiting...", core.CONF.Target)
-		}
 		fmt.Print(core.ASCII_ART, "\n")
 		debug.Log("got nothing, starting repl...")
 		repl(run)

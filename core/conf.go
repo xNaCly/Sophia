@@ -12,20 +12,9 @@ const ASCII_ART = `
       ░      ░ ░            ░  ░  ░ ░        ░  ░
 `
 
-// available targets to compile sophia to
-var TARGETS = map[string]struct{}{
-	"js": {},
-	// "go",
-	// "javascript",
-	// "python",
-}
-
 type Config struct {
-	Debug     bool // enable debug logs
 	AllErrors bool
-	Target    string // target to compile sophia to
-	Ast       bool   // print ast
-	Tokens    bool   // print lexed tokens
+	Debug     bool // enable debug logs
 }
 
 var CONF = Config{

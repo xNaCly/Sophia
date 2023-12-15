@@ -26,7 +26,7 @@ characters for token. For the sake of simplicity we will use the most basic
 expression i can think of:
 
 ```lisp
-(put "hello world")
+(println "hello world")
 ```
 
 The above statement can be roughly translated into the following list of token:

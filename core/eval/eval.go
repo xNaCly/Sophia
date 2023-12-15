@@ -19,19 +19,3 @@ func Eval(t string, ast []types.Node) []string {
 	}
 	return []string{}
 }
-
-func CompileJs(ast []types.Node) string {
-	b := strings.Builder{}
-	for _, c := range ast {
-		l := b.Len()
-
-		c.CompileJs(&b)
-
-		// INFO: if compiling the last expression did yield a result, append a
-		// semicolon, because we are at the top level expression
-		if b.Len() != l {
-			b.WriteRune(';')
-		}
-	}
-	return b.String()
-}
