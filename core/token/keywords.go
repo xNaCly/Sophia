@@ -38,7 +38,6 @@ var KEYWORD_MAP = map[string]int{
 	"return": RETURN,
 	"let":    LET,
 	"if":     IF,
-	"eq":     EQUAL,
 	"or":     OR,
 	"and":    AND,
 	"not":    NEG,
@@ -46,8 +45,6 @@ var KEYWORD_MAP = map[string]int{
 	"for":    FOR,
 	"param":  PARAM,
 	"ident":  IDENT,
-	"gt":     GT,
-	"lt":     LT,
 	"match":  MATCH,
 	"load":   LOAD,
 }

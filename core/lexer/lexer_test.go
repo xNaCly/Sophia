@@ -94,7 +94,7 @@ func TestLexerIdent(t *testing.T) {
 }
 
 func TestLexerOperators(t *testing.T) {
-	in := `+-/*% let () if eq or and not ++ fun _ for gt lt match #`
+	in := `+-/*% let () if = or and not ++ fun _ for > < match #`
 	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test"))
 	l := New(in)
 	to := l.Lex()

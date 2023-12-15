@@ -18,12 +18,12 @@ Sophia features four data types:
 > Keywords are textual words with multiple characters, operators are solely
 > symbols. Both words are used synonymously in the documentation.
 
-The most useful keyword is the `put` keyword. It prints all arguments to the
-standard output. Our current knowledge about Sophia can be applied to create
+The most useful keyword is the `println` keyword. It prints all arguments to the
+standard out stream. Our current knowledge about Sophia can be applied to create
 the famous `Hello World` example:
 
 ```lisp
-(put "Hello World")
+(println "Hello World")
 ```
 
 The following chapter explains how to execute the expression.
@@ -67,7 +67,7 @@ $ sophia
       ░      ░ ░            ░  ░  ░ ░        ░  ░
 
 Welcome to the Sophia programming language repl - press <CTRL-D> or <CTRL-C> to quit...
-sophia> (put "Hello World!")
+sophia> (println "Hello World!")
 Hello World!
 = [<nil>]
 sophia>
@@ -146,7 +146,7 @@ Sophia supports interpolation similar to rust or javascript via the following sy
 ```
 (let name "anon")
 (let money 500_912.99)
-(put 'Hi "{money}", you have {money}€ in the bank!')
+(println 'Hi "{money}", you have {money}€ in the bank!')
 ;; Hi "anon", you have 500912.99€ in the bank!
 ```
 
@@ -193,13 +193,13 @@ one of its arguments is true. `not` negates the arguments value:
 ### Comparing numbers
 
 ```lisp
-(eq 1 2 1)
-(lt 1 10)
-(gt 20 1)
+(= 1 2 1)
+(> 1 10)
+(< 20 1)
 ```
 
-`eq` evaluates to true if all arguments are the same. `lt` evaluates to true if
-the first argument is smaller than the second. `gt` evaluates to true if the
+`=` evaluates to true if all arguments are the same. `<` evaluates to true if
+the first argument is smaller than the second. `>` evaluates to true if the
 first argument is bigger than the second.
 
 ## Controlflow
@@ -214,16 +214,16 @@ are executed.
 ```lisp
 (if
     true                ;; if-head
-    (put "true!")       ;; if-body
-    (put "true!")       ;; if-body
-    (put "true!")       ;; if-body
+    (println "true!")       ;; if-body
+    (println "true!")       ;; if-body
+    (println "true!")       ;; if-body
 )
 
 (if
     (and true false)
-    (put "true!")
-    (put "true!")
-    (put "true!")
+    (println "true!")
+    (println "true!")
+    (println "true!")
 )
 ```
 
@@ -236,7 +236,7 @@ Lets take a look at iteration over containers:
 (for
     (_ i)               ;; loop variable
     array               ;; container to iterate over
-    (put i))            ;; for body
+    (println i))            ;; for body
 ```
 
 `for` assigns the current value of the container iteration to the defined loop
@@ -250,7 +250,7 @@ Sophia supports array range syntax:
 (for
     (_ i)
     100
-    (put i))
+    (println i))
 ```
 
 ### Match
@@ -259,9 +259,9 @@ Sophia supports array range syntax:
 (let a true)
 (let b false)
 (match
-    (if a (put "a true"))
-    (if b (put "b true"))
-    (put i)
+    (if a (println "a true"))
+    (if b (println "b true"))
+    (println i)
 ```
 
 Match creates an environment which contains guards (`if`), similar to a switch
@@ -282,7 +282,7 @@ this simply create the following files and compile the entry point
     (* n n))
 ;; main.phia
 (load "square.phia")
-(put
+(println
     (square 12))
 ```
 
@@ -325,7 +325,7 @@ accessing said data is as intuitive as possible:
 ```lisp
 (let person { name: "anon" age: 25})
 ;; accessing the 'name' value from the 'person' object
-(put person["name"])
+(println person["name"])
 ```
 
 The same can be applied to lists:
@@ -333,7 +333,7 @@ The same can be applied to lists:
 ```lisp
 (let list 1 2 3 4)
 ;; accessing the first element in the 'l'-list
-(put list[0])
+(println list[0])
 ```
 
 <!-- Updating the values at either the key or the index is possible via the same syntax: -->
@@ -341,7 +341,7 @@ The same can be applied to lists:
 <!-- ```lisp -->
 <!-- (let list.0 5) -->
 <!-- (let person.name "unknown") -->
-<!-- (put list person) -->
+<!-- (println list person) -->
 <!-- [5 2 3 4] map[age:25 name:unknown] -->
 <!-- ``` -->
 
@@ -349,7 +349,7 @@ The same can be applied to lists:
 
 <!-- ```lisp -->
 <!-- (let person[newKey] "thisIsNew") -->
-<!-- (put person) -->
+<!-- (println person) -->
 <!--  map[age:25 name:unknown newKey:thisisNew] -->
 <!-- ``` -->
 

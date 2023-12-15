@@ -3,21 +3,21 @@
 ## Hello world
 
 ```lisp
-(put "hello world")
-(put "hello" "world")
+(println "hello world")
+(println "hello" "world")
 ```
 
 ## Variables
 
 ```lisp
-(put
+(println
     "pi:"
     (let pi 3.1514))
 
-(put
+(println
     "pi*pi" (* pi pi))
 
-(put
+(println
     "version:"
     (let v "v1.1.1")
     v
@@ -25,10 +25,10 @@
     v
 )
 
-(put
+(println
     "boolean variables:"
     (let bool true)
-    (put bool)
+    (println bool)
 )
 ```
 
@@ -41,7 +41,7 @@
     (* a a)
 )
 
-(put
+(println
     "function call:"
     (square 12))
 ```
@@ -60,16 +60,16 @@
 ## Math
 
 ```lisp
-(put
+(println
     "1+2=" (+ 1 2))
-(put
+(println
     "1-2=" (- 1 2))
-(put
+(println
     "1*2=" (* 1 2))
-(put
+(println
     "1/2=" (/ 1 2))
 
-(put
+(println
     "1%2=" (% 1 2))
 
 (- 25
@@ -84,12 +84,12 @@
 ```lisp
 (if
     true
-    (put "the condition is true")
+    (println "the condition is true")
 )
 
 (if
     false
-    (put "?")
+    (println "?")
 )
 
 (eq 1 1)
@@ -101,28 +101,28 @@
 (gt 10 1)
 
 (let a 1)
-(put
+(println
     "a == a -> "
     (eq a a))
 
 (or false true false)
 
 (let a false)
-(put
+(println
     "a | a | true -> "
     (or a a true))
 
 (and true false)
 
 (let a true)
-(put
+(println
     "a & a -> "
     (and a a))
 
 (not
     (eq 1 2))
 
-(put
+(println
     "not (and a) -> "
     (not
         (eq a)))
@@ -133,13 +133,13 @@
 ```lisp
 (let arr 9)
 (for (_ i) arr
-     (put i))
+     (println i))
 ```
 
 ```lisp
 (let arr 9)
 (for (_ i) arr
-     (put i))
+     (println i))
 ```
 
 ```lisp
@@ -147,7 +147,7 @@
 (let arr 9)
 (for (_ e) arr
     (let sum (+ e sum)))
-(put sum)
+(println sum)
 ```
 
 ## Fibonacci sequence
@@ -157,7 +157,7 @@
 (let lst 1)
 (for (_ i) 15
     (let t (+ beforeLast lst))
-    (put t)
+    (println t)
     (let beforeLast lst)
     (let lst t))
 ```
@@ -169,9 +169,9 @@
     (let mod3 (eq 0 (% i 3)))
     (let mod5 (eq 0 (% i 5)))
     (match
-        (if (and mod3 mod5) (put "FizzBuzz"))
-        (if mod3 (put "Fizz"))
-        (if mod5 (put "Buzz"))
-        (put i)
+        (if (and mod3 mod5) (println "FizzBuzz"))
+        (if mod3 (println "Fizz"))
+        (if mod5 (println "Buzz"))
+        (println i)
 ))
 ```

@@ -1,7 +1,7 @@
 ;; vim: syntax=lisp
 (for (_ i) 15
-    (let mod3 (eq 0 (% i 3)))
-    (let mod5 (eq 0 (% i 5)))
+    (let mod3 (= 0 (% i 3)))
+    (let mod5 (= 0 (% i 5)))
     (match
         (if (and mod3 mod5) (println "FizzBuzz"))
         (if mod3 (println "Fizz"))

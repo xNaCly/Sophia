@@ -1,8 +1,8 @@
 ;; vim: syntax=lisp
 (fun bin (_ n k)
-    (if (gt k n) 
+    (if (< k n) 
         (return -1))
-    (if (and (eq k n) (eq k 0)) 
+    (if (and (= k n) (= k 0)) 
         (return 1))
 
     ;; Due to the symmetry of the binomial coefficient with regard to k and n −
@@ -10,7 +10,7 @@
 	;; product above to the smaller of k and n − k, see
 	;; https://en.wikipedia.org/wiki/Binomial_coefficient#Computing_the_value_of_binomial_coefficients
     (let kn (- n k))
-    (if (lt kn k) 
+    (if (< kn k) 
         (let k kn))
 
     ;; see https://en.wikipedia.org/wiki/Binomial_coefficient#Multiplicative_formula

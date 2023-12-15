@@ -7,7 +7,7 @@
 ;; returns a if bigger than b, otherwise b
 ;; max: float, float -> float
 (fun max (_ a b) 
-    (if (lt a b) 
+    (if (< a b) 
         (return b)) 
     a) ;; return without extra statement
 
@@ -18,7 +18,7 @@
     (let neg 0)
     (for (_ i) arr 
         (match
-            (if (lt i 0) (let pos (+ pos 1)))
+            (if (< i 0) (let pos (+ pos 1)))
             (let neg (+ neg 1))))
     (max neg pos))
 

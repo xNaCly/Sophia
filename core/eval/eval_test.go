@@ -123,27 +123,27 @@ func TestEvalConditional(t *testing.T) {
 			exp: "true",
 		},
 		{
-			str: "(eq 1 2)",
+			str: "(= 1 2)",
 			exp: "false",
 		},
 		{
-			str: "(eq true false)",
+			str: "(= true false)",
 			exp: "false",
 		},
 		{
-			str: "(lt 10 1)",
+			str: "(< 10 1)",
 			exp: "false",
 		},
 		{
-			str: "(gt 1 10)",
+			str: "(> 1 10)",
 			exp: "false",
 		},
 		{
-			str: "(lt 1 10)",
+			str: "(< 1 10)",
 			exp: "true",
 		},
 		{
-			str: "(gt 10 1)",
+			str: "(> 10 1)",
 			exp: "true",
 		},
 		{
@@ -327,7 +327,7 @@ func TestEvalReturn(t *testing.T) {
 		{
 			str: `
 (fun test (_ n) 
-    (if (lt n 0) 
+    (if (< n 0) 
         (return -1))
     (return (*n n)
 ))
