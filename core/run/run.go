@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"sophia/core"
+	_ "sophia/core/builtin"
 	"sophia/core/debug"
 	"sophia/core/eval"
 	"sophia/core/lexer"

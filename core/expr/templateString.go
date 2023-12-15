@@ -1,7 +1,7 @@
 package expr
 
 import (
-	"sophia/core/consts"
+	"sophia/core/shared"
 	"sophia/core/token"
 	"sophia/core/types"
 	"strings"
@@ -32,7 +32,7 @@ func (s *TemplateString) Eval() any {
 	}
 
 	buffer.Reset()
-	consts.FormatHelper(buffer, s.Children, 0)
+	shared.FormatHelper(buffer, s.Children, 0)
 	return buffer.String()
 }
 

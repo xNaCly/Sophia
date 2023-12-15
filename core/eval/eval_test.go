@@ -2,6 +2,7 @@ package eval
 
 import (
 	"sophia/core"
+	_ "sophia/core/builtin" // required for built ins, such as println or len
 	"sophia/core/lexer"
 	"sophia/core/parser"
 	"sophia/core/serror"

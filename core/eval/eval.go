@@ -3,7 +3,6 @@ package eval
 import (
 	"fmt"
 	"sophia/core/types"
-	"strings"
 )
 
 func Eval(t string, ast []types.Node) []string {
