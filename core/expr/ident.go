@@ -4,8 +4,7 @@ import (
 	"sophia/core/consts"
 	"sophia/core/serror"
 	"sophia/core/token"
-"sophia/core/types"
-	"strings"
+	"sophia/core/types"
 )
 
 // using a variable
@@ -32,8 +31,4 @@ func (i *Ident) Eval() any {
 		serror.Panic()
 	}
 	return val
-}
-
-func (n *Ident) CompileJs(b *strings.Builder) {
-	b.WriteString(n.Name)
 }

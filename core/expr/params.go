@@ -2,8 +2,7 @@ package expr
 
 import (
 	"sophia/core/token"
-"sophia/core/types"
-	"strings"
+	"sophia/core/types"
 )
 
 type Params struct {
@@ -25,13 +24,4 @@ func (p *Params) GetToken() *token.Token {
 
 func (p *Params) Eval() any {
 	return nil
-}
-
-func (n *Params) CompileJs(b *strings.Builder) {
-	for i, c := range n.Children {
-		c.CompileJs(b)
-		if i+1 < len(n.Children) {
-			b.WriteRune(',')
-		}
-	}
 }

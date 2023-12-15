@@ -2,7 +2,6 @@ package types
 
 import (
 	"sophia/core/token"
-	"strings"
 )
 
 type Node interface {
@@ -10,5 +9,4 @@ type Node interface {
 	GetChildren() []Node
 	SetChildren(c []Node)
 	Eval() any
-	CompileJs(b *strings.Builder)
 }

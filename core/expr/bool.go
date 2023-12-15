@@ -2,8 +2,7 @@ package expr
 
 import (
 	"sophia/core/token"
-"sophia/core/types"
-	"strings"
+	"sophia/core/types"
 )
 
 type Boolean struct {
@@ -23,8 +22,4 @@ func (b *Boolean) GetToken() *token.Token {
 
 func (b *Boolean) Eval() any {
 	return b.Value
-}
-
-func (n *Boolean) CompileJs(b *strings.Builder) {
-	b.WriteString(n.Token.Raw)
 }

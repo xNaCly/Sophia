@@ -3,8 +3,7 @@ package expr
 import (
 	"sophia/core/serror"
 	"sophia/core/token"
-"sophia/core/types"
-	"strings"
+	"sophia/core/types"
 )
 
 type ObjectPair struct {
@@ -40,17 +39,4 @@ func (o *Object) Eval() any {
 		m[ident.Name] = c.Value.Eval()
 	}
 	return m
-}
-
-func (o *Object) CompileJs(b *strings.Builder) {
-	b.WriteRune('{')
-	for i, c := range o.Children {
-		c.Key.CompileJs(b)
-		b.WriteRune(':')
-		c.Value.CompileJs(b)
-		if i+1 < len(o.Children) {
-			b.WriteRune(',')
-		}
-	}
-	b.WriteRune('}')
 }

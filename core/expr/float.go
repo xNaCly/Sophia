@@ -2,8 +2,7 @@ package expr
 
 import (
 	"sophia/core/token"
-"sophia/core/types"
-	"strings"
+	"sophia/core/types"
 )
 
 type Float struct {
@@ -23,8 +22,4 @@ func (f *Float) GetToken() *token.Token {
 
 func (f *Float) Eval() any {
 	return f.Value
-}
-
-func (n *Float) CompileJs(b *strings.Builder) {
-	b.WriteString(n.Token.Raw)
 }

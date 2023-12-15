@@ -1,9 +1,8 @@
 package expr
 
 import (
-	"sophia/core/debug"
 	"sophia/core/token"
-"sophia/core/types"
+	"sophia/core/types"
 	"strings"
 )
 
@@ -60,20 +59,4 @@ func (m *Merge) Eval() any {
 		}
 	}
 	return merged
-}
-
-func (n *Merge) CompileJs(b *strings.Builder) {
-	cLen := len(n.Children)
-	if cLen == 0 {
-		debug.Log("opt: removed illogical '++' expression containing no children on line ", n.Token.Line)
-		return
-	}
-	b.WriteString("[].concat(")
-	for i, c := range n.Children {
-		c.CompileJs(b)
-		if i+1 < cLen {
-			b.WriteRune(',')
-		}
-	}
-	b.WriteRune(')')
 }

@@ -3,8 +3,7 @@ package expr
 import (
 	"sophia/core/serror"
 	"sophia/core/token"
-"sophia/core/types"
-	"strings"
+	"sophia/core/types"
 )
 
 type Neg struct {
@@ -41,14 +40,4 @@ func (n *Neg) Eval() any {
 		serror.Panic()
 	}
 	return r
-}
-
-func (n *Neg) CompileJs(b *strings.Builder) {
-	switch n.Children.(type) {
-	case *Float:
-		b.WriteRune('-')
-	case *Boolean:
-		b.WriteRune('!')
-	}
-	n.Children.CompileJs(b)
 }

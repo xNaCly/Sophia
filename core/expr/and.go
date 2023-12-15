@@ -3,7 +3,6 @@ package expr
 import (
 	"sophia/core/token"
 	"sophia/core/types"
-	"strings"
 )
 
 type And struct {
@@ -38,14 +37,4 @@ func (a *And) Eval() any {
 		}
 	}
 	return true
-}
-
-func (n *And) CompileJs(b *strings.Builder) {
-	cLen := len(n.Children)
-	for i, c := range n.Children {
-		c.CompileJs(b)
-		if i+1 < cLen {
-			b.WriteString("&&")
-		}
-	}
 }

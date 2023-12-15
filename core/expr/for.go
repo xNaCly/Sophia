@@ -4,8 +4,7 @@ import (
 	"sophia/core/consts"
 	"sophia/core/serror"
 	"sophia/core/token"
-"sophia/core/types"
-	"strings"
+	"sophia/core/types"
 )
 
 // function definition
@@ -66,29 +65,4 @@ func (f *For) Eval() any {
 		consts.SYMBOL_TABLE[element.Key] = oldValue
 	}
 	return nil
-}
-func (n *For) CompileJs(b *strings.Builder) {
-	b.WriteString("for(")
-	b.WriteString("let ")
-	if n.LoopOver.GetToken().Type == token.FLOAT {
-		b.WriteString(n.Params.GetChildren()[0].GetToken().Raw)
-		b.WriteString("=0;")
-		b.WriteString(n.Params.GetChildren()[0].GetToken().Raw)
-		b.WriteString("<")
-		b.WriteString(n.LoopOver.GetToken().Raw)
-		b.WriteString(";")
-		b.WriteString(n.Params.GetChildren()[0].GetToken().Raw)
-		b.WriteString("++")
-	} else {
-		n.Params.CompileJs(b)
-		b.WriteString(" of ")
-		n.LoopOver.CompileJs(b)
-	}
-	b.WriteRune(')')
-	b.WriteString("{")
-	for _, c := range n.Body {
-		c.CompileJs(b)
-		b.WriteRune(';')
-	}
-	b.WriteString("}")
 }

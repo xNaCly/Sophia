@@ -2,8 +2,7 @@ package expr
 
 import (
 	"sophia/core/token"
-"sophia/core/types"
-	"strings"
+	"sophia/core/types"
 )
 
 type If struct {
@@ -33,15 +32,4 @@ func (i *If) Eval() any {
 		c.Eval()
 	}
 	return true
-}
-func (n *If) CompileJs(b *strings.Builder) {
-	b.WriteString("if(")
-	n.Condition.CompileJs(b)
-	b.WriteRune(')')
-	b.WriteRune('{')
-	for _, c := range n.Body {
-		c.CompileJs(b)
-		b.WriteRune(';')
-	}
-	b.WriteRune('}')
 }

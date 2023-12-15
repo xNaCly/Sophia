@@ -2,8 +2,7 @@ package expr
 
 import (
 	"sophia/core/token"
-"sophia/core/types"
-	"strings"
+	"sophia/core/types"
 )
 
 type Div struct {
@@ -39,12 +38,4 @@ func (d *Div) Eval() any {
 		}
 	}
 	return res
-}
-func (n *Div) CompileJs(b *strings.Builder) {
-	for i, c := range n.Children {
-		c.CompileJs(b)
-		if i+1 < len(n.Children) {
-			b.WriteRune('/')
-		}
-	}
 }

@@ -2,8 +2,7 @@ package expr
 
 import (
 	"sophia/core/token"
-"sophia/core/types"
-	"strings"
+	"sophia/core/types"
 )
 
 type Mul struct {
@@ -40,12 +39,4 @@ func (m *Mul) Eval() any {
 		}
 	}
 	return res
-}
-func (n *Mul) CompileJs(b *strings.Builder) {
-	for i, c := range n.Children {
-		c.CompileJs(b)
-		if i+1 < len(n.Children) {
-			b.WriteRune('*')
-		}
-	}
 }

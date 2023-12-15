@@ -2,8 +2,7 @@ package expr
 
 import (
 	"sophia/core/token"
-"sophia/core/types"
-	"strings"
+	"sophia/core/types"
 )
 
 type Match struct {
@@ -39,25 +38,4 @@ func (m *Match) Eval() any {
 		}
 	}
 	return nil
-}
-
-func (n *Match) CompileJs(b *strings.Builder) {
-	if len(n.Branches) == 1 {
-		n.Branches[0].CompileJs(b)
-	}
-	for i, c := range n.Branches {
-		isIf := c.GetToken().Type != token.IF
-		if i != 0 {
-			b.WriteString("else")
-		}
-		if isIf {
-			b.WriteRune('{')
-		} else {
-			b.WriteRune(' ')
-		}
-		c.CompileJs(b)
-		if c.GetToken().Type != token.IF {
-			b.WriteRune('}')
-		}
-	}
 }

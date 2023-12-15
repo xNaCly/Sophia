@@ -2,8 +2,7 @@ package expr
 
 import (
 	"sophia/core/token"
-"sophia/core/types"
-	"strings"
+	"sophia/core/types"
 )
 
 type Gt struct {
@@ -25,10 +24,4 @@ func (g *Gt) GetToken() *token.Token {
 
 func (g *Gt) Eval() any {
 	return castFloatPanic(g.Children[0].Eval(), g.Children[0].GetToken()) > castFloatPanic(g.Children[1].Eval(), g.Children[1].GetToken())
-}
-
-func (n *Gt) CompileJs(b *strings.Builder) {
-	n.Children[0].CompileJs(b)
-	b.WriteRune('<')
-	n.Children[1].CompileJs(b)
 }

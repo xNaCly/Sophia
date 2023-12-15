@@ -4,8 +4,7 @@ import (
 	"sophia/core/consts"
 	"sophia/core/serror"
 	"sophia/core/token"
-"sophia/core/types"
-	"strings"
+	"sophia/core/types"
 )
 
 type Index struct {
@@ -115,24 +114,4 @@ func (i *Index) Eval() any {
 		serror.Panic()
 	}
 	return indexHelper(requested, i.Index)
-}
-
-func (i *Index) CompileJs(b *strings.Builder) {
-	i.Target.CompileJs(b)
-	for _, index := range i.Index {
-		b.WriteRune('[')
-		switch v := index.(type) {
-		case *Ident:
-			b.WriteRune('"')
-			v.CompileJs(b)
-			b.WriteRune('"')
-		case *Float:
-			v.CompileJs(b)
-		default:
-			t := v.GetToken()
-			serror.Add(t, "Index error", "Element to index into of unknown type, not yet implemented")
-			serror.Panic()
-		}
-		b.WriteRune(']')
-	}
 }

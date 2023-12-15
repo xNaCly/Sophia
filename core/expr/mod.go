@@ -3,8 +3,7 @@ package expr
 import (
 	"math"
 	"sophia/core/token"
-"sophia/core/types"
-	"strings"
+	"sophia/core/types"
 )
 
 type Mod struct {
@@ -41,12 +40,4 @@ func (m *Mod) Eval() any {
 		}
 	}
 	return float64(res)
-}
-func (n *Mod) CompileJs(b *strings.Builder) {
-	for i, c := range n.Children {
-		c.CompileJs(b)
-		if i+1 < len(n.Children) {
-			b.WriteRune('%')
-		}
-	}
 }

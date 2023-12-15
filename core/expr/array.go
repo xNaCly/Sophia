@@ -2,8 +2,7 @@ package expr
 
 import (
 	"sophia/core/token"
-"sophia/core/types"
-	"strings"
+	"sophia/core/types"
 )
 
 type Array struct {
@@ -34,15 +33,4 @@ func (a *Array) Eval() any {
 	}
 
 	return m
-}
-
-func (a *Array) CompileJs(b *strings.Builder) {
-	b.WriteRune('[')
-	for i, c := range a.Children {
-		c.CompileJs(b)
-		if i+1 != len(a.Children) {
-			b.WriteRune(',')
-		}
-	}
-	b.WriteRune(']')
 }

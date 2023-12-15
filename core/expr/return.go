@@ -3,8 +3,7 @@ package expr
 import (
 	"sophia/core/consts"
 	"sophia/core/token"
-"sophia/core/types"
-	"strings"
+	"sophia/core/types"
 )
 
 type Return struct {
@@ -32,9 +31,4 @@ func (r *Return) Eval() any {
 	consts.RETURN.HasValue = true
 	consts.RETURN.Value = e
 	return e
-}
-
-func (r *Return) CompileJs(b *strings.Builder) {
-	b.WriteString("return ")
-	r.Child.CompileJs(b)
 }

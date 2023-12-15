@@ -2,8 +2,7 @@ package expr
 
 import (
 	"sophia/core/token"
-"sophia/core/types"
-	"strings"
+	"sophia/core/types"
 )
 
 type Root struct {
@@ -25,5 +24,3 @@ func (r *Root) GetToken() *token.Token {
 func (r *Root) Eval() any {
 	return nil
 }
-
-func (r *Root) CompileJs(b *strings.Builder) {}

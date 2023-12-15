@@ -35,18 +35,3 @@ func (s *TemplateString) Eval() any {
 	shared.FormatHelper(buffer, s.Children, 0)
 	return buffer.String()
 }
-
-func (n *TemplateString) CompileJs(b *strings.Builder) {
-	b.WriteRune('`')
-	for _, c := range n.Children {
-		t := c.GetToken()
-		if t.Type == token.STRING {
-			b.WriteString(t.Raw)
-		} else if t.Type == token.IDENT {
-			b.WriteString("${")
-			b.WriteString(t.Raw)
-			b.WriteRune('}')
-		}
-	}
-	b.WriteRune('`')
-}

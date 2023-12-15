@@ -2,8 +2,7 @@ package expr
 
 import (
 	"sophia/core/token"
-"sophia/core/types"
-	"strings"
+	"sophia/core/types"
 )
 
 // parser only structure
@@ -25,5 +24,3 @@ func (l *Load) GetToken() *token.Token {
 func (l *Load) Eval() any {
 	return nil
 }
-
-func (n *Load) CompileJs(b *strings.Builder) {}
