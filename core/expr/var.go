@@ -2,15 +2,17 @@ package expr
 
 import (
 	"sophia/core/consts"
+	"sophia/core/serror"
 	"sophia/core/token"
 	"sophia/core/types"
 )
 
 // defining a variable
 type Var struct {
-	Token *token.Token
-	Ident *Ident
-	Value []types.Node
+	Token       *token.Token
+	IndexAssign bool
+	Ident       *Ident
+	Value       []types.Node
 }
 
 func (v *Var) GetChildren() []types.Node {
@@ -35,8 +37,25 @@ func (v *Var) Eval() any {
 	} else if len(v.Value) == 0 {
 		val = nil
 	} else {
+		// TODO: implement assignment to object and array
+
+		// example:
+		// ;; vim: syntax=lisp
+		// (let tracker {})
+		// (let names "anon" "anon1" "anon" "anon")
+		// (for (_ name) names
+		//     (let tracker[name] 1)
+		//     (println name))
+		//
+		// (println tracker)
+
+		if v.IndexAssign {
+			serror.Add(v.Ident.Token, "Not implemented", "Assignment to array or object is currently not implemented - sorry :(")
+			serror.Panic()
+		}
 		val = v.Value[0].Eval()
 	}
+
 	consts.SYMBOL_TABLE[v.Ident.Key] = val
 	return val
 }

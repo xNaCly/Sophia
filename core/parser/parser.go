@@ -238,18 +238,28 @@ func (p *Parser) parseStatment() types.Node {
 			serror.Add(op, "Not enough arguments", "Expected at least one argument for variable declaration, got %d.", len(childs))
 			return nil
 		}
-		ident, ok := childs[0].(*expr.Ident)
-		if !ok {
-			serror.Add(childs[0].GetToken(), "Wrong parameter", "Expected identifier, got %T.", childs[0])
+		switch v := childs[0].(type) {
+		case *expr.Index:
+			// can skip check, parser makes sure this is correct
+			ident, _ := v.Target.(*expr.Ident)
+			stmt = &expr.Var{
+				IndexAssign: true,
+				Ident:       ident,
+				Token:       ident.Token,
+				Value:       []types.Node{v},
+			}
+		case *expr.Ident:
+			if _, ok := alloc.Default.Variables[v.Name]; !ok {
+				v.Key = alloc.NewVar(v.Name)
+			}
+			stmt = &expr.Var{
+				Token: op,
+				Ident: v,
+				Value: childs[1:],
+			}
+		default:
+			serror.Add(childs[0].GetToken(), "Parameter error", "Expected identifier, got %T.", childs[0])
 			return nil
-		}
-		if _, ok := alloc.Default.Variables[ident.Name]; !ok {
-			ident.Key = alloc.NewVar(ident.Name)
-		}
-		stmt = &expr.Var{
-			Token: op,
-			Ident: ident,
-			Value: childs[1:],
 		}
 	case token.MERGE:
 		if len(childs) < 2 {
