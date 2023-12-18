@@ -78,8 +78,6 @@ func (l *Lexer) Lex() []*token.Token {
 			ttype = token.COLON
 		case '.':
 			ttype = token.DOT
-		case '_':
-			ttype = token.PARAM
 		case '=':
 			ttype = token.EQUAL
 		case '<':

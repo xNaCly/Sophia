@@ -146,19 +146,19 @@ func (p *Parser) parseStatment() types.Node {
 			serror.Add(op, "Not enough arguments", "Expected two argument for loop definition, got %d.", len(childs))
 			return nil
 		}
-		params := childs[0]
-		t := params.GetToken()
-		if params.GetToken().Type != token.PARAM {
-			serror.Add(t, "Type error", "Expected the first argument for loop definition to be of type PARAM, got %q.", token.TOKEN_NAME_MAP[t.Type])
+
+		param, ok := childs[0].(*expr.Array)
+		if !ok {
+			serror.Add(param.Token, "Type error", "Expected the first argument for loop definition to be an array, got %T.", childs[0])
 			return nil
 		}
-		if len(params.(*expr.Params).Children) != 1 {
-			serror.Add(t, "Not enough parameters", "Expected one parameter for loop parameter definition, got %d.", len(params.(*expr.Params).Children))
+		if len(param.Children) != 1 {
+			serror.Add(param.Token, "Not enough parameters", "Expected one parameter for loop parameter definition, got %d.", len(param.Children))
 			return nil
 		}
 		stmt = &expr.For{
 			Token:    op,
-			Params:   params,
+			Params:   param,
 			LoopOver: childs[1],
 			Body:     childs[2:],
 		}
@@ -186,18 +186,6 @@ func (p *Parser) parseStatment() types.Node {
 			Token:    op,
 			Children: childs,
 		}
-	case token.PARAM:
-		for _, c := range childs {
-			t := c.GetToken()
-			if t.Type != token.IDENT {
-				serror.Add(t, "Type error", "Expected identifier for parameter definition, got %q.", token.TOKEN_NAME_MAP[t.Type])
-				return nil
-			}
-		}
-		stmt = &expr.Params{
-			Token:    op,
-			Children: childs,
-		}
 	case token.FUNC:
 		if len(childs) < 2 {
 			serror.Add(op, "Not enough parameters", "Expected 2 parameters, one for function name and one for parameters, got %d.", len(childs))
@@ -206,13 +194,13 @@ func (p *Parser) parseStatment() types.Node {
 		ident, ok := childs[0].(*expr.Ident)
 		if !ok {
 			t := childs[0].GetToken()
-			serror.Add(t, "Type error", "Expected the first argument for function definition to be of type IDENT, got %q.", token.TOKEN_NAME_MAP[t.Type])
+			serror.Add(t, "Type error", "Expected the first argument for function definition to be an identifier, got %T.", childs[0])
 			return nil
 		}
-		params, ok := childs[1].(*expr.Params)
+		params, ok := childs[1].(*expr.Array)
 		if !ok {
 			t := childs[1].GetToken()
-			serror.Add(t, "Type error", "Expected the second argument for function definition to be of type PARAM, got %q.", token.TOKEN_NAME_MAP[t.Type])
+			serror.Add(t, "Type error", "Expected the second argument for function definition to be parameters, got %T.", childs[1])
 			return nil
 		}
 		ident.Key = alloc.NewFunc(ident.Name)
@@ -361,21 +349,7 @@ func (p *Parser) parseStatment() types.Node {
 func (p *Parser) parseConstants() types.Node {
 	p.peekErrorMany("Missing or unknown constant", token.CONSTANTS...)
 	var child types.Node
-	if p.peekIs(token.HASHTAG) {
-		arr := &expr.Array{
-			Token:    p.token[p.pos-1],
-			Children: make([]types.Node, 0),
-		}
-		p.advance() // skip #
-		p.peekError(token.LEFT_BRACKET, "Missing array start")
-		p.advance()
-		for !(p.peekIs(token.RIGHT_BRACKET) || p.peekIs(token.EOF)) {
-			arr.Children = append(arr.Children, p.parseArguments())
-			p.advance()
-		}
-		p.peekError(token.RIGHT_BRACKET, "Missing statement end")
-		child = arr
-	} else if p.peekIs(token.FLOAT) {
+	if p.peekIs(token.FLOAT) {
 		t := p.peek()
 		value, err := strconv.ParseFloat(t.Raw, 64)
 		if err != nil {
@@ -387,12 +361,18 @@ func (p *Parser) parseConstants() types.Node {
 			Value: value,
 		}
 	} else if p.peekIs(token.IDENT) {
-		t := p.peek()
-		child = &expr.Ident{
-			Token: t,
-			Key:   alloc.Default.Variables[t.Raw],
-			Name:  t.Raw,
+		tok := p.peek()
+		ident := &expr.Ident{
+			Token: tok,
+			Name:  tok.Raw,
 		}
+		if val, ok := alloc.Default.Variables[ident.Name]; !ok {
+			ident.Key = alloc.NewVar(ident.Name)
+		} else {
+			ident.Key = val
+		}
+
+		child = ident
 	} else if p.peekIs(token.STRING) {
 		child = &expr.String{
 			Token: p.peek(),
@@ -415,24 +395,40 @@ func (p *Parser) parseArguments() types.Node {
 		token.STRING,
 		token.IDENT,
 		token.BOOL,
-		token.HASHTAG,
+		token.LEFT_BRACKET,
 		token.LEFT_CURLY,
 		token.TEMPLATE_STRING)
-	if p.peekNext().Type == token.LEFT_BRACKET && p.peekIs(token.IDENT) {
+
+	if p.peekIs(token.LEFT_BRACKET) {
+		param := &expr.Array{
+			Token:    p.peek(),
+			Children: make([]types.Node, 0),
+		}
+		p.advance() // skip [
+		for !p.peekIs(token.RIGHT_BRACKET) && !p.peekIs(token.EOF) {
+			param.Children = append(param.Children, p.parseArguments())
+			p.advance()
+		}
+		p.peekError(token.RIGHT_BRACKET, "Missing statement end")
+		child = param
+	} else if p.peekNext().Type == token.HASHTAG {
 		t := &expr.Index{
 			Token:  p.peek(),
 			Target: p.parseConstants(),
 			Index:  make([]types.Node, 0),
 		}
 		p.advance() // skip ident
+		p.advance() // skip HASHTAG
+
 		for p.peekIs(token.LEFT_BRACKET) {
 			p.advance() // skip [
 			t.Index = append(t.Index, p.parseConstants())
-			p.advance() // skip ident
+			p.advance() // skip ident or index or constant
 			if p.peekNext().Type == token.LEFT_BRACKET {
 				p.advance() // skip ]
 			}
 		}
+
 		child = t
 	} else if p.peekIs(token.LEFT_CURLY) {
 		child = p.parseObject()
@@ -455,7 +451,7 @@ func (p *Parser) parseObject() types.Node {
 		op := expr.ObjectPair{
 			Key: p.parseArguments(),
 		}
-		p.advance()
+		p.advance() // skip key
 		if p.peek().Type != token.COLON {
 			p.peekError(token.COLON, "missing object key value divider")
 			return nil

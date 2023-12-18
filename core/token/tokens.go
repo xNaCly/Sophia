@@ -15,7 +15,6 @@ const (
 	DIV
 	MUL
 	MOD
-	PARAM
 	HASHTAG // #
 
 	// structure
@@ -59,10 +58,9 @@ var TOKEN_NAME_MAP = map[int]string{
 	DIV:             "/",
 	MUL:             "*",
 	MOD:             "%",
-	PARAM:           "_",
 	LEFT_CURLY:      "{",
 	RIGHT_CURLY:     "}",
-	COLON:           ",",
+	COLON:           ":",
 	DOT:             ".",
 	LEFT_BRACE:      "(",
 	RIGHT_BRACE:     ")",

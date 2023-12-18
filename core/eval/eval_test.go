@@ -247,15 +247,15 @@ func TestEvalFunction(t *testing.T) {
 		exp string
 	}{
 		{
-			str: "(fun square (_ a) (* a a))(square 12)",
+			str: "(fun square [a] (* a a))(square 12)",
 			exp: "144",
 		},
 		{
-			str: "(fun sum (_ a b) (+ a b))(sum 12 12)",
+			str: "(fun sum [a b] (+ a b))(sum 12 12)",
 			exp: "24",
 		},
 		{
-			str: "(fun print (_ a) (println a))(let y 12 23 12)(print y)",
+			str: "(fun print [a] (println a))(let y 12 23 12)(print y)",
 			exp: "<nil>",
 		},
 	}
@@ -286,7 +286,7 @@ func TestEvalLoop(t *testing.T) {
 		exp string
 	}{
 		{
-			str: "(let sum 0)(let arr 9)(for (_ e) arr (let sum (+ e sum)))(let r sum)",
+			str: "(let sum 0)(let arr 9)(for [e] arr (let sum (+ e sum)))(let r sum)",
 			exp: "36",
 		},
 	}
@@ -317,16 +317,16 @@ func TestEvalReturn(t *testing.T) {
 		exp string
 	}{
 		{
-			str: "(fun square (_n) (*n n))(square 12)",
+			str: "(fun square [n] (*n n))(square 12)",
 			exp: "144",
 		},
 		{
-			str: "(fun square (_n) (return (*n n)))(square 12)",
+			str: "(fun square [n] (return (*n n)))(square 12)",
 			exp: "144",
 		},
 		{
 			str: `
-(fun test (_ n) 
+(fun test [n] 
     (if (< n 0) 
         (return -1))
     (return (*n n)
@@ -374,7 +374,7 @@ func TestEvalObject(t *testing.T) {
     }
     age: 25
 })
-(let bankName person["bank"]["institute"]["name"])
+(let bankName person#["bank"]["institute"]["name"])
             `,
 			exp: "western union",
 		},
@@ -390,8 +390,8 @@ func TestEvalObject(t *testing.T) {
     }
     age: 25
 })
-(let arr person["bank"] 2 3 4)
-(let money arr[0]["money"])
+(let arr person#["bank"] 2 3 4)
+(let money arr#[0]["money"])
 		`,
 			exp: "2500",
 		},
@@ -423,11 +423,11 @@ func TestEvalArray(t *testing.T) {
 		exp string
 	}{
 		{
-			str: `(let b #[1 2 3 4 5])(let r b[1])`,
+			str: `(let b [1 2 3 4 5])(let r b#[1])`,
 			exp: "2",
 		},
 		{
-			str: `(let b 5 #[1 2 3 4 5])(let r b[1][0])`,
+			str: `(let b 5 [1 2 3 4 5])(let r b#[1][0])`,
 			exp: "1",
 		},
 	}

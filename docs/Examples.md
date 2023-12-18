@@ -37,7 +37,7 @@
 ```lisp
 (fun
     square
-    (_ a)
+    [a]
     (* a a)
 )
 
@@ -92,18 +92,18 @@
     (println "?")
 )
 
-(eq 1 1)
-(eq "equal" "equal")
-(eq true false)
-(lt 10 1)
-(gt 1 10)
-(lt 1 10)
-(gt 10 1)
+(= 1 1)
+(= "equal" "equal")
+(= true false)
+(< 10 1)
+(> 1 10)
+(< 1 10)
+(> 10 1)
 
 (let a 1)
 (println
     "a == a -> "
-    (eq a a))
+    (= a a))
 
 (or false true false)
 
@@ -120,32 +120,31 @@
     (and a a))
 
 (not
-    (eq 1 2))
+    (= 1 2))
 
 (println
     "not (and a) -> "
     (not
-        (eq a)))
+        (= a)))
 ```
 
 ## Iteration
 
 ```lisp
 (let arr 9)
-(for (_ i) arr
+(for [i] arr
      (println i))
 ```
 
 ```lisp
-(let arr 9)
-(for (_ i) arr
+(for [i] 9
      (println i))
 ```
 
 ```lisp
 (let sum 0)
 (let arr 9)
-(for (_ e) arr
+(for [i] arr
     (let sum (+ e sum)))
 (println sum)
 ```
@@ -155,7 +154,7 @@
 ```lisp
 (let beforeLast 0)
 (let lst 1)
-(for (_ i) 15
+(for [i] 15
     (let t (+ beforeLast lst))
     (println t)
     (let beforeLast lst)
@@ -165,7 +164,7 @@
 ## Fizzbuzz
 
 ```lisp
-(for (_ i) 15
+(for [i] 15
     (let mod3 (eq 0 (% i 3)))
     (let mod5 (eq 0 (% i 5)))
     (match

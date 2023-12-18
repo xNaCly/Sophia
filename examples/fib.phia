@@ -1,8 +1,8 @@
 ;; vim: syntax=lisp
-(fun fib (_ n) 
+(fun fib [n]
     (let beforeLast 0)
     (let last 1)
-    (for (_ i) (- n 1)
+    (for [i] (- n 1)
         (let t (+ beforeLast last))
         (let beforeLast last)
         (let last t))
@@ -10,5 +10,5 @@
 (let result (fib 40))
 (let expected 102_334_155)
 (if 
-    (not (eq result expected))
+    (not (= result expected))
     (println 'error "{result}" should have been equal to "{expected}"!'))

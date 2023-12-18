@@ -1,9 +1,6 @@
 ;; vim: syntax=lisp
-(fun
-    square
-    (_ a)
-    (* a a)
-)
+(fun square [n]
+    (* a a))
 
 (let r (square 12))
 (println '12^2 -> {r}')

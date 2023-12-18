@@ -1,7 +1,7 @@
 ;; vim: syntax=lisp
 (let arr 9)
-(for (_ i) arr
+(for [i] arr
      (println i))
 
-(for (_ i) 10
+(for [i] 10
     (println i))

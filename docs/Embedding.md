@@ -83,7 +83,7 @@ And call this function from sophia:
 
 ```shell
 $ cat test.phia; echo "------"; sophia test.phia
-(println (typeof #[1 "test" test 25.0]))
+(println (typeof [1 "test" test 25.0]))
 (println (typeof true))
 (println (typeof "test"))
 (println (typeof 12))

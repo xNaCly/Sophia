@@ -10,7 +10,7 @@ import (
 type Func struct {
 	Token  *token.Token
 	Name   types.Node
-	Params types.Node
+	Params *Array
 	Body   []types.Node
 }
 

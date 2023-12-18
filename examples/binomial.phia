@@ -1,8 +1,9 @@
 ;; vim: syntax=lisp
-(fun bin (_ n k)
-    (if (< k n) 
+(fun bin [n k] 
+    (if (> k n) ;; can't compute the binomial coefficient for k > n
         (return -1))
-    (if (and (= k n) (= k 0)) 
+
+    (if (or (= k n) (= k 0)) 
         (return 1))
 
     ;; Due to the symmetry of the binomial coefficient with regard to k and n −
@@ -15,7 +16,7 @@
 
     ;; see https://en.wikipedia.org/wiki/Binomial_coefficient#Multiplicative_formula
     (let r 1)
-    (for (_ i) k
+    (for [i] k
         (let r 
             (/ (* r (- n i)) (+ i 1)))
         )
@@ -23,5 +24,5 @@
 
 (println (bin 1 1)) ;; 1
 (println (bin 6 3)) ;; 20
-(println (bin 49 6)) ;; 20
+(println (bin 49 6)) ;; 13_983_816
 (println (bin 20 15)) ;; 15504

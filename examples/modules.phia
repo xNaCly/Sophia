@@ -18,7 +18,7 @@
 
 ;; custom module
 (module person
-    (fun str (_ p) (++ "person: " p.name)
+    (fun str [p] (++ "person: " p.name)
 
     (module extract ;; namespaces can be nested
         (fun name (_ p) p.name)

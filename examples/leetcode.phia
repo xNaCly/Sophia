@@ -5,26 +5,24 @@
 (let example3 5 20 66 1314)
 
 ;; returns a if bigger than b, otherwise b
-;; max: float, float -> float
-(fun max (_ a b) 
+(fun max [a b]
     (if (< a b) 
         (return b)) 
     a) ;; return without extra statement
 
 ;; counts negative and positve numbers in arr, returns the higher amount
-;; solve: [float] -> float
-(fun solve (_ arr)
+(fun solve [arr]
     (let pos 0)
     (let neg 0)
-    (for (_ i) arr 
+    (for [i] arr 
         (match
             (if (< i 0) (let pos (+ pos 1)))
             (let neg (+ neg 1))))
     (max neg pos))
 
 ;; used for benchmarking and profiling
-(for (_ i) 500_000
-    (solve example1) ;; 3
-    (solve example3) ;; 4
-    (solve example2) ;; 4
-)
+;;(for [i] 500_000
+;; (println (solve example1)) ;; 3
+;; (println (solve example3)) ;; 4
+;; (println (solve example2)) ;; 4
+;;)

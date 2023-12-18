@@ -10,7 +10,7 @@ import (
 // function definition
 type For struct {
 	Token    *token.Token
-	Params   types.Node
+	Params   *Array
 	LoopOver types.Node
 	Body     []types.Node
 }
@@ -28,7 +28,7 @@ func (f *For) GetToken() *token.Token {
 }
 
 func (f *For) Eval() any {
-	params := f.Params.(*Params).Children
+	params := f.Params.Children
 	if len(params) < 1 {
 		serror.Add(f.Token, "Not enough arguments", "Expected at least %d parameters for loop, got %d.", 1, len(params))
 		serror.Panic()

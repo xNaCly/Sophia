@@ -6,9 +6,9 @@
 (let list 0 1 2 3 4)
 (let listEq1 0 1 2 3 4)
 (let listEq2 0 1 2 3 4)
-(let list #[0 1 2 3 4])
+(let list [0 1 2 3 4])
 
-(let firstEl list[0])
+(let firstEl list#[0])
 
 ;; objects
 (let person {
@@ -22,9 +22,9 @@
     age: 25
 })
 
-(println person["bank"]["money"]) ;; 2500
-(println person["bank"]["institute"]["name"]) ;; "western union"
+(println person#["bank"]["money"]) ;; 2500
+(println person#["bank"]["institute"]["name"]) ;; "western union"
 
 (let arr person 1 2 3 4 5)
-(println arr[0]["name"]) ;; "anon"
+(println arr#[0]["name"]) ;; "anon"
 

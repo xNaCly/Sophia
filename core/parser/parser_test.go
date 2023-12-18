@@ -47,9 +47,9 @@ func TestParserErrors(t *testing.T) {
 
 func TestParserIndex(t *testing.T) {
 	in := []string{
-		`(println person["name"])`,
-		`(println person["data"]["name"])`,
-		`(println person["data"]["name"][0])`,
+		`(println person#["name"])`,
+		`(println person#["data"]["name"])`,
+		`(println person#["data"]["name"][0])`,
 	}
 	for _, s := range in {
 		t.Run(s, func(t *testing.T) {
@@ -68,9 +68,9 @@ func TestParserIndex(t *testing.T) {
 
 func TestParserArray(t *testing.T) {
 	in := []string{
-		"(let array #[1 2 3 4 5])",
-		"(for (_ i) #[1 2 3 4 5])",
-		"(++ #[1 2 3 4 5] 1 2)",
+		"(let array [1 2 3 4 5])",
+		"(for [i] [1 2 3 4 5])",
+		"(++ [1 2 3 4 5] 1 2)",
 	}
 	for _, s := range in {
 		t.Run(s, func(t *testing.T) {

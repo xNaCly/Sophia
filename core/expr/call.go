@@ -33,13 +33,14 @@ func (c *Call) Eval() any {
 	}
 
 	def, ok := storedFunc.(*Func)
+	// fastpath for built-in function support, see core/builtin/builtin.go
 	if !ok {
 		// this branch is hit if a function is not of type *Func which only
 		// happens for built ins, thus the cast can not fail
 		function, _ := storedFunc.(func(tok *token.Token, args ...types.Node) any)
 		return function(c.Token, c.Params...)
 	}
-	defParams := castPanicIfNotType[*Params](def.Params, c.Token)
+	defParams := castPanicIfNotType[*Array](def.Params, def.Token)
 	children := defParams.Children
 
 	lchild := len(children)

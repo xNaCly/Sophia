@@ -6,16 +6,13 @@ View the docs containing an overview, an in depth overview and a lot of
 Examples [here](https://xnacly.github.io/Sophia/)
 
 ```lisp
-(fun
-    square
-    (_ n)
-    (* n n)
-)
+(fun square [n]
+    (* n n))
 
 (let n 12)
 (let res (square n))
 
-(put '{n}*{n} is {res}')
+(println '{n}*{n} is {res}')
 ;; 12*12 is 144
 ```
 
@@ -39,13 +36,13 @@ Hello World!
 With an expression:
 
 ```
-$ sophia -exp '(put "Hello World")'
+$ sophia -exp '(println "Hello World")'
 
 Hello World!
 ```
 
 ```
-$ echo '(put "Hello World")' | sophia
+$ echo '(println "Hello World")' | sophia
 
 Hello World!
 ```
@@ -66,10 +63,10 @@ $ sophia
       ░      ░ ░            ░  ░  ░ ░        ░  ░
 
 Welcome to the Sophia programming language repl - press <CTRL-D> or <CTRL-C> to quit...
-sophia> (let name "user")
+sophia> (let person { name: "user" })
 = [user]
-sophia> (put 'Hello World, {name}!')
-Hello World, user!
+sophia> (println "Hello World," person#["name"] ":)")
+Hello World, user :)
 = [<nil>]
 sophia>
 ```

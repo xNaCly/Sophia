@@ -171,7 +171,7 @@ The `++` operator can be applied to lists, strings, booleans, floats:
 (++ 1 arr)
 ;; [1 1 2 3]
 
-#[1 2 3 5] ;; defining a list
+[1 2 3 5] ;; defining a list
 ```
 
 ## Comparison
@@ -234,7 +234,7 @@ Lets take a look at iteration over containers:
 ```lisp
 (let array 1 2 3 4)
 (for
-    (_ i)               ;; loop variable
+    [i]               ;; loop variable
     array               ;; container to iterate over
     (println i))            ;; for body
 ```
@@ -248,7 +248,7 @@ Sophia supports array range syntax:
 
 ```lisp
 (for
-    (_ i)
+    [i]
     100
     (println i))
 ```
@@ -278,7 +278,7 @@ this simply create the following files and compile the entry point
 
 ```lisp
 ;; square.phia
-(fun square (_ n)
+(fun square [n]
     (* n n))
 ;; main.phia
 (load "square.phia")
@@ -325,7 +325,7 @@ accessing said data is as intuitive as possible:
 ```lisp
 (let person { name: "anon" age: 25})
 ;; accessing the 'name' value from the 'person' object
-(println person["name"])
+(println person#["name"])
 ```
 
 The same can be applied to lists:
@@ -333,7 +333,7 @@ The same can be applied to lists:
 ```lisp
 (let list 1 2 3 4)
 ;; accessing the first element in the 'l'-list
-(println list[0])
+(println list#[0])
 ```
 
 <!-- Updating the values at either the key or the index is possible via the same syntax: -->
@@ -363,7 +363,7 @@ called in Sophia:
 ```lisp
 (fun
     square              ;; function name
-    (_ n)               ;; parameters
+    [a]               ;; parameters
     (* a a))            ;; function body
 ```
 
@@ -392,7 +392,7 @@ Functions with multiple arguments, such as summing two values can be expressed a
 ```lisp
 (fun
     sum
-    (_ a b)
+    [a b]
     (+ a b))
 
 (sum 1 2)
@@ -419,7 +419,7 @@ map[string]interface {}{"a":"hello world", "b":[]interface {}{1, 2, 3}}
 Defining a function and printing the function table using the `~funs` command:
 
 ```
-ß :: (fun square (_ a) (* a a))
+ß :: (fun square [a] (* a a))
 = [<nil>]
 ß :: ~funs
 map[string]interface {}{"square":(*expr.Func)(0xc0000ac000)}
