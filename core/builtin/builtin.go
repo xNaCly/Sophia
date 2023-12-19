@@ -68,6 +68,7 @@ func init() {
 
 		var r any
 		switch iter := args[1].Eval().(type) {
+		// string requires a copy, sadly
 		case string:
 			t := make([]rune, len(iter))
 			for i, char := range iter {
@@ -82,8 +83,13 @@ func init() {
 			}
 			r = string(t)
 		case []any:
+			for i, element := range iter {
+				call.Params[0] = &expr.Any{Value: element}
+				iter[i] = call.Eval()
+			}
+			return iter
 		default:
-			serror.Add(args[1].GetToken(), "Error", "Can't map over target of type %T, expected string or array", args[1])
+			serror.Add(args[1].GetToken(), "Error", "Can't map over target of type %T, expected string, array or object", args[1])
 			serror.Panic()
 		}
 
