@@ -37,7 +37,7 @@ func (c *Call) Eval() any {
 	if !ok {
 		// this branch is hit if a function is not of type *Func which only
 		// happens for built ins, thus the cast can not fail
-		function, _ := storedFunc.(func(tok *token.Token, args ...types.Node) any)
+		function, _ := storedFunc.(types.KnownFunctionInterface)
 		return function(c.Token, c.Params...)
 	}
 	defParams := castPanicIfNotType[*Array](def.Params, def.Token)
