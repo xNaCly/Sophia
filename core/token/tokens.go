@@ -42,6 +42,7 @@ const (
 	LOAD
 	MERGE
 	RETURN
+	LAMBDA
 
 	EOF
 )
@@ -81,5 +82,6 @@ var TOKEN_NAME_MAP = map[int]string{
 	MERGE:           "++",
 	EOF:             "EOF",
 	RETURN:          "return",
+	LAMBDA:          "lambda",
 	HASHTAG:         "#",
 }

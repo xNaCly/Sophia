@@ -31,6 +31,7 @@ var EXPECTED_KEYWORDS = []int{
 	MATCH,
 	LOAD,
 	RETURN,
+	LAMBDA,
 }
 
 var KEYWORD_MAP = map[string]int{
@@ -45,4 +46,5 @@ var KEYWORD_MAP = map[string]int{
 	"ident":  IDENT,
 	"match":  MATCH,
 	"load":   LOAD,
+	"lambda": LAMBDA,
 }
