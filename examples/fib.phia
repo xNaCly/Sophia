@@ -7,8 +7,7 @@
         (let beforeLast last)
         (let last t))
     last)
+
 (let result (fib 40))
 (let expected 102_334_155)
-(if 
-    (not (= result expected))
-    (println 'error "{result}" should have been equal to "{expected}"!'))
+(assert (= result expected))

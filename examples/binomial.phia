@@ -22,7 +22,7 @@
         )
     r)
 
-(println (bin 1 1)) ;; 1
-(println (bin 6 3)) ;; 20
-(println (bin 49 6)) ;; 13_983_816
-(println (bin 20 15)) ;; 15504
+(assert (= (bin 1 1) 1)) ;; 1
+(assert (= (bin 6 3) 20)) ;; 20
+(assert (= (bin 49 6) 13_983_816)) ;; 13_983_816
+(assert (= (bin 20 15) 15504)) ;; 15504

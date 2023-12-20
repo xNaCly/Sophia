@@ -17,6 +17,7 @@ func init() {
 		"map":     builtinMap,
 		"println": builtinPrintln,
 		"filter":  builtinFilter,
+		"assert":  builtinAssert,
 	}
 
 	for name, function := range builtins {
