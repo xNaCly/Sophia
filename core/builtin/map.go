@@ -7,9 +7,9 @@ import (
 	"sophia/core/types"
 )
 
-func buildinMap(tok *token.Token, args ...types.Node) any {
+func builtinMap(tok *token.Token, args ...types.Node) any {
 	if len(args) != 2 {
-		serror.Add(tok, "Argument error", "Expected exactly 2 arguments for map built-in")
+		serror.Add(tok, "Argument error", "Expected exactly 2 arguments for map built-in, first function, second iterator")
 		serror.Panic()
 	}
 
@@ -20,18 +20,13 @@ func buildinMap(tok *token.Token, args ...types.Node) any {
 		serror.Panic()
 	}
 
-	if len(call.Args) != 0 {
-		serror.Add(args[0].GetToken(), "Argument Error", "Expected function call with 0 arguments, got %d", len(call.Args))
-		serror.Panic()
-	}
-
 	call.Args = make([]types.Node, 1)
 
 	var r any
 	switch iter := args[1].Eval().(type) {
 	// string requires a copy, sadly
 	case string:
-		t := make([]rune, len(iter))
+		t := make([]float64, len(iter))
 		for i, char := range iter {
 			call.Args[0] = &expr.Float{Value: float64(char)}
 			res := call.Eval()
@@ -40,9 +35,9 @@ func buildinMap(tok *token.Token, args ...types.Node) any {
 				serror.Add(call.Token, "Type error", "Expected result of type float64 for function used for string mapping, got %T instead", res)
 				serror.Panic()
 			}
-			t[i] = rune(out)
+			t[i] = out
 		}
-		r = string(t)
+		r = t
 	case []any:
 		t := make([]any, len(iter))
 		for i, element := range iter {

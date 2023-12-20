@@ -14,8 +14,9 @@ import (
 func init() {
 	builtins := map[string]types.KnownFunctionInterface{
 		"len":     builtinLen,
-		"println": buildinPrintln,
-		"map":     buildinMap,
+		"map":     builtinMap,
+		"println": builtinPrintln,
+		"filter":  builtinFilter,
 	}
 
 	for name, function := range builtins {

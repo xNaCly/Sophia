@@ -10,7 +10,7 @@ import (
 
 var sharedPrintBuffer = &strings.Builder{}
 
-func buildinPrintln(tok *token.Token, args ...types.Node) any {
+func builtinPrintln(tok *token.Token, args ...types.Node) any {
 	sharedPrintBuffer.Reset()
 	shared.FormatHelper(sharedPrintBuffer, args, ' ')
 	sharedPrintBuffer.WriteRune('\n')
