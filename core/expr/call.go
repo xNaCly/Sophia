@@ -8,17 +8,17 @@ import (
 )
 
 type Call struct {
-	Token  *token.Token
-	Key    uint32
-	Params []types.Node
+	Token *token.Token
+	Key   uint32
+	Args  []types.Node
 }
 
 func (c *Call) GetChildren() []types.Node {
-	return c.Params
+	return c.Args
 }
 
 func (n *Call) SetChildren(c []types.Node) {
-	n.Params = c
+	n.Args = c
 }
 
 func (c *Call) GetToken() *token.Token {
@@ -38,35 +38,36 @@ func (c *Call) Eval() any {
 		// this branch is hit if a function is not of type *Func which only
 		// happens for built ins, thus the cast can not fail
 		function, _ := storedFunc.(types.KnownFunctionInterface)
-		return function(c.Token, c.Params...)
+		return function(c.Token, c.Args...)
 	}
-	defParams := castPanicIfNotType[*Array](def.Params, def.Token)
-	children := defParams.Children
 
-	lchild := len(children)
-	if len(children) != len(c.Params) {
-		argLen := len(c.Params)
-		if lchild < argLen {
-			serror.Add(c.Token, "Too many arguments", "Too many arguments for %q, wanted %d, got %d", c.Token.Raw, lchild, len(c.Params))
+	return callFunction(c.Token, def.Body, def.Params, c.Args)
+}
+
+func callFunction(tok *token.Token, body []types.Node, params *Array, args []types.Node) any {
+	if len(params.Children) != len(args) {
+		argLen := len(args)
+		if len(params.Children) < argLen {
+			serror.Add(tok, "Too many arguments", "Too many arguments for %q, wanted %d, got %d", tok.Raw, len(params.Children), len(args))
 			serror.Panic()
-		} else if lchild > argLen {
-			serror.Add(c.Token, "Not enough arguments", "Not enough arguments for %q, wanted %d, got %d", c.Token.Raw, lchild, len(c.Params))
+		} else if len(params.Children) > argLen {
+			serror.Add(tok, "Not enough arguments", "Not enough arguments for %q, wanted %d, got %d", tok.Raw, len(params.Children), len(args))
 			serror.Panic()
 		}
 	}
 
 	// store variable values from before entering the function scope
-	for i, arg := range c.Params {
-		name := children[i].(*Ident)
-		if val, ok := consts.SYMBOL_TABLE[name.Key]; ok {
-			consts.SCOPE_TABLE[name.Key] = val
+	for i, arg := range args {
+		identifier := params.Children[i].(*Ident)
+		if val, ok := consts.SYMBOL_TABLE[identifier.Key]; ok {
+			consts.SCOPE_TABLE[identifier.Key] = val
 		}
-		consts.SYMBOL_TABLE[name.Key] = arg.Eval()
+		consts.SYMBOL_TABLE[identifier.Key] = arg.Eval()
 	}
 
 	var ret any
 
-	for i, stmt := range def.Body {
+	for i, stmt := range body {
 		// enabling early returns
 		if consts.RETURN.HasValue {
 			ret = consts.RETURN.Value
@@ -74,7 +75,7 @@ func (c *Call) Eval() any {
 			consts.RETURN.Value = nil
 			break
 		}
-		if i+1 == len(def.Body) {
+		if i+1 == len(body) {
 			ret = stmt.Eval()
 			break
 		}
@@ -98,4 +99,5 @@ func (c *Call) Eval() any {
 	}()
 
 	return ret
+
 }

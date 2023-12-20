@@ -20,12 +20,12 @@ func buildinMap(tok *token.Token, args ...types.Node) any {
 		serror.Panic()
 	}
 
-	if len(call.Params) != 0 {
-		serror.Add(args[0].GetToken(), "Argument Error", "Expected function call with 0 arguments, got %d", len(call.Params))
+	if len(call.Args) != 0 {
+		serror.Add(args[0].GetToken(), "Argument Error", "Expected function call with 0 arguments, got %d", len(call.Args))
 		serror.Panic()
 	}
 
-	call.Params = make([]types.Node, 1)
+	call.Args = make([]types.Node, 1)
 
 	var r any
 	switch iter := args[1].Eval().(type) {
@@ -33,7 +33,7 @@ func buildinMap(tok *token.Token, args ...types.Node) any {
 	case string:
 		t := make([]rune, len(iter))
 		for i, char := range iter {
-			call.Params[0] = &expr.Float{Value: float64(char)}
+			call.Args[0] = &expr.Float{Value: float64(char)}
 			res := call.Eval()
 			out, ok := res.(float64)
 			if !ok {
@@ -44,11 +44,12 @@ func buildinMap(tok *token.Token, args ...types.Node) any {
 		}
 		r = string(t)
 	case []any:
+		t := make([]any, len(iter))
 		for i, element := range iter {
-			call.Params[0] = &expr.Any{Value: element}
-			iter[i] = call.Eval()
+			call.Args[0] = &expr.Any{Value: element}
+			t[i] = call.Eval()
 		}
-		return iter
+		r = t
 	default:
 		serror.Add(args[1].GetToken(), "Error", "Can't map over target of type %T, expected string, array or object", args[1])
 		serror.Panic()

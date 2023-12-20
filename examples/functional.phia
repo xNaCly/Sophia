@@ -1,6 +1,7 @@
 ;; vim: syntax=lisp
 (let arr [1 2 3 4 5 6 7 8 9])
-(fun square [n] (*n n))
 
-(map (square) arr) ;; mutates the original array, only for arrays, not for strings (go limitation)
 (println arr)
+;; (println (map (lambda [n] (+ n 1)) arr))
+(fun square [n] (* n n))
+(println (map (square) arr))

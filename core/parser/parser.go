@@ -164,9 +164,9 @@ func (p *Parser) parseStatment() types.Node {
 		}
 	case token.IDENT:
 		stmt = &expr.Call{
-			Token:  op,
-			Key:    alloc.Default.Functions[op.Raw],
-			Params: childs,
+			Token: op,
+			Key:   alloc.Default.Functions[op.Raw],
+			Args:  childs,
 		}
 	case token.LT:
 		if len(childs) != 2 {
@@ -339,6 +339,8 @@ func (p *Parser) parseStatment() types.Node {
 			Token:    op,
 			Children: childs,
 		}
+	case token.LAMBDA:
+		serror.Add(op, "Not implemented", "Anonymous functions are currently a work in progress, thus not implemented.")
 	}
 
 	p.peekError(token.RIGHT_BRACE, "Missing statement end")
