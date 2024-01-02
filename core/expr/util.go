@@ -11,7 +11,7 @@ func castBoolPanic(in any, t *token.Token) bool {
 	case bool:
 		return v
 	default:
-		serror.Add(t, "Type error", "Incompatiable types %T and bool", in)
+		serror.Add(t, "Type error", "Expected value of type bool, got %s", token.TOKEN_NAME_MAP[t.Type])
 		serror.Panic()
 	}
 	// technically unreachable
@@ -24,7 +24,7 @@ func castFloatPanic(in any, t *token.Token) float64 {
 	case float64:
 		return v
 	default:
-		serror.Add(t, "Type error", "Incompatiable types %T and float64", in)
+		serror.Add(t, "Type error", "Expected value of type float, got %s", token.TOKEN_NAME_MAP[t.Type])
 		serror.Panic()
 	}
 	// technically unreachable
@@ -37,7 +37,7 @@ func castPanicIfNotType[T any](in any, t *token.Token) T {
 	val, ok := in.(T)
 	if !ok {
 		var e T
-		serror.Add(t, "Type error", "Incompatiable types %T and %T", in, e)
+		serror.Add(t, "Type error", "Expected value of type %T, got %T", e, in)
 		serror.Panic()
 	}
 	return val
