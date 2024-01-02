@@ -11,4 +11,4 @@
     (filter (lambda [n] (= (% n 2) 0)) arr))
 
 (println "natural numbers"
-    (map (lambda [c] (- cc 97)) "hello world"))
+    (map (lambda [cc] (- cc 97)) "hello world"))
