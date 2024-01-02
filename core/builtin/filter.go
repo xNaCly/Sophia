@@ -14,13 +14,14 @@ func builtinFilter(tok *token.Token, args ...types.Node) any {
 	}
 
 	// function to apply to iterator
-	call, ok := args[0].(*expr.Call)
-	if !ok {
+	switch args[0].(type) {
+	case *expr.Call, *expr.Lambda:
+	default:
 		serror.Add(args[0].GetToken(), "Argument Error", "Expected first argument to be a function call, got %T", args[0])
 		serror.Panic()
 	}
 
-	call.Args = make([]types.Node, 1)
+	call := args[0]
 
 	var r any
 	switch iter := args[1].Eval().(type) {
@@ -28,10 +29,11 @@ func builtinFilter(tok *token.Token, args ...types.Node) any {
 	case string:
 		t := make([]rune, 0, len(iter))
 		for _, char := range iter {
+			call.SetChildren([]types.Node{&expr.Float{Value: float64(char)}})
 			res := call.Eval()
 			out, ok := res.(bool)
 			if !ok {
-				serror.Add(call.Token, "Type error", "Expected result of type bool for function used for filter, got %T instead", res)
+				serror.Add(call.GetToken(), "Type error", "Expected result of type bool for function used for filter, got %T instead", res)
 				serror.Panic()
 			}
 			if out {
@@ -42,11 +44,11 @@ func builtinFilter(tok *token.Token, args ...types.Node) any {
 	case []any:
 		t := make([]any, 0, len(iter))
 		for _, element := range iter {
-			call.Args[0] = &expr.Any{Value: element}
+			call.SetChildren([]types.Node{&expr.Any{Value: element}})
 			res := call.Eval()
 			out, ok := res.(bool)
 			if !ok {
-				serror.Add(call.Token, "Type error", "Expected result of type bool for function used for filter, got %T instead", res)
+				serror.Add(call.GetToken(), "Type error", "Expected result of type bool for function used for filter, got %T instead", res)
 				serror.Panic()
 			}
 			if out {

@@ -340,7 +340,21 @@ func (p *Parser) parseStatment() types.Node {
 			Children: childs,
 		}
 	case token.LAMBDA:
-		serror.Add(op, "Not implemented", "Anonymous functions are currently a work in progress, thus not implemented.")
+		if len(childs) < 1 {
+			serror.Add(op, "Not enough parameters", "Expected 1 parameter for lambda parameters, got %d.", len(childs))
+			return nil
+		}
+		params, ok := childs[0].(*expr.Array)
+		if !ok {
+			t := childs[0].GetToken()
+			serror.Add(t, "Type error", "Expected the first argument for function definition to be parameters, got %T.", childs[1])
+			return nil
+		}
+		stmt = &expr.Lambda{
+			Token:  op,
+			Params: params,
+			Body:   childs[1:],
+		}
 	}
 
 	p.peekError(token.RIGHT_BRACE, "Missing statement end")

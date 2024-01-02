@@ -1,14 +1,14 @@
 ;; vim: syntax=lisp
-(let arr [1 2 3 4 5 6 7 8 9])
+(let arr 1 2 3 4 5 6 7 8 9)
 
-;; (println (map (lambda [n] (+ n 1)) arr))
+(println "incremented:" 
+    (map (lambda [n] (+ n 1)) arr))
 
-(fun square [n] (* n n))
-(let arr (map (square) arr))
-(println "squared:" arr)
+(println "squared:" 
+    (map (lambda [n] (* n n)) arr))
 
-(fun filterFun [element] (= (% element 2) 0))
-(println "keep even nums:" (filter (filterFun) arr))
+(println "even numbers:" 
+    (filter (lambda [n] (= (% n 2) 0)) arr))
 
-(fun orderNatural [char] (- char 97))
-(println (map (orderNatural) "hello world"))
+(println "natural numbers"
+    (map (lambda [c] (- cc 97)) "hello world"))

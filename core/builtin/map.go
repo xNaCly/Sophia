@@ -14,13 +14,14 @@ func builtinMap(tok *token.Token, args ...types.Node) any {
 	}
 
 	// function to apply to iterator
-	call, ok := args[0].(*expr.Call)
-	if !ok {
+	switch args[0].(type) {
+	case *expr.Call, *expr.Lambda:
+	default:
 		serror.Add(args[0].GetToken(), "Argument Error", "Expected first argument to be a function call, got %T", args[0])
 		serror.Panic()
 	}
 
-	call.Args = make([]types.Node, 1)
+	call := args[0]
 
 	var r any
 	switch iter := args[1].Eval().(type) {
@@ -28,11 +29,11 @@ func builtinMap(tok *token.Token, args ...types.Node) any {
 	case string:
 		t := make([]float64, len(iter))
 		for i, char := range iter {
-			call.Args[0] = &expr.Float{Value: float64(char)}
+			call.SetChildren([]types.Node{&expr.Float{Value: float64(char)}})
 			res := call.Eval()
 			out, ok := res.(float64)
 			if !ok {
-				serror.Add(call.Token, "Type error", "Expected result of type float64 for function used for string mapping, got %T instead", res)
+				serror.Add(call.GetToken(), "Type error", "Expected result of type float64 for function used for string mapping, got %T instead", res)
 				serror.Panic()
 			}
 			t[i] = out
@@ -41,7 +42,7 @@ func builtinMap(tok *token.Token, args ...types.Node) any {
 	case []any:
 		t := make([]any, len(iter))
 		for i, element := range iter {
-			call.Args[0] = &expr.Any{Value: element}
+			call.SetChildren([]types.Node{&expr.Any{Value: element}})
 			t[i] = call.Eval()
 		}
 		r = t
