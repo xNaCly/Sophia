@@ -15,6 +15,7 @@ func init() {
 	builtins := map[string]types.KnownFunctionInterface{
 		"len":     builtinLen,
 		"map":     builtinMap,
+		"type":    builtinType,
 		"println": builtinPrintln,
 		"filter":  builtinFilter,
 		"assert":  builtinAssert,
