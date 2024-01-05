@@ -1,19 +1,34 @@
 # Sophia
 
-My take on a small lisp like programming language named after my girlfriend.
+My take on a small lisp like embeddable programming language with go
+interoperability.
 
 View the docs containing an overview, an in depth overview and a lot of
 Examples [here](https://xnacly.github.io/Sophia/)
 
 ```lisp
-(fun square [n]
-    (* n n))
+(let arr 1 2 3 4 5)
 
-(let n 12)
-(let res (square n))
+(fun square [n] (* n n))
+(map (square) arr) ;; [1 4 9 16 25]
 
-(println '{n}*{n} is {res}')
-;; 12*12 is 144
+(filter
+    (lambda [n]
+        (= (% n 2) 0)) arr) ;; [2 4]
+
+(let person {
+    array: [1 2 3]
+    bank: {
+        institute: {
+            name: "western union"
+        }
+    }
+})
+(println person#["array"][0]) ;; 1
+(println person#["bank"]["institute"]["name"]) ;; "western union"
+
+(let name "anon")
+(println 'Hello {name}!')
 ```
 
 ## Try
