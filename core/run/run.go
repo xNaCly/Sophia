@@ -16,7 +16,8 @@ import (
 	"github.com/xnacly/sophia/core/serror"
 )
 
-func run(r io.Reader, filename string) (s []string, e error) {
+// runtime execution starting point
+func Run(r io.Reader, filename string) (s []string, e error) {
 	defer func() {
 		if core.CONF.Debug {
 			return
@@ -32,10 +33,6 @@ func run(r io.Reader, filename string) (s []string, e error) {
 			return
 		}
 	}()
-
-	buf := &strings.Builder{}
-	r = io.TeeReader(r, buf)
-	serror.SetDefault(serror.NewFormatter(&core.CONF, buf.String(), filename))
 
 	debug.Log("starting lexer")
 	l := lexer.New(r)

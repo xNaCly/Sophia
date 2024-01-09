@@ -1,9 +1,13 @@
 package serror
 
 import (
+	"bufio"
+	"io"
+	"os"
+	"strings"
+
 	"github.com/xnacly/sophia/core"
 	"github.com/xnacly/sophia/core/token"
-	"strings"
 )
 
 var defaultFormatter *ErrorFormatter
@@ -33,12 +37,15 @@ func Panic() {
 	panic("sophia: " + err.Title + ": " + err.Info)
 }
 
-func NewFormatter(config *core.Config, input string, filename string) *ErrorFormatter {
+func NewFormatter(config *core.Config, input string, filename string, w io.Writer) *ErrorFormatter {
+	if w == nil {
+		w = os.Stdout
+	}
 	return &ErrorFormatter{
-		conf:    config,
-		lines:   strings.Split(input, "\n"),
-		file:    filename,
-		builder: &strings.Builder{},
-		errors:  make([]Error, 0),
+		conf:   config,
+		lines:  strings.Split(input, "\n"),
+		file:   filename,
+		w:      bufio.NewWriter(w),
+		errors: make([]Error, 0),
 	}
 }

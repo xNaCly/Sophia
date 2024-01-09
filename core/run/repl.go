@@ -9,6 +9,7 @@ import (
 	"github.com/chzyer/readline"
 	"github.com/xnacly/sophia/core"
 	"github.com/xnacly/sophia/core/consts"
+	"github.com/xnacly/sophia/core/serror"
 )
 
 func repl(run func(r io.Reader, filename string) ([]string, error)) {
@@ -43,7 +44,10 @@ func repl(run func(r io.Reader, filename string) ([]string, error)) {
 				log.Printf("toggled debug logging to='%t'", core.CONF.Debug)
 			}
 		} else {
-			val, error := run(strings.NewReader(line), "repl")
+			var r io.Reader
+			r = strings.NewReader(line)
+			serror.SetDefault(serror.NewFormatter(&core.CONF, line, "repl", nil))
+			val, error := run(r, "repl")
 			if error != nil {
 				log.Println(error)
 			} else {

@@ -3,13 +3,13 @@
 package serror
 
 import (
+	"bufio"
 	"fmt"
-	"log"
 	"path/filepath"
+	"strconv"
+
 	"github.com/xnacly/sophia/core"
 	"github.com/xnacly/sophia/core/token"
-	"strconv"
-	"strings"
 )
 
 const MAX_ERRORS = 3
@@ -23,11 +23,11 @@ const (
 )
 
 type ErrorFormatter struct {
-	conf    *core.Config
-	lines   []string
-	errors  []Error
-	builder *strings.Builder
-	file    string
+	conf   *core.Config
+	lines  []string
+	errors []Error
+	w      *bufio.Writer
+	file   string
 }
 
 func (e *ErrorFormatter) HasErrors() bool {
@@ -39,23 +39,27 @@ func (e *ErrorFormatter) Add(t *token.Token, title string, info string, addition
 }
 
 func (e *ErrorFormatter) Display() {
+	if len(e.errors) == 0 {
+		return
+	}
 	// if a file, lookup absolute path
-	if e.file != "cli" && e.file != "repl" {
+	if e.file != "cli" && e.file != "repl" && e.file != "stdin" {
 		// only errors on os.Getwd (we don't really care)
 		path, _ := filepath.Abs(e.file)
 		e.file = path
 	}
 	for i, err := range e.errors {
 		if i < MAX_ERRORS || e.conf.AllErrors {
-			log.Println(err.prettyPrint(e, e.builder))
+			err.prettyPrint(e)
 			if i+1 != len(e.errors) {
-				log.Println()
+				e.w.WriteRune('\n')
 			}
 		} else {
-			log.Printf("Too many errors, skipping the remaining %d, rerun with '-all-errors' to view all %d errors", len(e.errors)-MAX_ERRORS, len(e.errors))
+			fmt.Fprintf(e.w, "Too many errors, skipping the remaining %d, rerun with '-all-errors' to view all %d errors", len(e.errors)-MAX_ERRORS, len(e.errors))
 			break
 		}
 	}
+	e.w.Flush()
 }
 
 type Error struct {
@@ -65,28 +69,28 @@ type Error struct {
 }
 
 // responsible for formatting the error title and the  filename + line + pos
-func (e *Error) title(errorFormatter *ErrorFormatter, builder *strings.Builder) {
-	builder.WriteString(ANSI_RED)
-	builder.WriteString("error: ")
-	builder.WriteString(ANSI_RESET)
-	builder.WriteString(e.Title)
-	builder.WriteString("\n\n\tat: ")
-	builder.WriteString(ANSI_BLUE)
-	builder.WriteString(errorFormatter.file)
-	builder.WriteString(ANSI_RESET)
-	builder.WriteRune(':')
-	builder.WriteString(strconv.Itoa(e.Token.Line + 1))
-	builder.WriteRune(':')
-	builder.WriteString(strconv.Itoa(e.Token.LinePos + 1))
-	builder.WriteRune(':')
+func (e *Error) title(errFmt *ErrorFormatter) {
+	errFmt.w.WriteString(ANSI_RED)
+	errFmt.w.WriteString("error: ")
+	errFmt.w.WriteString(ANSI_RESET)
+	errFmt.w.WriteString(e.Title)
+	errFmt.w.WriteString("\n\n\tat: ")
+	errFmt.w.WriteString(ANSI_BLUE)
+	errFmt.w.WriteString(errFmt.file)
+	errFmt.w.WriteString(ANSI_RESET)
+	errFmt.w.WriteRune(':')
+	errFmt.w.WriteString(strconv.Itoa(e.Token.Line + 1))
+	errFmt.w.WriteRune(':')
+	errFmt.w.WriteString(strconv.Itoa(e.Token.LinePos + 1))
+	errFmt.w.WriteRune(':')
 }
 
 // responsible for formatting the code snippet
-func (e *Error) snippet(errorFormatter *ErrorFormatter, builder *strings.Builder) {
+func (e *Error) snippet(errFmt *ErrorFormatter) {
 	t := e.Token
 	prevLineAmount := 2
 	nextLineAmount := 2
-	if len(errorFormatter.lines) == 1 {
+	if len(errFmt.lines) == 1 {
 		prevLineAmount = 0
 		nextLineAmount = 0
 	}
@@ -99,69 +103,68 @@ func (e *Error) snippet(errorFormatter *ErrorFormatter, builder *strings.Builder
 		lineIndex = 0
 	}
 
-	prevLines := errorFormatter.lines[lineIndex:t.Line]
+	prevLines := errFmt.lines[lineIndex:t.Line]
 
 	for _, line := range prevLines {
-		e.line(line, lineIndex, builder)
+		e.line(errFmt, line, lineIndex)
 		lineIndex++
 	}
 
 	// print the offending line
-	e.error(errorFormatter.lines[t.Line], builder)
+	e.error(errFmt, errFmt.lines[t.Line])
 	lineIndex++
 
 	nextLineAmount = t.Line + 1 + nextLineAmount
-	if nextLineAmount >= len(errorFormatter.lines)-1 {
-		nextLineAmount = len(errorFormatter.lines) - 1
+	if nextLineAmount >= len(errFmt.lines)-1 {
+		nextLineAmount = len(errFmt.lines) - 1
 	}
 	baseLine := t.Line + 1
-	if baseLine >= len(errorFormatter.lines)-1 {
-		baseLine = len(errorFormatter.lines) - 1
+	if baseLine >= len(errFmt.lines)-1 {
+		baseLine = len(errFmt.lines) - 1
 	}
 
-	nextLines := errorFormatter.lines[baseLine:nextLineAmount]
+	nextLines := errFmt.lines[baseLine:nextLineAmount]
 
 	for _, line := range nextLines {
-		e.line(line, lineIndex, builder)
+		e.line(errFmt, line, lineIndex)
 		lineIndex++
 	}
 }
 
 // formats the error line
-func (e *Error) error(line string, builder *strings.Builder) {
-	e.line(line, e.Token.Line, builder)
-	builder.WriteString("\n\t")
-	builder.WriteString(fmt.Sprintf("%5s| ", ""))
-	runeRepeat(builder, ' ', e.Token.LinePos)
-	builder.WriteString(ANSI_RED)
-	runeRepeat(builder, '^', len(e.Token.Raw))
-	builder.WriteString(ANSI_RESET)
+func (e *Error) error(errFmt *ErrorFormatter, line string) {
+	e.line(errFmt, line, e.Token.Line)
+	errFmt.w.WriteString("\n\t")
+	fmt.Fprintf(errFmt.w, "%5s| ", " ")
+	runeRepeat(errFmt.w, ' ', e.Token.LinePos-1)
+	errFmt.w.WriteString(ANSI_RED)
+	runeRepeat(errFmt.w, '^', len(e.Token.Raw))
+	errFmt.w.WriteString(ANSI_RESET)
 }
 
 // formats a singular line
-func (e *Error) line(line string, lineNum int, builder *strings.Builder) {
-	builder.WriteString("\n\t")
-	builder.WriteString(fmt.Sprintf("%5d| ", lineNum+1))
-	builder.WriteString(line)
+func (e *Error) line(errFmt *ErrorFormatter, line string, lineNum int) {
+	errFmt.w.WriteString("\n\t")
+	fmt.Fprintf(errFmt.w, "%5d| ", lineNum+1)
+	errFmt.w.WriteString(line)
 }
 
-func (e *Error) prettyPrint(errorFormatter *ErrorFormatter, builder *strings.Builder) string {
-	e.title(errorFormatter, builder)
-	builder.WriteString("\n")
-	e.snippet(errorFormatter, builder)
-	builder.WriteString("\n\n")
-	builder.WriteString(e.Info)
-	str := builder.String()
-	builder.Reset()
-	return str
+func (e *Error) prettyPrint(errFmt *ErrorFormatter) {
+	e.title(errFmt)
+	errFmt.w.WriteRune('\n')
+	e.snippet(errFmt)
+	errFmt.w.WriteRune('\n')
+	errFmt.w.WriteRune('\n')
+	errFmt.w.WriteString(e.Info)
+	errFmt.w.WriteRune('\n')
 }
 
 // writes rune 'r' 'n' times into 'builder'
-func runeRepeat(builder *strings.Builder, r rune, n int) {
+func runeRepeat(w *bufio.Writer, r rune, n int) {
 	if n <= 0 {
 		return
 	}
 	for i := 0; i < n; i++ {
-		builder.WriteRune(r)
+		w.WriteRune(r)
 	}
 }

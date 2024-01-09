@@ -13,7 +13,7 @@ import (
 func TestLexerHelloWorld(t *testing.T) {
 	in := `(println "Hello World!")`
 
-	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test"))
+	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test", nil))
 	l := New(strings.NewReader(in))
 	tok := l.Lex()
 	if len(tok) == 0 {
@@ -47,7 +47,7 @@ func TestLexerFloats(t *testing.T) {
 	}
 	for _, v := range in {
 		t.Run(v, func(t *testing.T) {
-			serror.SetDefault(serror.NewFormatter(&core.CONF, v, "test"))
+			serror.SetDefault(serror.NewFormatter(&core.CONF, v, "test", nil))
 			l := New(strings.NewReader(v))
 			o := l.Lex()
 			if serror.HasErrors() {
@@ -62,7 +62,7 @@ func TestLexerFloats(t *testing.T) {
 
 func TestLexerIdent(t *testing.T) {
 	in := `b a abc abcdefghijklmnopqrstuvwxyz`
-	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test"))
+	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test", nil))
 	l := New(strings.NewReader(in))
 	to := l.Lex()
 	if serror.HasErrors() {
@@ -97,7 +97,7 @@ func TestLexerIdent(t *testing.T) {
 
 func TestLexerOperators(t *testing.T) {
 	in := `+-/*% let () if = or and not ++ fun for > < match # lambda`
-	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test"))
+	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test", nil))
 	l := New(strings.NewReader(in))
 	to := l.Lex()
 	if serror.HasErrors() {
@@ -138,7 +138,7 @@ func TestLexerOperators(t *testing.T) {
 
 func TestLexerArithmetic(t *testing.T) {
 	in := `(+ 1 (* 1 (/ 1 (% 1))))`
-	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test"))
+	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test", nil))
 	l := New(strings.NewReader(in))
 	to := l.Lex()
 	if serror.HasErrors() {
@@ -180,7 +180,7 @@ func TestLexerIgnoreCharsAndComments(t *testing.T) {
 	}
 	for _, v := range in {
 		t.Run(v, func(t *testing.T) {
-			serror.SetDefault(serror.NewFormatter(&core.CONF, v, "test"))
+			serror.SetDefault(serror.NewFormatter(&core.CONF, v, "test", nil))
 			l := New(strings.NewReader(v))
 			toks := []*token.Token{}
 			if l != nil {
@@ -204,7 +204,7 @@ func TestLexerErrorsOnUnknownTokenAndIntegers(t *testing.T) {
 	}
 	for _, v := range in {
 		t.Run(v, func(t *testing.T) {
-			serror.SetDefault(serror.NewFormatter(&core.CONF, v, "test"))
+			serror.SetDefault(serror.NewFormatter(&core.CONF, v, "test", nil))
 			l := New(strings.NewReader(v))
 			l.Lex()
 			if !serror.HasErrors() {
@@ -216,7 +216,7 @@ func TestLexerErrorsOnUnknownTokenAndIntegers(t *testing.T) {
 
 func TestLexerBooleans(t *testing.T) {
 	in := "true false"
-	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test"))
+	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test", nil))
 	l := New(strings.NewReader(in))
 	tok := l.Lex()
 	if serror.HasErrors() {

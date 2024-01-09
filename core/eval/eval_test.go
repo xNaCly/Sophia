@@ -43,7 +43,7 @@ func TestEvalAritmetic(t *testing.T) {
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
-			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
+			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test", nil))
 			l := lexer.New(strings.NewReader(i.str))
 			p := parser.New(l.Lex(), "test")
 			r := Eval("repl", p.Parse())
@@ -94,7 +94,7 @@ func TestEvalVariables(t *testing.T) {
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
-			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
+			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test", nil))
 			l := lexer.New(strings.NewReader(i.str))
 			p := parser.New(l.Lex(), "test")
 			r := Eval("repl", p.Parse())
@@ -183,7 +183,7 @@ func TestEvalConditional(t *testing.T) {
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
-			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
+			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test", nil))
 			l := lexer.New(strings.NewReader(i.str))
 			p := parser.New(l.Lex(), "test")
 			r := Eval("repl", p.Parse())
@@ -224,7 +224,7 @@ func TestEvalMerge(t *testing.T) {
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
-			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
+			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test", nil))
 			l := lexer.New(strings.NewReader(i.str))
 			p := parser.New(l.Lex(), "test")
 			r := Eval("repl", p.Parse())
@@ -263,7 +263,7 @@ func TestEvalFunction(t *testing.T) {
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
-			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
+			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test", nil))
 			l := lexer.New(strings.NewReader(i.str))
 			p := parser.New(l.Lex(), "test")
 			r := Eval("repl", p.Parse())
@@ -294,7 +294,7 @@ func TestEvalLoop(t *testing.T) {
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
-			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
+			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test", nil))
 			l := lexer.New(strings.NewReader(i.str))
 			p := parser.New(l.Lex(), "test")
 			r := Eval("repl", p.Parse())
@@ -340,7 +340,7 @@ func TestEvalReturn(t *testing.T) {
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
-			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
+			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test", nil))
 			l := lexer.New(strings.NewReader(i.str))
 			p := parser.New(l.Lex(), "test")
 			r := Eval("repl", p.Parse())
@@ -400,7 +400,7 @@ func TestEvalObject(t *testing.T) {
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
-			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
+			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test", nil))
 			l := lexer.New(strings.NewReader(i.str))
 			p := parser.New(l.Lex(), "test")
 			r := Eval("repl", p.Parse())
@@ -435,7 +435,7 @@ func TestEvalArray(t *testing.T) {
 	}
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
-			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
+			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test", nil))
 			l := lexer.New(strings.NewReader(i.str))
 			p := parser.New(l.Lex(), "test")
 			r := Eval("repl", p.Parse())

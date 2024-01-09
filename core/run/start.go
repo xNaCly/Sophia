@@ -1,16 +1,20 @@
 package run
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"strings"
 
 	"github.com/xnacly/sophia/core"
 	"github.com/xnacly/sophia/core/debug"
+	"github.com/xnacly/sophia/core/serror"
 )
 
+// entry point for sophia cli
 func Start() {
 	execute := flag.String("exp", "", "specifiy expression to execute")
 	dbg := flag.Bool("dbg", false, "enable debug logs")
@@ -31,13 +35,17 @@ func Start() {
 	// check if stdin is readable and the process is in a pipe
 	if err == nil && !(stdinInf.Mode()&os.ModeNamedPipe == 0) {
 		debug.Log("got stdin content, running...")
-		_, err = run(os.Stdin, "stdin")
+		buf := bytes.Buffer{}
+		buf.ReadFrom(os.Stdin)
+		serror.SetDefault(serror.NewFormatter(&core.CONF, buf.String(), "stdin", nil))
+		_, err = Run(bytes.NewReader(buf.Bytes()), "stdin")
 		if err != nil {
 			log.Fatalln(err)
 		}
 	} else if len(*execute) != 0 {
 		debug.Log("got -exp flag, running...")
-		_, err := run(strings.NewReader(*execute), "cli")
+		serror.SetDefault(serror.NewFormatter(&core.CONF, *execute, "cli", nil))
+		_, err := Run(strings.NewReader(*execute), "cli")
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -49,13 +57,17 @@ func Start() {
 			log.Fatalf("Failed to open file: %s\n", err)
 		}
 		defer f.Close()
-		_, err = run(f, file)
+		buf := &bytes.Buffer{}
+		r := io.TeeReader(f, buf)
+		buf.ReadFrom(r)
+		serror.SetDefault(serror.NewFormatter(&core.CONF, buf.String(), file, nil))
+		_, err = Run(buf, file)
 		if err != nil {
 			log.Fatalln("\n" + err.Error())
 		}
 	} else {
 		fmt.Print(core.ASCII_ART, "\n")
 		debug.Log("got nothing, starting repl...")
-		repl(run)
+		repl(Run)
 	}
 }
