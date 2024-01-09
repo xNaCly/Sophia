@@ -1,17 +1,19 @@
 package parser
 
 import (
+	"strings"
+	"testing"
+
 	"github.com/xnacly/sophia/core"
 	"github.com/xnacly/sophia/core/lexer"
 	"github.com/xnacly/sophia/core/serror"
-	"testing"
 )
 
 func TestParserHelloWorld(t *testing.T) {
 	in := `(println "Hello World!")`
 
 	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test"))
-	l := lexer.New(in)
+	l := lexer.New(strings.NewReader(in))
 	token := l.Lex()
 
 	New(token, "test")
@@ -35,7 +37,7 @@ func TestParserErrors(t *testing.T) {
 	for _, s := range in {
 		t.Run(s, func(t *testing.T) {
 			serror.SetDefault(serror.NewFormatter(&core.CONF, s, "test"))
-			l := lexer.New(s)
+			l := lexer.New(strings.NewReader(s))
 			p := New(l.Lex(), "test")
 			p.Parse()
 			if !serror.HasErrors() {
@@ -54,7 +56,7 @@ func TestParserIndex(t *testing.T) {
 	for _, s := range in {
 		t.Run(s, func(t *testing.T) {
 			serror.SetDefault(serror.NewFormatter(&core.CONF, s, "test"))
-			l := lexer.New(s)
+			l := lexer.New(strings.NewReader(s))
 			tokens := l.Lex()
 			p := New(tokens, "test")
 			p.Parse()
@@ -75,7 +77,7 @@ func TestParserArray(t *testing.T) {
 	for _, s := range in {
 		t.Run(s, func(t *testing.T) {
 			serror.SetDefault(serror.NewFormatter(&core.CONF, s, "test"))
-			l := lexer.New(s)
+			l := lexer.New(strings.NewReader(s))
 			tokens := l.Lex()
 			p := New(tokens, "test")
 			p.Parse()

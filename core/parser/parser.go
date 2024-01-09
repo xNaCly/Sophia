@@ -1,16 +1,16 @@
 package parser
 
 import (
-	"io"
 	"os"
+	"strconv"
+	"strings"
+
 	"github.com/xnacly/sophia/core/alloc"
 	"github.com/xnacly/sophia/core/expr"
 	"github.com/xnacly/sophia/core/lexer"
 	"github.com/xnacly/sophia/core/serror"
 	"github.com/xnacly/sophia/core/token"
 	"github.com/xnacly/sophia/core/types"
-	"strconv"
-	"strings"
 )
 
 type Parser struct {
@@ -54,16 +54,12 @@ func (p *Parser) loadNewSource(node *expr.Load) []types.Node {
 	for i := 0; i < len(node.Imports); i++ {
 		name := node.Imports[i].GetToken()
 		file, err := os.Open(name.Raw)
+		defer file.Close()
 		if err != nil {
 			serror.Add(name, "Failed to source import", "Couldn't open %q: %q.", name.Raw, err)
 			continue
 		}
-		content, err := io.ReadAll(file)
-		if err != nil {
-			serror.Add(name, "Failed to read import", "Couldn't read %q: %q.", name.Raw, err)
-			continue
-		}
-		lexer := lexer.New(string(content))
+		lexer := lexer.New(file)
 		token := lexer.Lex()
 		if name.Raw == p.filename {
 			serror.Add(name, "Detected recursion in file imports", "Got %q while already parsing %q.", name.Raw, p.filename)

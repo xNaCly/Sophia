@@ -2,17 +2,19 @@ package lexer
 
 import (
 	"fmt"
+	"strings"
+	"testing"
+
 	"github.com/xnacly/sophia/core"
 	"github.com/xnacly/sophia/core/serror"
 	"github.com/xnacly/sophia/core/token"
-	"testing"
 )
 
 func TestLexerHelloWorld(t *testing.T) {
 	in := `(println "Hello World!")`
 
 	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test"))
-	l := New(in)
+	l := New(strings.NewReader(in))
 	tok := l.Lex()
 	if len(tok) == 0 {
 		t.Error("Lexer found error, token empty")
@@ -46,7 +48,7 @@ func TestLexerFloats(t *testing.T) {
 	for _, v := range in {
 		t.Run(v, func(t *testing.T) {
 			serror.SetDefault(serror.NewFormatter(&core.CONF, v, "test"))
-			l := New(v)
+			l := New(strings.NewReader(v))
 			o := l.Lex()
 			if serror.HasErrors() {
 				t.Fatalf("failed to lex float for input '%s'\n", v)
@@ -61,7 +63,7 @@ func TestLexerFloats(t *testing.T) {
 func TestLexerIdent(t *testing.T) {
 	in := `b a abc abcdefghijklmnopqrstuvwxyz`
 	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test"))
-	l := New(in)
+	l := New(strings.NewReader(in))
 	to := l.Lex()
 	if serror.HasErrors() {
 		t.Error("Lexer found error, token empty")
@@ -96,7 +98,7 @@ func TestLexerIdent(t *testing.T) {
 func TestLexerOperators(t *testing.T) {
 	in := `+-/*% let () if = or and not ++ fun for > < match # lambda`
 	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test"))
-	l := New(in)
+	l := New(strings.NewReader(in))
 	to := l.Lex()
 	if serror.HasErrors() {
 		t.Error("Lexer found error, token empty")
@@ -137,7 +139,7 @@ func TestLexerOperators(t *testing.T) {
 func TestLexerArithmetic(t *testing.T) {
 	in := `(+ 1 (* 1 (/ 1 (% 1))))`
 	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test"))
-	l := New(in)
+	l := New(strings.NewReader(in))
 	to := l.Lex()
 	if serror.HasErrors() {
 		t.Error("Lexer found error, token empty")
@@ -179,7 +181,7 @@ func TestLexerIgnoreCharsAndComments(t *testing.T) {
 	for _, v := range in {
 		t.Run(v, func(t *testing.T) {
 			serror.SetDefault(serror.NewFormatter(&core.CONF, v, "test"))
-			l := New(v)
+			l := New(strings.NewReader(v))
 			toks := []*token.Token{}
 			if l != nil {
 				toks = l.Lex()
@@ -203,7 +205,7 @@ func TestLexerErrorsOnUnknownTokenAndIntegers(t *testing.T) {
 	for _, v := range in {
 		t.Run(v, func(t *testing.T) {
 			serror.SetDefault(serror.NewFormatter(&core.CONF, v, "test"))
-			l := New(v)
+			l := New(strings.NewReader(v))
 			l.Lex()
 			if !serror.HasErrors() {
 				t.Error("Lexer should have found errors")
@@ -215,7 +217,7 @@ func TestLexerErrorsOnUnknownTokenAndIntegers(t *testing.T) {
 func TestLexerBooleans(t *testing.T) {
 	in := "true false"
 	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test"))
-	l := New(in)
+	l := New(strings.NewReader(in))
 	tok := l.Lex()
 	if serror.HasErrors() {
 		t.Error("Lexer found error, token empty")

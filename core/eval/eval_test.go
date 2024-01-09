@@ -1,12 +1,14 @@
 package eval
 
 import (
+	"strings"
+	"testing"
+
 	"github.com/xnacly/sophia/core"
 	_ "github.com/xnacly/sophia/core/builtin" // required for built ins, such as println or len
 	"github.com/xnacly/sophia/core/lexer"
 	"github.com/xnacly/sophia/core/parser"
 	"github.com/xnacly/sophia/core/serror"
-	"testing"
 )
 
 func TestEvalAritmetic(t *testing.T) {
@@ -42,7 +44,7 @@ func TestEvalAritmetic(t *testing.T) {
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
 			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
-			l := lexer.New(i.str)
+			l := lexer.New(strings.NewReader(i.str))
 			p := parser.New(l.Lex(), "test")
 			r := Eval("repl", p.Parse())
 
@@ -93,7 +95,7 @@ func TestEvalVariables(t *testing.T) {
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
 			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
-			l := lexer.New(i.str)
+			l := lexer.New(strings.NewReader(i.str))
 			p := parser.New(l.Lex(), "test")
 			r := Eval("repl", p.Parse())
 			if serror.HasErrors() {
@@ -182,7 +184,7 @@ func TestEvalConditional(t *testing.T) {
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
 			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
-			l := lexer.New(i.str)
+			l := lexer.New(strings.NewReader(i.str))
 			p := parser.New(l.Lex(), "test")
 			r := Eval("repl", p.Parse())
 			if serror.HasErrors() {
@@ -223,7 +225,7 @@ func TestEvalMerge(t *testing.T) {
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
 			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
-			l := lexer.New(i.str)
+			l := lexer.New(strings.NewReader(i.str))
 			p := parser.New(l.Lex(), "test")
 			r := Eval("repl", p.Parse())
 			if serror.HasErrors() {
@@ -262,7 +264,7 @@ func TestEvalFunction(t *testing.T) {
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
 			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
-			l := lexer.New(i.str)
+			l := lexer.New(strings.NewReader(i.str))
 			p := parser.New(l.Lex(), "test")
 			r := Eval("repl", p.Parse())
 			if serror.HasErrors() {
@@ -293,7 +295,7 @@ func TestEvalLoop(t *testing.T) {
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
 			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
-			l := lexer.New(i.str)
+			l := lexer.New(strings.NewReader(i.str))
 			p := parser.New(l.Lex(), "test")
 			r := Eval("repl", p.Parse())
 			if serror.HasErrors() {
@@ -339,7 +341,7 @@ func TestEvalReturn(t *testing.T) {
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
 			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
-			l := lexer.New(i.str)
+			l := lexer.New(strings.NewReader(i.str))
 			p := parser.New(l.Lex(), "test")
 			r := Eval("repl", p.Parse())
 			if serror.HasErrors() {
@@ -399,7 +401,7 @@ func TestEvalObject(t *testing.T) {
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
 			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
-			l := lexer.New(i.str)
+			l := lexer.New(strings.NewReader(i.str))
 			p := parser.New(l.Lex(), "test")
 			r := Eval("repl", p.Parse())
 			if serror.HasErrors() {
@@ -434,7 +436,7 @@ func TestEvalArray(t *testing.T) {
 	for _, i := range input {
 		t.Run(i.str, func(t *testing.T) {
 			serror.SetDefault(serror.NewFormatter(&core.CONF, i.str, "test"))
-			l := lexer.New(i.str)
+			l := lexer.New(strings.NewReader(i.str))
 			p := parser.New(l.Lex(), "test")
 			r := Eval("repl", p.Parse())
 			if serror.HasErrors() {

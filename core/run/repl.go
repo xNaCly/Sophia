@@ -2,13 +2,16 @@ package run
 
 import (
 	"fmt"
+	"io"
+	"log"
+	"strings"
+
 	"github.com/chzyer/readline"
 	"github.com/xnacly/sophia/core"
 	"github.com/xnacly/sophia/core/consts"
-	"log"
 )
 
-func repl(run func(input string, filename string) ([]string, error)) {
+func repl(run func(r io.Reader, filename string) ([]string, error)) {
 	log.SetFlags(0)
 	fmt.Println(`Welcome to the Sophia programming language repl - press <CTRL-D> or <CTRL-C> to quit...`)
 
@@ -40,7 +43,7 @@ func repl(run func(input string, filename string) ([]string, error)) {
 				log.Printf("toggled debug logging to='%t'", core.CONF.Debug)
 			}
 		} else {
-			val, error := run(line, "repl")
+			val, error := run(strings.NewReader(line), "repl")
 			if error != nil {
 				log.Println(error)
 			} else {

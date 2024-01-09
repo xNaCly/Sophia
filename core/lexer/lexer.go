@@ -1,33 +1,38 @@
 package lexer
 
 import (
-	"github.com/xnacly/sophia/core/serror"
-	"github.com/xnacly/sophia/core/token"
+	"bufio"
+	"io"
 	"strings"
 	"unicode"
+
+	"github.com/xnacly/sophia/core/serror"
+	"github.com/xnacly/sophia/core/token"
 )
 
 type Lexer struct {
-	input   []rune
+	reader  *bufio.Reader
 	pos     int
 	chr     rune
 	line    int
 	linepos int
 }
 
-func New(input string) *Lexer {
-	if len(input) == 0 || len(strings.TrimSpace(input)) == 0 {
-		serror.Add(&token.Token{LinePos: 0, Raw: " "}, "Unexpected end of file", "Source possibly empty")
+func New(r io.Reader) *Lexer {
+	in := bufio.NewReader(r)
+	if in.Size() == 0 {
+		serror.Add(&token.Token{LinePos: 0, Raw: " "}, "Unexpected end of file", "Source empty")
 		return &Lexer{}
 	}
-	in := []rune(input)
-	return &Lexer{
-		input:   in,
+
+	l := &Lexer{
+		reader:  in,
 		pos:     0,
-		chr:     in[0],
 		line:    0,
 		linepos: 0,
 	}
+	l.advance()
+	return l
 }
 
 func (l *Lexer) Lex() []*token.Token {
@@ -292,18 +297,21 @@ func (l *Lexer) float() (*token.Token, error) {
 }
 
 func (l *Lexer) peek() rune {
-	if l.pos+1 < len(l.input) {
-		return l.input[l.pos+1]
+	cc, _, err := l.reader.ReadRune()
+	if err != nil {
+		return 0
 	}
-	return 0
+	l.reader.UnreadRune()
+	return cc
 }
 
 func (l *Lexer) advance() {
-	if l.pos+1 < len(l.input) {
-		l.pos++
-		l.linepos++
-		l.chr = l.input[l.pos]
+	cc, _, err := l.reader.ReadRune()
+	if err != nil {
+		l.chr = 0
 		return
 	}
-	l.chr = 0
+	l.pos++
+	l.linepos++
+	l.chr = cc
 }

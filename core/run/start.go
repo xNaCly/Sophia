@@ -3,9 +3,10 @@ package run
 import (
 	"flag"
 	"fmt"
-	"io"
 	"log"
 	"os"
+	"strings"
+
 	"github.com/xnacly/sophia/core"
 	"github.com/xnacly/sophia/core/debug"
 )
@@ -27,31 +28,28 @@ func Start() {
 	}
 
 	stdinInf, err := os.Stdin.Stat()
-	// INFO: check if stdin is readable and the process is in a pipe
+	// check if stdin is readable and the process is in a pipe
 	if err == nil && !(stdinInf.Mode()&os.ModeNamedPipe == 0) {
 		debug.Log("got stdin content, running...")
-		out, err := io.ReadAll(os.Stdin)
-		if err != nil {
-			log.Fatalln("failed to read from stdin", err)
-		}
-		_, err = run(string(out), "stdin")
+		_, err = run(os.Stdin, "stdin")
 		if err != nil {
 			log.Fatalln(err)
 		}
 	} else if len(*execute) != 0 {
 		debug.Log("got -exp flag, running...")
-		_, err := run(*execute, "cli")
+		_, err := run(strings.NewReader(*execute), "cli")
 		if err != nil {
 			log.Fatalln(err)
 		}
 	} else if len(flag.Args()) == 1 {
 		debug.Log("got file, running...")
 		file := flag.Args()[0]
-		f, err := os.ReadFile(file)
+		f, err := os.Open(file)
 		if err != nil {
 			log.Fatalf("Failed to open file: %s\n", err)
 		}
-		_, err = run(string(f), file)
+		defer f.Close()
+		_, err = run(f, file)
 		if err != nil {
 			log.Fatalln("\n" + err.Error())
 		}

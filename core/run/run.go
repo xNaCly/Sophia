@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"strings"
+
 	"github.com/xnacly/sophia/core"
 	_ "github.com/xnacly/sophia/core/builtin"
 	"github.com/xnacly/sophia/core/debug"
@@ -11,10 +14,9 @@ import (
 	"github.com/xnacly/sophia/core/lexer"
 	"github.com/xnacly/sophia/core/parser"
 	"github.com/xnacly/sophia/core/serror"
-	"strings"
 )
 
-func run(input string, filename string) (s []string, e error) {
+func run(r io.Reader, filename string) (s []string, e error) {
 	defer func() {
 		if core.CONF.Debug {
 			return
@@ -31,10 +33,12 @@ func run(input string, filename string) (s []string, e error) {
 		}
 	}()
 
-	serror.SetDefault(serror.NewFormatter(&core.CONF, input, filename))
+	buf := &strings.Builder{}
+	r = io.TeeReader(r, buf)
+	serror.SetDefault(serror.NewFormatter(&core.CONF, buf.String(), filename))
 
 	debug.Log("starting lexer")
-	l := lexer.New(input)
+	l := lexer.New(r)
 	tokens := l.Lex()
 	if serror.HasErrors() {
 		serror.Display()
