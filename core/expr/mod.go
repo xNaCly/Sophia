@@ -2,8 +2,8 @@ package expr
 
 import (
 	"math"
-	"sophia/core/token"
-	"sophia/core/types"
+	"github.com/xnacly/sophia/core/token"
+	"github.com/xnacly/sophia/core/types"
 )
 
 type Mod struct {

@@ -2,7 +2,7 @@ package shared
 
 import (
 	"fmt"
-	"sophia/core/types"
+	"github.com/xnacly/sophia/core/types"
 	"strconv"
 	"strings"
 )

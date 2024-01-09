@@ -3,12 +3,12 @@ package parser
 import (
 	"io"
 	"os"
-	"sophia/core/alloc"
-	"sophia/core/expr"
-	"sophia/core/lexer"
-	"sophia/core/serror"
-	"sophia/core/token"
-	"sophia/core/types"
+	"github.com/xnacly/sophia/core/alloc"
+	"github.com/xnacly/sophia/core/expr"
+	"github.com/xnacly/sophia/core/lexer"
+	"github.com/xnacly/sophia/core/serror"
+	"github.com/xnacly/sophia/core/token"
+	"github.com/xnacly/sophia/core/types"
 	"strconv"
 	"strings"
 )

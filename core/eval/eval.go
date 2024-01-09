@@ -2,7 +2,7 @@ package eval
 
 import (
 	"fmt"
-	"sophia/core/types"
+	"github.com/xnacly/sophia/core/types"
 )
 
 func Eval(t string, ast []types.Node) []string {

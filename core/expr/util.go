@@ -1,8 +1,8 @@
 package expr
 
 import (
-	"sophia/core/serror"
-	"sophia/core/token"
+	"github.com/xnacly/sophia/core/serror"
+	"github.com/xnacly/sophia/core/token"
 )
 
 // fastpath for casting bool, reduces memory allocation by skipping allocation

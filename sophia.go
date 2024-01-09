@@ -1,7 +1,7 @@
 package main
 
 import (
-	"sophia/core/run"
+	"github.com/xnacly/sophia/core/run"
 )
 
 func main() {

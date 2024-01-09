@@ -1,8 +1,8 @@
 package serror
 
 import (
-	"sophia/core"
-	"sophia/core/token"
+	"github.com/xnacly/sophia/core"
+	"github.com/xnacly/sophia/core/token"
 	"strings"
 )
 

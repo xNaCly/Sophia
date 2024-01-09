@@ -1,9 +1,9 @@
 package expr
 
 import (
-	"sophia/core/shared"
-	"sophia/core/token"
-	"sophia/core/types"
+	"github.com/xnacly/sophia/core/shared"
+	"github.com/xnacly/sophia/core/token"
+	"github.com/xnacly/sophia/core/types"
 	"strings"
 )
 

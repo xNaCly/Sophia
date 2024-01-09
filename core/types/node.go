@@ -1,7 +1,7 @@
 package types
 
 import (
-	"sophia/core/token"
+	"github.com/xnacly/sophia/core/token"
 )
 
 type Node interface {

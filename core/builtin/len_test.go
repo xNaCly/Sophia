@@ -1,9 +1,9 @@
 package builtin
 
 import (
-	"sophia/core/expr"
-	"sophia/core/token"
-	"sophia/core/types"
+	"github.com/xnacly/sophia/core/expr"
+	"github.com/xnacly/sophia/core/token"
+	"github.com/xnacly/sophia/core/types"
 	"testing"
 )
 

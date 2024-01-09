@@ -1,9 +1,9 @@
 package parser
 
 import (
-	"sophia/core"
-	"sophia/core/lexer"
-	"sophia/core/serror"
+	"github.com/xnacly/sophia/core"
+	"github.com/xnacly/sophia/core/lexer"
+	"github.com/xnacly/sophia/core/serror"
 	"testing"
 )
 

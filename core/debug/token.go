@@ -2,7 +2,7 @@ package debug
 
 import (
 	"fmt"
-	"sophia/core/token"
+	"github.com/xnacly/sophia/core/token"
 	"strings"
 )
 

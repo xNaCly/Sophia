@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"log"
 	"path/filepath"
-	"sophia/core"
-	"sophia/core/token"
+	"github.com/xnacly/sophia/core"
+	"github.com/xnacly/sophia/core/token"
 	"strconv"
 	"strings"
 )

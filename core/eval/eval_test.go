@@ -1,11 +1,11 @@
 package eval
 
 import (
-	"sophia/core"
-	_ "sophia/core/builtin" // required for built ins, such as println or len
-	"sophia/core/lexer"
-	"sophia/core/parser"
-	"sophia/core/serror"
+	"github.com/xnacly/sophia/core"
+	_ "github.com/xnacly/sophia/core/builtin" // required for built ins, such as println or len
+	"github.com/xnacly/sophia/core/lexer"
+	"github.com/xnacly/sophia/core/parser"
+	"github.com/xnacly/sophia/core/serror"
 	"testing"
 )
 

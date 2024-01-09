@@ -1,8 +1,8 @@
 package lexer
 
 import (
-	"sophia/core/serror"
-	"sophia/core/token"
+	"github.com/xnacly/sophia/core/serror"
+	"github.com/xnacly/sophia/core/token"
 	"strings"
 	"unicode"
 )

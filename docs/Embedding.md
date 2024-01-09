@@ -2,7 +2,11 @@
 
 ### Embedding the runtime
 
-**Work in Progress**
+Install sophia as a project dependency:
+
+```shell
+$ go get github.com/xnacly/sophia
+```
 
 ### KFI - Known function interface
 

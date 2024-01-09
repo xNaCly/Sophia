@@ -6,9 +6,9 @@
 package builtin
 
 import (
-	"sophia/core/alloc"
-	"sophia/core/consts"
-	"sophia/core/types"
+	"github.com/xnacly/sophia/core/alloc"
+	"github.com/xnacly/sophia/core/consts"
+	"github.com/xnacly/sophia/core/types"
 )
 
 func init() {

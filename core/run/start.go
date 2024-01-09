@@ -6,8 +6,8 @@ import (
 	"io"
 	"log"
 	"os"
-	"sophia/core"
-	"sophia/core/debug"
+	"github.com/xnacly/sophia/core"
+	"github.com/xnacly/sophia/core/debug"
 )
 
 func Start() {

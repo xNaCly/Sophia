@@ -1,4 +1,4 @@
-module sophia
+module github.com/xnacly/sophia
 
 go 1.21
 

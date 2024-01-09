@@ -1,9 +1,9 @@
 package builtin
 
 import (
-	"sophia/core/serror"
-	"sophia/core/token"
-	"sophia/core/types"
+	"github.com/xnacly/sophia/core/serror"
+	"github.com/xnacly/sophia/core/token"
+	"github.com/xnacly/sophia/core/types"
 )
 
 func builtinLen(tok *token.Token, args ...types.Node) any {

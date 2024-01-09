@@ -1,9 +1,9 @@
 package expr
 
 import (
-	"sophia/core/consts"
-	"sophia/core/token"
-	"sophia/core/types"
+	"github.com/xnacly/sophia/core/consts"
+	"github.com/xnacly/sophia/core/token"
+	"github.com/xnacly/sophia/core/types"
 )
 
 type Return struct {

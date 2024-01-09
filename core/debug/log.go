@@ -3,7 +3,7 @@ package debug
 import (
 	"fmt"
 	"os"
-	"sophia/core"
+	"github.com/xnacly/sophia/core"
 	"time"
 )
 

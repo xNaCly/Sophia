@@ -2,9 +2,9 @@ package lexer
 
 import (
 	"fmt"
-	"sophia/core"
-	"sophia/core/serror"
-	"sophia/core/token"
+	"github.com/xnacly/sophia/core"
+	"github.com/xnacly/sophia/core/serror"
+	"github.com/xnacly/sophia/core/token"
 	"testing"
 )
 
