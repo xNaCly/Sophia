@@ -30,10 +30,11 @@ func Embed(config Configuration) {
 
 // starts the runtime, returns error op on error occurrence, writes prints and
 // errors to w, is w nil, os.Stdout is used
-func Execute(file *os.File, w io.Writer) ([]string, error) {
+func Execute(file *os.File, w io.Writer) error {
 	buf := &bytes.Buffer{}
 	r := io.TeeReader(file, buf)
 	buf.ReadFrom(r)
 	serror.SetDefault(serror.NewFormatter(&core.CONF, buf.String(), file.Name(), nil))
-	return run.Run(buf, file.Name())
+	_, err := run.Run(buf, file.Name())
+	return err
 }
