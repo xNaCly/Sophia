@@ -2,10 +2,255 @@
 
 ### Embedding the runtime
 
+#### Installing the runtime
+
 Install sophia as a project dependency:
 
 ```shell
 $ go get github.com/xnacly/sophia
+```
+
+#### Initial embedding
+
+Add skeleton:
+
+```go
+package main
+
+import (
+	"os"
+
+	"github.com/xnacly/sophia/embed"
+)
+
+func main() {
+	embed.Embed(embed.Configuration{})
+	file, err := os.Open("config.phia")
+	if err != nil {
+		panic(err)
+	}
+	embed.Execute(file, nil)
+}
+```
+
+#### Configuration script
+
+Lets add some configuration we want to modify with our sophia script:
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/xnacly/sophia/embed"
+)
+
+type Configuration struct {
+	Port int
+}
+
+var config = &Configuration{}
+
+func main() {
+	embed.Embed(embed.Configuration{})
+	file, err := os.Open("config.phia")
+	if err != nil {
+		panic(err)
+	}
+	embed.Execute(file, nil)
+}
+```
+
+And write a sophia script:
+
+```lisp
+(let port 8080)
+(set-port port)
+```
+
+#### Interfacing with go
+
+Now lets create the function by adding the `Functions` field to the `embed.Configuration` structure:
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/xnacly/sophia/core/token"
+	"github.com/xnacly/sophia/core/types"
+	"github.com/xnacly/sophia/embed"
+)
+
+type Configuration struct {
+	Port int
+}
+
+var config = &Configuration{}
+
+func main() {
+	embed.Embed(embed.Configuration{
+		Functions: map[string]types.KnownFunctionInterface{
+			"set-port": func(t *token.Token, n ...types.Node) any {
+				return nil
+			},
+		},
+	})
+	file, err := os.Open("config.phia")
+	if err != nil {
+		panic(err)
+	}
+	embed.Execute(file, nil)
+}
+```
+
+#### Input validation
+
+And do some input validation for the arguments we passed to `set-port`:
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/xnacly/sophia/core/serror"
+	"github.com/xnacly/sophia/core/token"
+	"github.com/xnacly/sophia/core/types"
+	"github.com/xnacly/sophia/embed"
+)
+
+type Configuration struct {
+	Port int
+}
+
+var config = &Configuration{}
+
+func main() {
+	embed.Embed(embed.Configuration{
+		Functions: map[string]types.KnownFunctionInterface{
+			"set-port": func(t *token.Token, n ...types.Node) any {
+				if len(n) > 1 {
+					serror.Add(n[1].GetToken(), "Too many arguments", "Expected 1 argument for set-port, got %d", len(n))
+					serror.Panic()
+				}
+				return nil
+			},
+		},
+	})
+	file, err := os.Open("config.phia")
+	if err != nil {
+		panic(err)
+	}
+	embed.Execute(file, nil)
+	fmt.Println("port:", config.Port)
+}
+```
+
+If we pass two ports to our `set-port` function we will get the following error message:
+
+```shell
+$ cat config.phia
+(let port 8080)
+(set-port port port)
+$ go run .
+error: Too many arguments
+
+        at: /home/teo/programming/embedding_sophia/config.phia:3:16:
+
+            1| ;; vim: syntax=lisp
+            2| (let port 8080)
+            3| (set-port port port)
+             |                ^^^^
+
+Expected 1 argument for set-port, got 2
+```
+
+Lets evaluate the result of the argument passed to our function, cast it to a float64 and assign it to `config.Port`:
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/xnacly/sophia/core/serror"
+	"github.com/xnacly/sophia/core/token"
+	"github.com/xnacly/sophia/core/types"
+	"github.com/xnacly/sophia/embed"
+)
+
+type Configuration struct {
+	Port int
+}
+
+var config = &Configuration{}
+
+func main() {
+	embed.Embed(embed.Configuration{
+		Functions: map[string]types.KnownFunctionInterface{
+			"set-port": func(t *token.Token, n ...types.Node) any {
+				if len(n) > 1 {
+					serror.Add(n[1].GetToken(), "Too many arguments", "Expected 1 argument for set-port, got %d", len(n))
+					serror.Panic()
+				}
+				res := n[0].Eval()
+				port, ok := res.(float64)
+				if !ok {
+					serror.Add(n[0].GetToken(), "Type error", "Expected float64 for port, got %T", res)
+					serror.Panic()
+				}
+
+				config.Port = int(port)
+
+				return nil
+			},
+		},
+	})
+	file, err := os.Open("config.phia")
+	if err != nil {
+		panic(err)
+	}
+	embed.Execute(file, nil)
+	fmt.Println("port:", config.Port)
+}
+```
+
+Again, lets check the error handling:
+
+```shell
+$ cat config.phia
+(let port "8080")
+(set-port port)
+$ go run .
+error: Type error
+
+        at: /home/teo/programming/embedding_sophia/config.phia:3:11:
+
+            1| ;; vim: syntax=lisp
+            2| (let port "8080")
+            3| (set-port port)
+             |           ^^^^
+
+Expected float64 for port, got string
+```
+
+#### Resulting embedding of Sophia
+
+Simply running our script with valid inputs according to our previous checks will result in the following output:
+
+```shell
+$ cat config.phia
+(let port 8080)
+(set-port port)
+$ go run .
+port: 8080
 ```
 
 ### KFI - Known function interface
