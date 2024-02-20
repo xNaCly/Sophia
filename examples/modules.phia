@@ -1,16 +1,14 @@
 ;; vim: syntax=lisp
 
-;; WARNING: this is not yet implemented and thus subject to change
-
 ;; predefined modules, inspired by and linking to certain GO's standard library
-(use strings)
+;; (use strings)
 ;; results in ["192", "168", "0", "217"]
-(println (strings::split "192.168.0.217" ".")) 
+;, (println (strings::split "192.168.0.217" ".")) 
 
 ;; allows access to formatted text, such as printf or sprintf
-(use fmt) 
-(fmt::printf "Hello %q" "traveler")
-(println (fmt::sprintf "Hello %q" "Space"))
+;; (use fmt) 
+;; (fmt::printf "Hello %q" "traveler")
+;; (println (fmt::sprintf "Hello %q" "Space"))
 
 ;; function attached to objects / methods are not available in sophia, however
 ;; you are encouraged to create a module for the object containing these
@@ -18,10 +16,10 @@
 
 ;; custom module
 (module person
-    (fun str [p] (++ "person: " p.name)
+    (fun str [p] (++ "person: " p#["name"])
 
     (module extract ;; namespaces can be nested
-        (fun name (_ p) p.name)
+        (fun name (_ p) p["name"])
     )
 )
 

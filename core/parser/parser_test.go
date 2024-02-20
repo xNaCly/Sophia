@@ -88,3 +88,24 @@ func TestParserArray(t *testing.T) {
 		})
 	}
 }
+
+func TestParserModules(t *testing.T) {
+	in := []string{
+		"(module person)",
+		"(module person (fun str [p] (++ \"person: \" p#[\"name\"])))",
+	}
+
+	for _, s := range in {
+		t.Run(s, func(t *testing.T) {
+			serror.SetDefault(serror.NewFormatter(&core.CONF, s, "test", nil))
+			l := lexer.New(strings.NewReader(s))
+			tokens := l.Lex()
+			p := New(tokens, "test")
+			p.Parse()
+			if serror.HasErrors() {
+				serror.Display()
+				t.Errorf("parsing should not fail for %q, it did", s)
+			}
+		})
+	}
+}

@@ -96,7 +96,7 @@ func TestLexerIdent(t *testing.T) {
 }
 
 func TestLexerOperators(t *testing.T) {
-	in := `+-/*% let () if = or and not ++ fun for > < match # lambda`
+	in := `+-/*% let () if = or and not ++ fun for > < match # lambda ::`
 	serror.SetDefault(serror.NewFormatter(&core.CONF, in, "test", nil))
 	l := New(strings.NewReader(in))
 	to := l.Lex()
@@ -126,6 +126,7 @@ func TestLexerOperators(t *testing.T) {
 		token.MATCH,
 		token.HASHTAG,
 		token.LAMBDA,
+		token.DOUBLE_COLON,
 		token.EOF,
 	}
 

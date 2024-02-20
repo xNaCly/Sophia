@@ -80,7 +80,12 @@ func (l *Lexer) Lex() []*token.Token {
 		case ']':
 			ttype = token.RIGHT_BRACKET
 		case ':':
-			ttype = token.COLON
+			if l.peek() == ':' {
+				ttype = token.DOUBLE_COLON
+				l.advance()
+			} else {
+				ttype = token.COLON
+			}
 		case '.':
 			ttype = token.DOT
 		case '=':

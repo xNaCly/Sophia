@@ -335,6 +335,11 @@ func (p *Parser) parseStatment() types.Node {
 			Token:    op,
 			Children: childs,
 		}
+	case token.MODULE:
+		stmt = &expr.Module{
+			Token:    op,
+			Children: childs,
+		}
 	case token.LAMBDA:
 		if len(childs) < 1 {
 			serror.Add(op, "Not enough parameters", "Expected 1 parameter for lambda parameters, got %d.", len(childs))

@@ -22,6 +22,7 @@ const (
 	RIGHT_CURLY
 	COLON
 	DOT
+	DOUBLE_COLON
 	LEFT_BRACE
 	RIGHT_BRACE
 	LEFT_BRACKET
@@ -42,6 +43,7 @@ const (
 	LOAD
 	MERGE
 	RETURN
+	MODULE
 	LAMBDA
 
 	EOF
@@ -62,6 +64,7 @@ var TOKEN_NAME_MAP = map[int]string{
 	LEFT_CURLY:      "{",
 	RIGHT_CURLY:     "}",
 	COLON:           ":",
+	DOUBLE_COLON:    "::",
 	DOT:             ".",
 	LEFT_BRACE:      "(",
 	RIGHT_BRACE:     ")",
@@ -82,6 +85,7 @@ var TOKEN_NAME_MAP = map[int]string{
 	MERGE:           "++",
 	EOF:             "EOF",
 	RETURN:          "return",
+	MODULE:          "module",
 	LAMBDA:          "lambda",
 	HASHTAG:         "#",
 }

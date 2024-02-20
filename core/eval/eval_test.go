@@ -453,3 +453,26 @@ func TestEvalArray(t *testing.T) {
 		})
 	}
 }
+
+func TestEvalModules(t *testing.T) {
+	input := []string{
+		"(module person)",
+		"(module person (fun str [p] (++ \"person: \" p#[\"name\"])))",
+	}
+	for _, str := range input {
+		t.Run(str, func(t *testing.T) {
+			serror.SetDefault(serror.NewFormatter(&core.CONF, str, "test", nil))
+			l := lexer.New(strings.NewReader(str))
+			p := parser.New(l.Lex(), "test")
+			r := Eval("repl", p.Parse())
+			if serror.HasErrors() {
+				t.Errorf("lexer or parser error for %q", str)
+			}
+			if len(r) == 0 {
+				t.Errorf("eval result empty for %q", str)
+				return
+			}
+		})
+	}
+
+}
