@@ -44,6 +44,7 @@ const (
 	MERGE
 	RETURN
 	MODULE
+	USE
 	LAMBDA
 
 	EOF
@@ -85,6 +86,7 @@ var TOKEN_NAME_MAP = map[int]string{
 	MERGE:           "++",
 	EOF:             "EOF",
 	RETURN:          "return",
+	USE:             "use",
 	MODULE:          "module",
 	LAMBDA:          "lambda",
 	HASHTAG:         "#",

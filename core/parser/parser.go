@@ -335,10 +335,34 @@ func (p *Parser) parseStatment() types.Node {
 			Token:    op,
 			Children: childs,
 		}
+	case token.USE:
+		if len(childs) != 1 {
+			serror.Add(op, "Not enough parameters", "Expected 1 parameter as the module to use, got %d.", len(childs))
+			return nil
+		}
+		ident, ok := childs[0].(*expr.Ident)
+		if !ok {
+			serror.Add(childs[0].GetToken(), "Type Error", "Expected identifier as first argument for using a module, got %T", childs[0])
+			return nil
+		}
+		stmt = &expr.Use{
+			Token: op,
+			Name:  ident,
+		}
 	case token.MODULE:
+		if len(childs) < 1 {
+			serror.Add(op, "Not enough parameters", "Expected 1 parameter as the module name, got %d.", len(childs))
+			return nil
+		}
+		ident, ok := childs[0].(*expr.Ident)
+		if !ok {
+			serror.Add(childs[0].GetToken(), "Type Error", "Expected identifier as first argument for module defintition, got %T", childs[0])
+			return nil
+		}
 		stmt = &expr.Module{
 			Token:    op,
-			Children: childs,
+			Name:     ident.Name,
+			Children: childs[1:],
 		}
 	case token.LAMBDA:
 		if len(childs) < 1 {

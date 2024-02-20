@@ -1,13 +1,14 @@
 package expr
 
 import (
-	"github.com/xnacly/sophia/core/serror"
+	"github.com/xnacly/sophia/core/consts"
 	"github.com/xnacly/sophia/core/token"
 	"github.com/xnacly/sophia/core/types"
 )
 
 type Module struct {
 	Token    *token.Token
+	Name     string
 	Children []types.Node
 }
 
@@ -24,7 +25,6 @@ func (m *Module) GetToken() *token.Token {
 }
 
 func (m *Module) Eval() any {
-	serror.Add(m.Token, "Not implemented", "Modules are a work in progress.")
-	serror.Panic()
+	consts.MODULE_TABLE[m.Name] = m
 	return nil
 }

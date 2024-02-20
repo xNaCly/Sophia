@@ -457,7 +457,15 @@ func TestEvalArray(t *testing.T) {
 func TestEvalModules(t *testing.T) {
 	input := []string{
 		"(module person)",
-		"(module person (fun str [p] (++ \"person: \" p#[\"name\"])))",
+		"(module person)(use person)",
+		// `
+		// (module person
+		// (fun str [p]
+		// (++ "person: " p#["name"])
+		// )
+		// )
+		// (let pers { name: "anon" })
+		// (person::str pers)`,
 	}
 	for _, str := range input {
 		t.Run(str, func(t *testing.T) {

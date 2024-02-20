@@ -92,6 +92,7 @@ func TestParserArray(t *testing.T) {
 func TestParserModules(t *testing.T) {
 	in := []string{
 		"(module person)",
+		"(module person)(use person)",
 		"(module person (fun str [p] (++ \"person: \" p#[\"name\"])))",
 	}
 
